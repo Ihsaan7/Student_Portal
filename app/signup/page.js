@@ -141,14 +141,14 @@ export default function SignupPage() {
         }
       }
 
-      setSuccess("Registration successful! Redirecting to course selection...");
+      setSuccess("Registration successful! Redirecting to home...");
       
       // Store programme in localStorage for course selection
       localStorage.setItem('selectedProgramme', programme);
       
-      // Redirect to course selection after 2 seconds
+      // Redirect to home after 2 seconds
       setTimeout(() => {
-        router.push(`/course-selection?programme=${encodeURIComponent(programme)}`);
+        router.push('/home');
       }, 2000);
 
     } catch (error) {

@@ -1,12 +1,19 @@
 "use client";
 import DashboardLayout from "../components/DashboardLayout";
 import { useState, useEffect } from "react";
+import { supabase } from "../../lib/supabase";
+import { useRouter } from "next/navigation";
+import { useToast, ToastContainer } from "../components/Toast";
 
 export default function CourseSelectionPage() {
   const [selectedSemester, setSelectedSemester] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCourses, setSelectedCourses] = useState([]);
   const [userProgramme, setUserProgramme] = useState("");
+  const [user, setUser] = useState(null);
+  const [isEnrolling, setIsEnrolling] = useState(false);
+  const [enrolledCourses, setEnrolledCourses] = useState([]);
+  const { toasts, showSuccess, showError, removeToast, showWarning, showInfo } = useToast();
 
   const semesters = ["Semester 1", "Semester 2", "Semester 3", "Semester 4", "Semester 5", "Semester 6", "Semester 7", "Semester 8"];
 
@@ -154,33 +161,262 @@ export default function CourseSelectionPage() {
   const availableCourses = getAvailableCourses();
 
   const handleCourseSelection = (courseId) => {
+    const course = availableCourses.find(c => c.id === courseId);
+    
+    // Don't allow selection of already enrolled courses
+    if (course && isAlreadyEnrolled(course)) {
+      showInfo("You are already enrolled in this course");
+      return;
+    }
+    
     if (selectedCourses.includes(courseId)) {
+      // Remove course without confirmation
       setSelectedCourses(selectedCourses.filter(id => id !== courseId));
     } else {
       setSelectedCourses([...selectedCourses, courseId]);
     }
   };
 
-  const handleEnrollment = () => {
-    console.log("Enrolling in courses:", selectedCourses);
-    alert(`Successfully enrolled in ${selectedCourses.length} course(s)!`);
-    setSelectedCourses([]);
+  const handleEnrollment = async () => {
+    if (!user) {
+      showError("Please log in to enroll in courses");
+      return;
+    }
+
+    setIsEnrolling(true);
+
+    try {
+      const selectedCoursesData = availableCourses.filter(course => 
+        selectedCourses.includes(course.id) && !isAlreadyEnrolled(course)
+      );
+      
+      console.log('User:', user);
+      console.log('Selected courses:', selectedCourses);
+      console.log('Available courses:', availableCourses);
+      console.log('Selected courses data:', selectedCoursesData);
+      
+      // Check for already enrolled courses
+      const alreadyEnrolledCourses = selectedCoursesData.filter(course => 
+        enrolledCourses.some(ec => 
+          ec.course_code === course.code && 
+          ec.semester === selectedSemester
+        )
+      );
+
+      if (alreadyEnrolledCourses.length > 0) {
+        const courseNames = alreadyEnrolledCourses.map(c => c.name).join(', ');
+        showWarning(`You are already enrolled in: ${courseNames}`);
+        setIsEnrolling(false);
+        return;
+      }
+
+      // Filter out already enrolled courses
+      const newCoursesToEnroll = selectedCoursesData.filter(course => 
+        !enrolledCourses.some(ec => 
+          ec.course_code === course.code && 
+          ec.semester === selectedSemester
+        )
+      );
+
+      if (newCoursesToEnroll.length === 0) {
+        showInfo("All selected courses are already enrolled");
+        setIsEnrolling(false);
+        return;
+      }
+      
+      // Prepare enrollment data
+      const enrollmentData = newCoursesToEnroll.map(course => ({
+        user_id: user.id,
+        course_code: course.code,
+        course_name: course.name,
+        credits: course.credits,
+        semester: selectedSemester,
+        programme: userProgramme
+      }));
+
+      console.log('Attempting to enroll with data:', enrollmentData);
+      console.log('Supabase client:', supabase);
+
+      // Test the connection first
+      const { data: testData, error: testError } = await supabase
+        .from('enrolled_courses')
+        .select('count')
+        .limit(1);
+
+      console.log('Connection test result:', { testData, testError });
+
+      // Save enrollments to database
+      const { data, error } = await supabase
+        .from('enrolled_courses')
+        .insert(enrollmentData)
+        .select();
+
+      console.log('Full response:', { data, error, errorType: typeof error, errorKeys: error ? Object.keys(error) : 'no error' });
+
+      if (error) {
+        console.error('Enrollment error details:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code,
+          fullError: error
+        });
+        
+        if (error.code === '42P01') {
+          showError('Database table not found. Please run the SQL setup script in your Supabase dashboard first.');
+        } else if (error.code === '23505') {
+          // Handle duplicate key constraint violation
+          showWarning('Some courses are already enrolled. Please refresh the page to see updated enrollment status.');
+        } else {
+          showError(`Error enrolling in courses: ${error.message || 'Unknown error occurred'}`);
+        }
+        return;
+      }
+
+      console.log('Enrollment successful:', data);
+
+      // Update local state
+      setEnrolledCourses([...enrolledCourses, ...enrollmentData]);
+      setSelectedCourses([]);
+      
+      showSuccess(`Successfully enrolled in ${newCoursesToEnroll.length} course(s)!`);
+      
+      // Refresh enrolled courses from database instead of reloading page
+      await refreshEnrolledCourses();
+
+    } catch (error) {
+      console.error('Unexpected enrollment error:', error);
+      console.error('Error stack:', error.stack);
+      showError(`Unexpected error: ${error.message}`);
+    } finally {
+      setIsEnrolling(false);
+    }
+  };
+
+  const refreshEnrolledCourses = async () => {
+    if (user) {
+      const { data: enrollments, error } = await supabase
+        .from('enrolled_courses')
+        .select('*')
+        .eq('user_id', user.id);
+      
+      if (!error) {
+        setEnrolledCourses(enrollments || []);
+      }
+    }
   };
 
   const getEnrollmentStatus = (course) => {
-    const percentage = (course.enrolled / course.capacity) * 100;
-    if (percentage >= 90) return { status: "Full", color: "text-red-600 bg-red-100" };
-    if (percentage >= 75) return { status: "Almost Full", color: "text-yellow-600 bg-yellow-100" };
-    return { status: "Available", color: "text-green-600 bg-green-100" };
+    // Get actual enrollment count from database
+    const enrolledCount = enrolledCourses.filter(ec => ec.course_code === course.code).length;
+    const percentage = (enrolledCount / course.capacity) * 100;
+    
+    if (percentage >= 90) return { status: "Full", color: "text-red-600 bg-red-100", count: enrolledCount };
+    if (percentage >= 75) return { status: "Almost Full", color: "text-yellow-600 bg-yellow-100", count: enrolledCount };
+    return { status: "Available", color: "text-green-600 bg-green-100", count: enrolledCount };
   };
 
-  const selectedCoursesData = availableCourses.filter(course => selectedCourses.includes(course.id));
+  const isAlreadyEnrolled = (course) => {
+    return enrolledCourses.some(ec => 
+      ec.course_code === course.code && 
+      ec.semester === selectedSemester
+    );
+  };
+
+  const selectedCoursesData = availableCourses.filter(course => 
+    selectedCourses.includes(course.id) && !isAlreadyEnrolled(course)
+  );
   const totalCredits = selectedCoursesData.reduce((sum, course) => sum + course.credits, 0);
 
-  // Set default programme for demo (in real app, this would come from user session)
+  const testDatabaseConnection = async () => {
+    try {
+      console.log('Testing database connection...');
+      
+      // Test 1: Check if we can connect to Supabase
+      const { data: { user } } = await supabase.auth.getUser();
+      console.log('Auth test - User:', user);
+      
+      // Test 2: Check if the table exists
+      const { data: tableTest, error: tableError } = await supabase
+        .from('enrolled_courses')
+        .select('*')
+        .limit(1);
+      
+      console.log('Table test - Data:', tableTest, 'Error:', tableError);
+      
+      // Test 3: Try to insert a test record
+      if (user) {
+        const { data: insertTest, error: insertError } = await supabase
+          .from('enrolled_courses')
+          .insert({
+            user_id: user.id,
+            course_code: 'TEST001',
+            course_name: 'Test Course',
+            credits: 1,
+            semester: 'Test Semester',
+            programme: 'Test Programme'
+          })
+          .select();
+        
+        console.log('Insert test - Data:', insertTest, 'Error:', insertError);
+        
+        // Clean up test record
+        if (insertTest && insertTest.length > 0) {
+          const { error: deleteError } = await supabase
+            .from('enrolled_courses')
+            .delete()
+            .eq('course_code', 'TEST001');
+          
+          console.log('Cleanup test - Error:', deleteError);
+        }
+      }
+      
+    } catch (error) {
+      console.error('Database connection test failed:', error);
+    }
+  };
+
+  // Test database connection on component mount
   useEffect(() => {
-    // In a real app, this would come from the user's session or URL parameters
-    // For demo purposes, we'll check if there's a programme in localStorage or URL params
+    testDatabaseConnection();
+  }, []);
+
+  // Get user and enrolled courses on component mount
+  useEffect(() => {
+    const getUserAndEnrollments = async () => {
+      // Debug Supabase configuration
+      console.log('Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL);
+      console.log('Supabase Key exists:', !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+      
+      const { data: { user } } = await supabase.auth.getUser();
+      console.log('Current user:', user);
+      
+      if (user) {
+        setUser(user);
+        
+        // Get user's enrolled courses
+        const { data: enrollments, error } = await supabase
+          .from('enrolled_courses')
+          .select('*')
+          .eq('user_id', user.id);
+        
+        if (error) {
+          console.error('Error fetching enrollments:', error);
+          if (error.code === '42P01') {
+            console.log('Table does not exist yet. Please run the SQL setup script.');
+          }
+          setEnrolledCourses([]);
+        } else {
+          setEnrolledCourses(enrollments || []);
+        }
+      }
+    };
+
+    getUserAndEnrollments();
+  }, []);
+
+  // Set default programme
+  useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const selectedProgramme = urlParams.get('programme') || localStorage.getItem('selectedProgramme') || "Bachelor of Science in Software Engineering (BSSE)";
     setUserProgramme(selectedProgramme);
@@ -188,6 +424,9 @@ export default function CourseSelectionPage() {
 
   return (
     <DashboardLayout currentPage="/course-selection">
+      {/* Toast Container */}
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
+      
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Course Selection</h1>
@@ -254,14 +493,24 @@ export default function CourseSelectionPage() {
                 <div className="space-y-4">
                   {availableCourses.map((course) => {
                     const enrollmentStatus = getEnrollmentStatus(course);
+                    const alreadyEnrolled = isAlreadyEnrolled(course);
                     return (
-                      <div key={course.id} className="border border-gray-200 rounded-lg p-4">
+                      <div key={course.id} className={`border rounded-lg p-4 transition-all ${
+                        alreadyEnrolled 
+                          ? 'border-green-300 bg-green-50' 
+                          : 'border-gray-200'
+                      }`}>
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex-1">
                             <div className="flex items-center space-x-2 mb-1">
                               <h3 className="font-semibold text-gray-900">{course.code}</h3>
                               <span className="text-sm text-gray-500">•</span>
                               <span className="text-sm text-gray-600">{course.credits} credits</span>
+                              {alreadyEnrolled && (
+                                <span className="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full font-medium">
+                                  ✓ Enrolled
+                                </span>
+                              )}
                             </div>
                             <h4 className="text-lg font-medium text-gray-900 mb-1">{course.name}</h4>
                             <p className="text-sm text-gray-600 mb-2">{course.instructor}</p>
@@ -284,7 +533,7 @@ export default function CourseSelectionPage() {
                               {enrollmentStatus.status}
                             </span>
                             <span className="text-sm text-gray-600">
-                              {course.enrolled}/{course.capacity} enrolled
+                              {enrollmentStatus.count}/{course.capacity} enrolled
                             </span>
                           </div>
                         </div>
@@ -293,16 +542,23 @@ export default function CourseSelectionPage() {
                           <span className="text-sm text-gray-600">{course.department}</span>
                           <button
                             onClick={() => handleCourseSelection(course.id)}
-                            disabled={enrollmentStatus.status === "Full"}
+                            disabled={enrollmentStatus.status === "Full" || alreadyEnrolled}
                             className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
-                              selectedCourses.includes(course.id)
+                              alreadyEnrolled
+                                ? 'bg-green-500 text-white cursor-not-allowed'
+                                : selectedCourses.includes(course.id)
                                 ? 'bg-red-500 text-white hover:bg-red-600'
                                 : enrollmentStatus.status === "Full"
                                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                                 : 'bg-indigo-500 text-white hover:bg-indigo-600'
                             }`}
                           >
-                            {selectedCourses.includes(course.id) ? 'Remove' : 'Add Course'}
+                            {alreadyEnrolled 
+                              ? 'Already Enrolled' 
+                              : selectedCourses.includes(course.id) 
+                              ? 'Remove' 
+                              : 'Add Course'
+                            }
                           </button>
                         </div>
                       </div>
@@ -343,9 +599,24 @@ export default function CourseSelectionPage() {
                   
                   <button
                     onClick={handleEnrollment}
-                    className="w-full px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition font-medium"
+                    disabled={isEnrolling || selectedCoursesData.length === 0}
+                    className={`w-full px-4 py-2 rounded-lg transition font-medium ${
+                      isEnrolling || selectedCoursesData.length === 0
+                        ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
+                        : 'bg-green-500 text-white hover:bg-green-600'
+                    }`}
                   >
-                    Enroll in {selectedCoursesData.length} Course{selectedCoursesData.length !== 1 ? 's' : ''}
+                    {isEnrolling ? (
+                      <div className="flex items-center justify-center">
+                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Enrolling...
+                      </div>
+                    ) : (
+                      `Enroll in ${selectedCoursesData.length} Course${selectedCoursesData.length !== 1 ? 's' : ''}`
+                    )}
                   </button>
                 </>
               )}

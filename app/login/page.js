@@ -10,6 +10,7 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isResending, setIsResending] = useState(false);
   const router = useRouter();
 
   async function handleSubmit(e) {
@@ -46,7 +47,7 @@ export default function LoginPage() {
         
         // Redirect to dashboard after 2 seconds
         setTimeout(() => {
-          router.push('/dashboard');
+          router.push('/home');
         }, 2000);
       }
 
@@ -54,6 +55,34 @@ export default function LoginPage() {
       setError("An unexpected error occurred: " + error.message);
     } finally {
       setIsLoading(false);
+    }
+  }
+
+  async function handleResendConfirmation() {
+    if (!email) {
+      setError("Please enter your email address first");
+      return;
+    }
+
+    setIsResending(true);
+    setError("");
+    setSuccess("");
+
+    try {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: email,
+      });
+
+      if (error) {
+        setError("Error resending confirmation: " + error.message);
+      } else {
+        setSuccess("Confirmation email sent! Please check your inbox and spam folder.");
+      }
+    } catch (error) {
+      setError("An unexpected error occurred: " + error.message);
+    } finally {
+      setIsResending(false);
     }
   }
 
@@ -153,6 +182,21 @@ export default function LoginPage() {
             {isLoading ? 'Signing In...' : 'Sign In'}
           </button>
         </form>
+        
+        {/* Resend Confirmation Button */}
+        <div className="mt-4 text-center">
+          <button
+            type="button"
+            onClick={handleResendConfirmation}
+            disabled={isResending || !email}
+            className={`text-sm text-indigo-600 hover:text-indigo-800 font-medium transition-colors ${
+              isResending || !email ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
+          >
+            {isResending ? 'Sending...' : 'Resend Confirmation Email'}
+          </button>
+        </div>
+        
         <div className="mt-6 text-center text-sm text-gray-500">
           Don't have an account? <a href="/signup" className="text-indigo-600 hover:underline font-medium">Sign Up</a>
         </div>

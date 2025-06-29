@@ -6,7 +6,7 @@ import { useState } from "react";
 const navItems = [
   { name: "Home", icon: (
     <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7m-9 2v6a2 2 0 002 2h2a2 2 0 002-2v-6m-6 0h6" /></svg>
-  ), route: "/dashboard" },
+  ), route: "/home" },
   { name: "Calendar", icon: (
     <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="4" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" /></svg>
   ), route: "/calendar" },
@@ -36,8 +36,6 @@ export default function DashboardLayout({ children, currentPage }) {
   const [profileOpen, setProfileOpen] = useState(false);
 
   const studentName = session?.user?.name || "Student Name";
-  const studentProgramme = session?.user?.programme || "Bachelor of Computer Science (BCS)";
-  const studentSemester = session?.user?.semester || "Semester 3";
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
@@ -94,11 +92,9 @@ export default function DashboardLayout({ children, currentPage }) {
             >
               <svg className="w-7 h-7 text-indigo-700" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
             </button>
-            {/* Student Info */}
+            {/* Student Name Only */}
             <div className="hidden sm:block text-right">
               <div className="font-medium text-gray-700">{studentName}</div>
-              <div className="text-xs text-gray-500">{studentProgramme}</div>
-              <div className="text-xs text-gray-500">{studentSemester}</div>
             </div>
             {/* Profile Dropdown */}
             <div className="relative">
@@ -113,8 +109,6 @@ export default function DashboardLayout({ children, currentPage }) {
                 <div className="absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-50 bg-gradient-to-b from-white to-gray-50">
                   <div className="px-4 py-2 border-b border-gray-100">
                     <div className="font-medium text-gray-900">{studentName}</div>
-                    <div className="text-sm text-gray-600">{studentProgramme}</div>
-                    <div className="text-sm text-gray-600">{studentSemester}</div>
                   </div>
                   <a href="/profile" className="block px-4 py-2 text-gray-700 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-indigo-100">Profile</a>
                   <button
@@ -127,7 +121,7 @@ export default function DashboardLayout({ children, currentPage }) {
           </div>
         </header>
         {/* Main content area */}
-        <main className="flex-1 p-6 bg-gradient-to-br from-gray-50 to-gray-100">
+        <main className="flex-1 p-4 md:p-6 bg-gradient-to-br from-gray-50 to-gray-100">
           {children}
         </main>
       </div>

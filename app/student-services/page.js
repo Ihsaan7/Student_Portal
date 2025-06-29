@@ -9,121 +9,121 @@ export default function StudentServicesPage() {
   const services = [
     {
       id: 1,
-      name: "Academic Advising",
-      description: "Get guidance on course selection, degree requirements, and academic planning.",
+      name: "Study Skills & Learning Support",
+      description: "Get help with time management, study techniques, note-taking strategies, and effective online learning methods.",
       icon: (
         <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
         </svg>
       ),
-      contact: "advising@vu.edu.pk",
+      contact: "studysupport@vu.edu.pk",
       phone: "+92-51-1234567",
       hours: "Mon-Fri: 9:00 AM - 5:00 PM",
-      location: "Student Center, Room 101"
+      location: "Online Sessions Available"
     },
     {
       id: 2,
-      name: "Financial Aid",
-      description: "Information about scholarships, grants, and student loan options.",
-      icon: (
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3zm0 0V4m0 7v7" />
-        </svg>
-      ),
-      contact: "financialaid@vu.edu.pk",
-      phone: "+92-51-1234568",
-      hours: "Mon-Fri: 8:00 AM - 4:00 PM",
-      location: "Administration Building, Room 205"
-    },
-    {
-      id: 3,
-      name: "Career Services",
-      description: "Resume writing, job search assistance, and career counseling.",
-      icon: (
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H8a2 2 0 01-2-2V8a2 2 0 012-2h8z" />
-        </svg>
-      ),
-      contact: "career@vu.edu.pk",
-      phone: "+92-51-1234569",
-      hours: "Mon-Fri: 10:00 AM - 6:00 PM",
-      location: "Career Center, Room 301"
-    },
-    {
-      id: 4,
-      name: "Health Services",
-      description: "Medical consultations, health screenings, and wellness programs.",
-      icon: (
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-        </svg>
-      ),
-      contact: "health@vu.edu.pk",
-      phone: "+92-51-1234570",
-      hours: "Mon-Fri: 8:00 AM - 6:00 PM",
-      location: "Health Center, Ground Floor"
-    },
-    {
-      id: 5,
-      name: "IT Support",
-      description: "Technical assistance with LMS, email, and computer issues.",
+      name: "Computer & PC Technical Support",
+      description: "Get help with laptop/PC issues, software problems, internet connectivity, and technical difficulties affecting your online studies.",
       icon: (
         <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
         </svg>
       ),
-      contact: "itsupport@vu.edu.pk",
-      phone: "+92-51-1234571",
+      contact: "techsupport@vu.edu.pk",
+      phone: "+92-51-1234568",
       hours: "Mon-Sun: 24/7",
-      location: "IT Center, Room 401"
+      location: "Online Support Portal"
+    },
+    {
+      id: 3,
+      name: "Career Guidance for VU Students",
+      description: "Get advice on career choices, job opportunities after VU, industry trends, and how to prepare for your future career while studying.",
+      icon: (
+        <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H8a2 2 0 01-2-2V8a2 2 0 012-2h8z" />
+        </svg>
+      ),
+      contact: "careerguidance@vu.edu.pk",
+      phone: "+92-51-1234569",
+      hours: "Mon-Fri: 10:00 AM - 6:00 PM",
+      location: "Virtual Career Counseling"
+    },
+    {
+      id: 4,
+      name: "Peer Mentoring Program",
+      description: "Connect with senior students who can guide you through your academic journey and share their success strategies.",
+      icon: (
+        <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+        </svg>
+      ),
+      contact: "mentoring@vu.edu.pk",
+      phone: "+92-51-1234570",
+      hours: "Mon-Fri: 10:00 AM - 6:00 PM",
+      location: "Virtual Meeting Rooms"
+    },
+    {
+      id: 5,
+      name: "Online Exam Preparation",
+      description: "Learn strategies for online exams, time management during tests, and how to prepare effectively for virtual assessments.",
+      icon: (
+        <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+        </svg>
+      ),
+      contact: "examhelp@vu.edu.pk",
+      phone: "+92-51-1234571",
+      hours: "Mon-Fri: 9:00 AM - 5:00 PM",
+      location: "Virtual Study Sessions"
     },
     {
       id: 6,
-      name: "Library Services",
-      description: "Access to books, journals, research databases, and study spaces.",
+      name: "Student Success Workshops",
+      description: "Join workshops on goal setting, motivation, stress management, and building effective study habits for online learning.",
       icon: (
         <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
         </svg>
       ),
-      contact: "library@vu.edu.pk",
+      contact: "workshops@vu.edu.pk",
       phone: "+92-51-1234572",
-      hours: "Mon-Sat: 8:00 AM - 10:00 PM",
-      location: "Main Library, 2nd Floor"
+      hours: "Various Times (Check Schedule)",
+      location: "Online Workshops"
     }
   ];
 
   const announcements = [
     {
       id: 1,
-      title: "New Scholarship Opportunities Available",
-      content: "Several new scholarships have been announced for the upcoming academic year. Visit the Financial Aid office for more information.",
+      title: "New Study Skills Workshop Series",
+      content: "Join our weekly workshops on effective online learning strategies, time management, and exam preparation techniques.",
       date: "2024-12-10",
-      category: "Financial Aid"
+      category: "Study Skills"
     },
     {
       id: 2,
-      title: "Career Fair Registration Open",
-      content: "The annual career fair will be held on January 15th, 2025. Register now to meet with top employers in your field.",
+      title: "Career Guidance Sessions for VU Students",
+      content: "Special career counseling sessions available to help you choose the right career path and prepare for job opportunities after graduation.",
       date: "2024-12-08",
-      category: "Career Services"
+      category: "Career Guidance"
     },
     {
       id: 3,
-      title: "Library Extended Hours During Finals",
-      content: "The library will be open 24/7 during the final examination period from December 15th to December 22nd.",
+      title: "Computer & PC Support Available 24/7",
+      content: "Having technical issues with your laptop or PC? Our technical support team is available round the clock to help with any computer problems.",
       date: "2024-12-05",
-      category: "Library Services"
+      category: "Technical Support"
     }
   ];
 
   const quickLinks = [
-    { name: "Student Handbook", url: "/handbook", icon: "📖" },
-    { name: "Academic Calendar", url: "/calendar", icon: "📅" },
-    { name: "Course Catalog", url: "/courses", icon: "📚" },
-    { name: "Student Portal", url: "/portal", icon: "🌐" },
-    { name: "Email Access", url: "/email", icon: "📧" },
-    { name: "LMS Support", url: "/lms-help", icon: "💻" }
+    { name: "Study Resources", url: "/study-resources", icon: "📚" },
+    { name: "Online Learning Tips", url: "/learning-tips", icon: "💡" },
+    { name: "Exam Schedule", url: "/exam-schedule", icon: "📅" },
+    { name: "Student Community", url: "/community", icon: "👥" },
+    { name: "Success Stories", url: "/success-stories", icon: "🏆" },
+    { name: "Study Groups", url: "/study-groups", icon: "👨‍🎓" }
   ];
 
   return (

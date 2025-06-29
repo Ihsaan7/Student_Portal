@@ -1,9 +1,15 @@
 "use client";
 import DashboardLayout from "../components/DashboardLayout";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "../../lib/supabase";
 
 export default function CalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [showNoteModal, setShowNoteModal] = useState(false);
+  const [noteText, setNoteText] = useState("");
+  const [notes, setNotes] = useState({});
+  const [user, setUser] = useState(null);
   
   // Generate calendar days
   const getDaysInMonth = (date) => {
@@ -38,6 +44,143 @@ export default function CalendarPage() {
 
   const prevMonth = () => {
     setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
+  };
+
+  // Get user and load notes on component mount
+  useEffect(() => {
+    const getUserAndNotes = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setUser(user);
+        await loadNotes(user.id);
+      }
+    };
+    getUserAndNotes();
+  }, []);
+
+  // Load notes from database
+  const loadNotes = async (userId) => {
+    try {
+      const { data, error } = await supabase
+        .from('calendar_notes')
+        .select('*')
+        .eq('user_id', userId);
+
+      if (error) {
+        console.error('Error loading notes:', error);
+        return;
+      }
+
+      // Convert array to object with date as key
+      const notesObj = {};
+      data.forEach(note => {
+        const dateKey = note.date;
+        notesObj[dateKey] = note.note_text;
+      });
+      setNotes(notesObj);
+    } catch (error) {
+      console.error('Error loading notes:', error);
+    }
+  };
+
+  // Handle date click
+  const handleDateClick = (date) => {
+    if (!date) return;
+    
+    const dateKey = date.toISOString().split('T')[0];
+    setSelectedDate(date);
+    setNoteText(notes[dateKey] || "");
+    setShowNoteModal(true);
+  };
+
+  // Save note
+  const handleSaveNote = async () => {
+    if (!selectedDate || !user) return;
+
+    const dateKey = selectedDate.toISOString().split('T')[0];
+    
+    try {
+      if (noteText.trim()) {
+        // Check if note already exists
+        const { data: existingNote } = await supabase
+          .from('calendar_notes')
+          .select('id')
+          .eq('user_id', user.id)
+          .eq('date', dateKey)
+          .single();
+
+        if (existingNote) {
+          // Update existing note
+          const { error } = await supabase
+            .from('calendar_notes')
+            .update({ note_text: noteText.trim() })
+            .eq('id', existingNote.id);
+
+          if (error) throw error;
+        } else {
+          // Insert new note
+          const { error } = await supabase
+            .from('calendar_notes')
+            .insert({
+              user_id: user.id,
+              date: dateKey,
+              note_text: noteText.trim()
+            });
+
+          if (error) throw error;
+        }
+
+        // Update local state
+        setNotes(prev => ({
+          ...prev,
+          [dateKey]: noteText.trim()
+        }));
+      } else {
+        // Delete note if text is empty
+        const { error } = await supabase
+          .from('calendar_notes')
+          .delete()
+          .eq('user_id', user.id)
+          .eq('date', dateKey);
+
+        if (error) throw error;
+
+        // Update local state
+        const newNotes = { ...notes };
+        delete newNotes[dateKey];
+        setNotes(newNotes);
+      }
+
+      setShowNoteModal(false);
+      setSelectedDate(null);
+      setNoteText("");
+    } catch (error) {
+      console.error('Error saving note:', error);
+      alert('Failed to save note. Please try again.');
+    }
+  };
+
+  // Cancel note editing
+  const handleCancelNote = () => {
+    setShowNoteModal(false);
+    setSelectedDate(null);
+    setNoteText("");
+  };
+
+  // Get note for a specific date
+  const getNoteForDate = (date) => {
+    if (!date) return null;
+    const dateKey = date.toISOString().split('T')[0];
+    return notes[dateKey];
+  };
+
+  // Format date for display
+  const formatDate = (date) => {
+    return date.toLocaleDateString('en-US', {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric'
+    });
   };
 
   return (
@@ -82,21 +225,31 @@ export default function CalendarPage() {
             ))}
             
             {/* Calendar Days */}
-            {days.map((day, index) => (
-              <div
-                key={index}
-                className={`p-3 min-h-[80px] border border-gray-100 ${
-                  day ? 'bg-white hover:bg-gray-50 cursor-pointer' : 'bg-gray-50'
-                }`}
-              >
-                {day && (
-                  <div className="text-sm font-medium text-gray-900 mb-1">
-                    {day.getDate()}
-                  </div>
-                )}
-                {/* Event indicators would go here */}
-              </div>
-            ))}
+            {days.map((day, index) => {
+              const note = getNoteForDate(day);
+              return (
+                <div
+                  key={index}
+                  onClick={() => handleDateClick(day)}
+                  className={`p-3 min-h-[80px] border border-gray-100 relative ${
+                    day ? 'bg-white hover:bg-gray-50 cursor-pointer' : 'bg-gray-50'
+                  } ${note ? 'bg-yellow-50 hover:bg-yellow-100' : ''}`}
+                >
+                  {day && (
+                    <>
+                      <div className="text-sm font-medium text-gray-900 mb-1">
+                        {day.getDate()}
+                      </div>
+                      {note && (
+                        <div className="text-xs text-gray-600 bg-yellow-200 p-1 rounded truncate">
+                          📝 {note}
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
 
@@ -131,6 +284,37 @@ export default function CalendarPage() {
             </div>
           </div>
         </div>
+
+        {/* Note Modal */}
+        {showNoteModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Add Note for {selectedDate && formatDate(selectedDate)}
+              </h3>
+              <textarea
+                value={noteText}
+                onChange={(e) => setNoteText(e.target.value)}
+                placeholder="Enter your reminder or note here..."
+                className="w-full h-32 p-3 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+              <div className="flex space-x-3 mt-4">
+                <button
+                  onClick={handleCancelNote}
+                  className="flex-1 px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSaveNote}
+                  className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                >
+                  Save Note
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </DashboardLayout>
   );
