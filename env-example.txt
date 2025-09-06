@@ -1,0 +1,16 @@
+# Supabase Configuration
+# Copy this content to a file named .env.local in your project root
+
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url_here
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
+
+# Example:
+# NEXT_PUBLIC_SUPABASE_URL=https://abcdefghijklmnop.supabase.co
+# NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+# To get these values:
+# 1. Go to your Supabase dashboard
+# 2. Click on Settings > API
+# 3. Copy the "Project URL" and "anon public" key
+# 4. Create a .env.local file in your project root
+# 5. Paste the values above 
