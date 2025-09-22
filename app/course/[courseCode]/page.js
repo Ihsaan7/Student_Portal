@@ -6,6 +6,7 @@ import { supabase } from '../../../lib/supabase';
 import DashboardLayout from '../../components/DashboardLayout';
 import LectureSystem from '../../components/LectureSystem';
 import CourseGuidanceSection from '../../components/CourseGuidanceSection';
+import AIStudyAssistant from '../../components/AIStudyAssistant';
 
 export default function CoursePage() {
   const params = useParams();
@@ -68,7 +69,7 @@ export default function CoursePage() {
     return (
       <DashboardLayout currentPage="/course">
         <div className="flex items-center justify-center min-h-screen">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600"></div>
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2" style={{ borderColor: 'hsl(var(--primary))' }}></div>
         </div>
       </DashboardLayout>
     );
@@ -78,22 +79,25 @@ export default function CoursePage() {
     return (
       <DashboardLayout currentPage="/course">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+          <div className="rounded-lg border-2 p-6" style={{ backgroundColor: 'hsl(var(--destructive) / 0.1)', borderColor: 'hsl(var(--destructive))' }}>
             <div className="flex items-center">
-              <div className="text-red-400 mr-3">
+              <div className="mr-3" style={{ color: 'hsl(var(--destructive))' }}>
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
               <div>
-                <h3 className="text-lg font-medium text-red-800">Error</h3>
-                <p className="text-red-700">{error}</p>
+                <h3 className="text-lg font-medium" style={{ color: 'hsl(var(--destructive))' }}>Error</h3>
+                <p style={{ color: 'hsl(var(--destructive))' }}>{error}</p>
               </div>
             </div>
             <div className="mt-4">
               <button
                 onClick={() => router.push('/home')}
-                className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+                className="px-4 py-2 rounded-lg transition-colors"
+                style={{ backgroundColor: 'hsl(var(--destructive))', color: 'hsl(var(--destructive-foreground))' }}
+                onMouseEnter={(e) => e.target.style.opacity = '0.9'}
+                onMouseLeave={(e) => e.target.style.opacity = '1'}
               >
                 Return to Dashboard
               </button>
@@ -109,11 +113,14 @@ export default function CoursePage() {
       <DashboardLayout currentPage="/course">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-900">Course not found</h2>
-            <p className="text-gray-600 mt-2">The requested course could not be found.</p>
+            <h2 className="text-2xl font-bold" style={{ color: 'hsl(var(--foreground))' }}>Course not found</h2>
+            <p className="mt-2" style={{ color: 'hsl(var(--muted-foreground))' }}>The requested course could not be found.</p>
             <button
               onClick={() => router.push('/home')}
-              className="mt-4 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
+              className="mt-4 px-4 py-2 rounded-lg transition-colors"
+              style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))' }}
+              onMouseEnter={(e) => e.target.style.opacity = '0.9'}
+              onMouseLeave={(e) => e.target.style.opacity = '1'}
             >
               Return to Dashboard
             </button>
@@ -127,19 +134,19 @@ export default function CoursePage() {
     <DashboardLayout currentPage="/course">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Course Header */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+        <div className="rounded-xl shadow-sm border-2 p-6 mb-8" style={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
           <div className="flex items-start justify-between">
             <div>
-              <div className="flex items-center space-x-3 mb-2">
-                <span className="bg-indigo-100 text-indigo-800 text-sm font-medium px-3 py-1 rounded-full">
+              <div className="flex items-center space-x-3 mb-3">
+                <span className="text-sm font-medium px-3 py-1 rounded-full" style={{ backgroundColor: 'hsl(var(--primary) / 0.1)', color: 'hsl(var(--primary))' }}>
                   {course.course_code}
                 </span>
-                <span className="bg-green-100 text-green-800 text-sm font-medium px-3 py-1 rounded-full">
+                <span className="text-sm font-medium px-3 py-1 rounded-full" style={{ backgroundColor: 'hsl(var(--accent))', color: 'hsl(var(--accent-foreground))' }}>
                   {course.credits} Credits
                 </span>
               </div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">{course.course_name}</h1>
-              <div className="flex items-center space-x-4 text-sm text-gray-600">
+              <h1 className="text-3xl font-bold mb-3" style={{ color: 'hsl(var(--card-foreground))' }}>{course.course_name}</h1>
+              <div className="flex items-center space-x-4 text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>
                 <span>📚 {course.semester}</span>
                 <span>🎓 {course.programme}</span>
                 <span>📅 Enrolled: {new Date(course.enrolled_at).toLocaleDateString()}</span>
@@ -147,7 +154,10 @@ export default function CoursePage() {
             </div>
             <button
               onClick={() => router.push('/home')}
-              className="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
+              className="px-4 py-2 rounded-lg transition-colors"
+              style={{ backgroundColor: 'hsl(var(--muted))', color: 'hsl(var(--muted-foreground))' }}
+              onMouseEnter={(e) => e.target.style.backgroundColor = 'hsl(var(--muted) / 0.8)'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = 'hsl(var(--muted))'}
             >
               ← Back to Dashboard
             </button>
@@ -155,79 +165,42 @@ export default function CoursePage() {
         </div>
 
         {/* Course Content Sections */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
           {/* Main Content */}
-          <div className="lg:col-span-3 space-y-6">
+          <div className="lg:col-span-4 space-y-6">
             {/* How to Attempt this Course Section */}
             <CourseGuidanceSection courseCode={courseCode} />
 
-            {/* Shorter Course Overview */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-              <h2 className="text-lg font-semibold text-gray-900 mb-3">Course Overview</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div className="bg-gray-50 p-3 rounded-lg">
-                  <h3 className="font-medium text-gray-900 mb-2 text-sm">Course Information</h3>
-                  <ul className="text-xs text-gray-600 space-y-1">
-                    <li><strong>Code:</strong> {course.course_code}</li>
-                    <li><strong>Credits:</strong> {course.credits}</li>
-                    <li><strong>Semester:</strong> {course.semester}</li>
-                    <li><strong>Programme:</strong> {course.programme}</li>
-                  </ul>
-                </div>
-                <div className="bg-gray-50 p-3 rounded-lg">
-                  <h3 className="font-medium text-gray-900 mb-2 text-sm">Quick Stats</h3>
-                  <ul className="text-xs text-gray-600 space-y-1">
-                    <li><strong>Enrolled:</strong> {new Date(course.enrolled_at).toLocaleDateString()}</li>
-                    <li><strong>Status:</strong> <span className="text-green-600">Active</span></li>
-                    <li><strong>Progress:</strong> In Progress</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
+            {/* AI Study Assistant - Now in main content area */}
+            <AIStudyAssistant courseCode={courseCode} user={user} />
 
             {/* Lecture System */}
             <LectureSystem courseCode={courseCode} user={user} />
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Course Stats */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Course Statistics</h3>
+          <div className="lg:col-span-1 space-y-6">
+            {/* Course Overview - Now in sidebar */}
+            <div className="rounded-xl shadow-sm border-2 p-4" style={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
+              <h2 className="text-lg font-semibold mb-4" style={{ color: 'hsl(var(--card-foreground))' }}>Course Overview</h2>
               <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Completion</span>
-                  <span className="text-sm font-medium text-gray-900">0%</span>
+                <div className="p-3 rounded-lg" style={{ backgroundColor: 'hsl(var(--muted) / 0.3)' }}>
+                  <h3 className="font-medium mb-2 text-sm" style={{ color: 'hsl(var(--card-foreground))' }}>Course Information</h3>
+                  <ul className="text-xs space-y-1" style={{ color: 'hsl(var(--muted-foreground))' }}>
+                    <li><strong>Code:</strong> {course.course_code}</li>
+                    <li><strong>Credits:</strong> {course.credits}</li>
+                    <li><strong>Semester:</strong> {course.semester}</li>
+                    <li><strong>Programme:</strong> {course.programme}</li>
+                  </ul>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div className="bg-indigo-600 h-2 rounded-full" style={{ width: '0%' }}></div>
+                <div className="p-3 rounded-lg" style={{ backgroundColor: 'hsl(var(--muted) / 0.3)' }}>
+                  <h3 className="font-medium mb-2 text-sm" style={{ color: 'hsl(var(--card-foreground))' }}>Quick Stats</h3>
+                  <ul className="text-xs space-y-1" style={{ color: 'hsl(var(--muted-foreground))' }}>
+                    <li><strong>Enrolled:</strong> {new Date(course.enrolled_at).toLocaleDateString()}</li>
+                    <li><strong>Status:</strong> <span style={{ color: 'hsl(var(--primary))' }}>Active</span></li>
+                    <li><strong>Progress:</strong> In Progress</li>
+                  </ul>
                 </div>
-                
-                <div className="flex justify-between items-center pt-2">
-                  <span className="text-sm text-gray-600">Assignments</span>
-                  <span className="text-sm font-medium text-gray-900">0/0</span>
-                </div>
-                
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Lectures Watched</span>
-                  <span className="text-sm font-medium text-gray-900">0/0</span>
-                </div>
-                
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Last Activity</span>
-                  <span className="text-sm font-medium text-gray-900">Today</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Upcoming Deadlines */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Upcoming Deadlines</h3>
-              <div className="text-center text-gray-500 py-4">
-                <svg className="w-12 h-12 mx-auto mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                <p className="text-sm">No upcoming deadlines</p>
               </div>
             </div>
           </div>

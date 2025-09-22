@@ -8,6 +8,7 @@ import AdminOnlyButton from "../components/AdminOnlyButton";
 import AdminControlPanel from "../components/AdminControlPanel";
 import CourseAdminPanel from "../components/CourseAdminPanel";
 import AdvancedAdminPanel from "../components/AdvancedAdminPanel";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 // Helper function to shorten programme names
 const shortenProgramme = (programme) => {
@@ -182,12 +183,12 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900">
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'hsl(var(--background))' }}>
         <div className="text-center max-w-md mx-auto px-4">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white mx-auto mb-4"></div>
-          <div className="text-white text-xl font-semibold mb-2">Loading Home...</div>
-          <div className="text-white/70 text-sm mb-4">Please wait while we fetch your data</div>
-          <div className="text-white/50 text-xs">
+          <LoadingSpinner size="large" variant="primary" />
+          <div className="text-xl font-semibold mb-2 mt-4" style={{ color: 'hsl(var(--foreground))' }}>Loading Home...</div>
+          <div className="text-sm mb-4" style={{ color: 'hsl(var(--muted-foreground))' }}>Please wait while we fetch your data</div>
+          <div className="text-xs" style={{ color: 'hsl(var(--muted-foreground))' }}>
             If this takes too long, please check your internet connection or try refreshing the page.
           </div>
         </div>
@@ -199,47 +200,47 @@ export default function Dashboard() {
     <DashboardLayout currentPage="/home">
       <div className="max-w-7xl mx-auto">
         {/* Welcome Section */}
-        <div className="bg-white rounded-lg shadow-sm p-4 md:p-6 mb-6 md:mb-8">
-          <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
-            <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0">
-              <span className="text-2xl font-bold text-indigo-600">
+        <div className="rounded-xl shadow-sm p-6 md:p-8 mb-6 md:mb-8 border-2" style={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
+          <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-6">
+            <div className="w-20 h-20 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-sm" style={{ backgroundColor: 'hsl(var(--primary))' }}>
+              <span className="text-3xl font-bold" style={{ color: 'hsl(var(--primary-foreground))' }}>
                 {userProfile?.name?.charAt(0) || user?.email?.charAt(0)}
               </span>
             </div>
             <div className="flex-1">
-              <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-1">
+              <h2 className="text-2xl md:text-3xl font-bold mb-2" style={{ color: 'hsl(var(--card-foreground))' }}>
                 Welcome back, {userProfile?.name || 'Student'}!
               </h2>
-              <p className="text-gray-600 text-sm md:text-base">{user?.email}</p>
+              <p className="text-base md:text-lg mb-1" style={{ color: 'hsl(var(--muted-foreground))' }}>{user?.email}</p>
               {userProfile?.programme && (
-                <p className="text-sm text-indigo-600 font-medium mt-1">
+                <div className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium" style={{ backgroundColor: 'hsl(var(--primary) / 0.1)', color: 'hsl(var(--primary))' }}>
                   {shortenProgramme(userProfile.programme)}
-                </p>
+                </div>
               )}
             </div>
           </div>
         </div>
 
         {/* Current Semester Overview */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
-          <div className="bg-white rounded-lg shadow-sm p-4 md:p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Current Semester</h3>
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-gray-600 text-sm md:text-base">Programme:</span>
-                <span className="font-medium text-gray-900 text-sm md:text-base">{shortenProgramme(userProfile?.programme)}</span>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
+          <div className="rounded-xl shadow-sm p-6 border-2" style={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
+            <h3 className="text-xl font-semibold mb-6" style={{ color: 'hsl(var(--card-foreground))' }}>Current Semester</h3>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center py-2">
+                <span className="text-base" style={{ color: 'hsl(var(--muted-foreground))' }}>Programme:</span>
+                <span className="font-medium text-base" style={{ color: 'hsl(var(--card-foreground))' }}>{shortenProgramme(userProfile?.programme)}</span>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-gray-600 text-sm md:text-base">Semester:</span>
-                <span className="font-medium text-gray-900 text-sm md:text-base">Semester 1</span>
+              <div className="flex justify-between items-center py-2">
+                <span className="text-base" style={{ color: 'hsl(var(--muted-foreground))' }}>Semester:</span>
+                <span className="font-medium text-base" style={{ color: 'hsl(var(--card-foreground))' }}>Semester 1</span>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-gray-600 text-sm md:text-base">Enrolled Courses:</span>
-                <span className="font-medium text-gray-900 text-sm md:text-base">{enrolledCourses.length}</span>
+              <div className="flex justify-between items-center py-2">
+                <span className="text-base" style={{ color: 'hsl(var(--muted-foreground))' }}>Enrolled Courses:</span>
+                <span className="font-medium text-base" style={{ color: 'hsl(var(--card-foreground))' }}>{enrolledCourses.length}</span>
               </div>
             </div>
-            <div className="mt-4 flex flex-wrap gap-2">
-              <a href="/course-selection" className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium">
+            <div className="mt-6 flex flex-wrap gap-3">
+              <a href="/course-selection" className="inline-flex items-center px-4 py-2.5 rounded-lg transition-all duration-200 text-sm font-medium shadow-sm hover:shadow-md" style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))' }}>
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
@@ -259,34 +260,34 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-4 md:p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Getting Started</h3>
-            <div className="space-y-3">
-              <div className="flex items-start space-x-3">
-                <div className="w-6 h-6 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-xs font-bold text-indigo-600">1</span>
+          <div className="rounded-xl shadow-sm p-6 border-2" style={{ backgroundColor: 'hsl(var(--secondary))', borderColor: 'hsl(var(--border))' }}>
+            <h3 className="text-xl font-semibold mb-6" style={{ color: 'hsl(var(--card-foreground))' }}>Getting Started</h3>
+            <div className="space-y-4">
+              <div className="flex items-start space-x-4">
+                <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm" style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))' }}>
+                  <span className="text-sm font-bold">1</span>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-900">Complete Course Enrollment</p>
-                  <p className="text-xs text-gray-600">Select and enroll in your courses for this semester</p>
+                  <p className="text-base font-medium mb-1" style={{ color: 'hsl(var(--card-foreground))' }}>Complete Course Enrollment</p>
+                  <p className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>Select and enroll in your courses for this semester</p>
                 </div>
               </div>
-              <div className="flex items-start space-x-3">
-                <div className="w-6 h-6 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-xs font-bold text-indigo-600">2</span>
+              <div className="flex items-start space-x-4">
+                <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm" style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))' }}>
+                  <span className="text-sm font-bold">2</span>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-900">Check Your Schedule</p>
-                  <p className="text-xs text-gray-600">View your class timetable and important dates</p>
+                  <p className="text-base font-medium mb-1" style={{ color: 'hsl(var(--card-foreground))' }}>Check Your Schedule</p>
+                  <p className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>View your class timetable and important dates</p>
                 </div>
               </div>
-              <div className="flex items-start space-x-3">
-                <div className="w-6 h-6 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-xs font-bold text-indigo-600">3</span>
+              <div className="flex items-start space-x-4">
+                <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm" style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))' }}>
+                  <span className="text-sm font-bold">3</span>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-900">Explore Student Services</p>
-                  <p className="text-xs text-gray-600">Access academic support and resources</p>
+                  <p className="text-base font-medium mb-1" style={{ color: 'hsl(var(--card-foreground))' }}>Explore Student Services</p>
+                  <p className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>Access academic support and resources</p>
                 </div>
               </div>
             </div>
@@ -295,51 +296,87 @@ export default function Dashboard() {
 
         {/* Enrolled Courses Grid */}
         {enrolledCourses.length > 0 && (
-          <div className="mb-6 md:mb-8">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Your Enrolled Courses</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
+          <div className="mb-10 p-6 rounded-xl border-2" style={{ backgroundColor: 'hsl(var(--muted) / 0.3)', borderColor: 'hsl(var(--border))' }}>
+            <h3 className="text-xl font-semibold mb-6" style={{ color: 'hsl(var(--foreground))' }}>Your Enrolled Courses</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {enrolledCourses.slice(0, 4).map((course, index) => (
-                <div key={course.id} className={`rounded-lg shadow-sm p-3 md:p-4 border-l-4 cursor-pointer hover:shadow-md transition-all duration-200 ${
-                  index % 4 === 0 ? 'bg-gradient-to-r from-blue-50 to-blue-100 border-blue-400 hover:from-blue-100 hover:to-blue-200' :
-                  index % 4 === 1 ? 'bg-gradient-to-r from-green-50 to-green-100 border-green-400 hover:from-green-100 hover:to-green-200' :
-                  index % 4 === 2 ? 'bg-gradient-to-r from-purple-50 to-purple-100 border-purple-400 hover:from-purple-100 hover:to-purple-200' :
-                  'bg-gradient-to-r from-orange-50 to-orange-100 border-orange-400 hover:from-orange-100 hover:to-orange-200'
-                }`}
-                onClick={() => router.push(`/course/${course.course_code}`)}
+                <div 
+                  key={course.id} 
+                  className="rounded-xl shadow-sm p-5 border-2 cursor-pointer hover:shadow-lg transition-all duration-300 group"
+                  style={{ 
+                    backgroundColor: 'hsl(var(--card))', 
+                    borderColor: 'hsl(var(--border))',
+                  }}
+                  onClick={() => router.push(`/course/${course.course_code}`)}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = 'translateY(-2px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = 'translateY(0)';
+                  }}
                 >
-                  <div className="flex items-start justify-between mb-2">
+                  <div className="flex items-start justify-between mb-4">
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-gray-900 text-sm md:text-base truncate">{course.course_code}</h4>
-                      <p className="text-xs md:text-sm text-gray-600 truncate">{course.course_name}</p>
+                      <div className="flex items-center gap-3 mb-2">
+                        <div className="w-3 h-3 rounded-full" style={{ 
+                          backgroundColor: index % 4 === 0 ? 'hsl(220 70% 50%)' :
+                                         index % 4 === 1 ? 'hsl(142 70% 50%)' :
+                                         index % 4 === 2 ? 'hsl(262 70% 50%)' :
+                                         'hsl(25 70% 50%)'
+                        }}></div>
+                        <h4 className="font-semibold text-base truncate" style={{ color: 'hsl(var(--card-foreground))' }}>{course.course_code}</h4>
+                      </div>
+                      <p className="text-sm mb-3 truncate" style={{ color: 'hsl(var(--muted-foreground))' }}>{course.course_name}</p>
                     </div>
                     <button
                       onClick={(e) => {
-                        e.stopPropagation(); // Prevent card click when clicking unenroll
+                        e.stopPropagation();
                         handleUnenrollClick(course);
                       }}
-                      className="ml-2 px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600 transition-colors flex-shrink-0"
+                      className="ml-3 px-3 py-1.5 text-xs rounded-lg transition-all duration-200 flex-shrink-0 hover:shadow-sm"
+                      style={{ 
+                        backgroundColor: 'hsl(var(--destructive) / 0.1)', 
+                        color: 'hsl(var(--destructive))',
+                        border: '1px solid hsl(var(--destructive) / 0.2)'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.backgroundColor = 'hsl(var(--destructive))';
+                        e.target.style.color = 'hsl(var(--destructive-foreground))';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.backgroundColor = 'hsl(var(--destructive) / 0.1)';
+                        e.target.style.color = 'hsl(var(--destructive))';
+                      }}
                     >
                       Unenroll
                     </button>
                   </div>
-                  <div className="text-xs text-gray-500">
+                  <div className="text-sm space-y-1 mb-3" style={{ color: 'hsl(var(--muted-foreground))' }}>
                     <p>Semester: {course.semester}</p>
                     <p>Enrolled: {new Date(course.enrolled_at).toLocaleDateString()}</p>
                   </div>
-                  <div className="mt-2 text-xs text-indigo-600 font-medium">
-                    Click to view course details →
+                  <div className="text-sm font-medium group-hover:translate-x-1 transition-transform duration-200" style={{ color: 'hsl(var(--primary))' }}>
+                    View course details →
                   </div>
                 </div>
               ))}
             </div>
             {enrolledCourses.length > 4 && (
-              <div className="mt-4 text-center">
-                <p className="text-sm text-gray-600">
-                  Showing 4 of {enrolledCourses.length} courses. 
-                  <a href="/course-selection" className="text-indigo-600 hover:underline ml-1">
-                    View all courses
-                  </a>
-                </p>
+              <div className="mt-6 text-center">
+                <a 
+                  href="/course-selection" 
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 hover:shadow-sm"
+                  style={{ 
+                    backgroundColor: 'hsl(var(--secondary))', 
+                    color: 'hsl(var(--secondary-foreground))',
+                    border: '1px solid hsl(var(--border))'
+                  }}
+                >
+                  View all courses ({enrolledCourses.length})
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </a>
               </div>
             )}
           </div>
@@ -347,23 +384,38 @@ export default function Dashboard() {
 
         {/* Unenroll Confirmation Modal */}
         {showUnenrollModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg p-4 md:p-6 max-w-md w-full mx-4">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Confirm Unenrollment</h3>
-              <p className="text-gray-600 mb-6">
-                Are you sure you want to unenroll from <strong>{courseToUnenroll?.course_code} - {courseToUnenroll?.course_name}</strong>?
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div 
+              className="rounded-xl p-4 md:p-6 max-w-md w-full mx-4 shadow-2xl border-2"
+              style={{ 
+                backgroundColor: 'hsl(var(--card))', 
+                borderColor: 'hsl(var(--border))'
+              }}
+            >
+              <h3 className="text-lg font-semibold mb-4" style={{ color: 'hsl(var(--card-foreground))' }}>Confirm Unenrollment</h3>
+              <p className="mb-6" style={{ color: 'hsl(var(--muted-foreground))' }}>
+                Are you sure you want to unenroll from <strong style={{ color: 'hsl(var(--foreground))' }}>{courseToUnenroll?.course_code} - {courseToUnenroll?.course_name}</strong>?
                 This action cannot be undone.
               </p>
               <div className="flex space-x-3">
                 <button
                   onClick={handleUnenrollCancel}
-                  className="flex-1 px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors"
+                  className="flex-1 px-4 py-2 rounded-lg border transition-all duration-200 hover:shadow-sm"
+                  style={{ 
+                    backgroundColor: 'hsl(var(--secondary))', 
+                    color: 'hsl(var(--secondary-foreground))',
+                    borderColor: 'hsl(var(--border))'
+                  }}
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleUnenrollConfirm}
-                  className="flex-1 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                  className="flex-1 px-4 py-2 rounded-lg transition-all duration-200 hover:shadow-sm"
+                  style={{ 
+                    backgroundColor: 'hsl(var(--destructive))', 
+                    color: 'hsl(var(--destructive-foreground))'
+                  }}
                 >
                   Unenroll
                 </button>
