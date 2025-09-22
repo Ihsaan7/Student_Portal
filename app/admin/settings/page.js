@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import AdminMiddleware from '../../../components/AdminMiddleware';
 import { logAdminAction } from '../../../lib/adminAuth';
 import { supabase } from '../../../lib/supabase';
+import { LoadingSpinner } from '../../components/LoadingSpinner';
 
 const AdminSettings = ({ adminData }) => {
   const [settings, setSettings] = useState({});
@@ -129,7 +130,7 @@ const AdminSettings = ({ adminData }) => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <LoadingSpinner size="large" variant="primary" />
       </div>
     );
   }
@@ -304,8 +305,8 @@ const AdminSettings = ({ adminData }) => {
 
               {saveLoading && (
                 <div className="text-center">
-                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto"></div>
-                  <p className="text-sm text-gray-600 mt-2">Saving...</p>
+                  <LoadingSpinner size="small" variant="primary" />
+                  <p className="text-sm mt-2" style={{color: 'hsl(var(--muted-foreground))'}}>Saving...</p>
                 </div>
               )}
             </div>

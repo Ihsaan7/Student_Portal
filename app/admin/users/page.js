@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminMiddleware from '../../../components/AdminMiddleware';
 import { getUsers, updateUserRole, deleteUser, logAdminAction } from '../../../lib/adminAuth';
+import { LoadingSpinner } from '../../components/LoadingSpinner';
 
 const UsersManagement = ({ adminData }) => {
   const [users, setUsers] = useState([]);
@@ -172,8 +173,8 @@ const UsersManagement = ({ adminData }) => {
           
           {loading ? (
             <div className="p-8 text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-              <p className="mt-2 text-gray-600">Loading users...</p>
+              <LoadingSpinner size="medium" variant="primary" />
+              <p className="mt-2" style={{color: 'hsl(var(--muted-foreground))'}}>Loading users...</p>
             </div>
           ) : (
             <div className="overflow-x-auto">

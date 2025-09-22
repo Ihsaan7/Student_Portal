@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import AdminMiddleware from '../../../components/AdminMiddleware';
 import { logAdminAction } from '../../../lib/adminAuth';
 import { supabase } from '../../../lib/supabase';
+import { LoadingSpinner } from '../../components/LoadingSpinner';
 
 const CoursesManagement = ({ adminData }) => {
   const [courses, setCourses] = useState([]);
@@ -231,8 +232,8 @@ const CoursesManagement = ({ adminData }) => {
 
         {loading ? (
           <div className="bg-white rounded-lg shadow p-8 text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-2 text-gray-600">Loading courses data...</p>
+            <LoadingSpinner size="medium" variant="primary" />
+            <p className="mt-2" style={{color: 'hsl(var(--muted-foreground))'}}>Loading courses data...</p>
           </div>
         ) : (
           <div className="bg-white rounded-lg shadow">
