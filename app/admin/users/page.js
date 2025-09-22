@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminMiddleware from '../../../components/AdminMiddleware';
 import { getUsers, updateUserRole, deleteUser, logAdminAction } from '../../../lib/adminAuth';
-import { LoadingSpinner } from '../../components/LoadingSpinner';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 const UsersManagement = ({ adminData }) => {
   const [users, setUsers] = useState([]);

@@ -2,7 +2,7 @@
 import DashboardLayout from "../components/DashboardLayout";
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "../../lib/supabase";
-import { LoadingSpinner } from "../components/LoadingSpinner";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function ChatPage() {
   const [user, setUser] = useState(null);

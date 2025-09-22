@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminMiddleware from '../../../components/AdminMiddleware';
 import { getSupportQueries, updateSupportQuery, logAdminAction } from '../../../lib/adminAuth';
-import { LoadingSpinner } from '../../components/LoadingSpinner';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 const SupportManagement = ({ adminData }) => {
   const [queries, setQueries] = useState([]);
