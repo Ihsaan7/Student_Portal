@@ -117,14 +117,14 @@ export default function SignupPage() {
   return (
     <div className="mainScreen min-h-screen flex items-center justify-center relative overflow-hidden">
       {/* Enhanced Study-themed background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900"></div>
+      <div className="absolute inset-0" style={{background: `linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 50%, hsl(var(--accent)) 100%)`}}></div>
       
       {/* Animated background elements */}
       <div className="absolute inset-0">
         {/* Geometric shapes for academic feel */}
-        <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-blue-400/20 to-transparent rounded-full blur-3xl"></div>
-        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-purple-400/20 to-transparent rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-gradient-to-tr from-indigo-400/20 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute top-0 left-0 w-96 h-96 rounded-full blur-3xl" style={{background: `linear-gradient(135deg, hsl(var(--primary) / 0.2) 0%, transparent 100%)`}}></div>
+        <div className="absolute top-0 right-0 w-96 h-96 rounded-full blur-3xl" style={{background: `linear-gradient(225deg, hsl(var(--secondary) / 0.2) 0%, transparent 100%)`}}></div>
+        <div className="absolute bottom-0 left-1/4 w-96 h-96 rounded-full blur-3xl" style={{background: `linear-gradient(45deg, hsl(var(--accent) / 0.2) 0%, transparent 100%)`}}></div>
         
         {/* Educational symbols */}
         <div className="absolute top-20 left-20 text-6xl text-white/10 animate-pulse">📚</div>
@@ -143,7 +143,7 @@ export default function SignupPage() {
         <div className="absolute bottom-1/4 right-1/2 w-1 h-1 bg-white/35 rounded-full animate-bounce" style={{animationDelay: '1.5s'}}></div>
       </div>
       
-      <div className="bg-white/95 backdrop-blur-md p-8 rounded-3xl shadow-2xl w-full max-w-4xl mx-4 relative z-10 border border-white/20">
+      <div className="backdrop-blur-md p-8 rounded-3xl shadow-2xl w-full max-w-4xl mx-4 relative z-10" style={{backgroundColor: `hsl(var(--card) / 0.95)`, border: `1px solid hsl(var(--border) / 0.2)`}}>
         <div className="flex items-center justify-between mb-8">
           {/* Logo on the left */}
           <div className="flex items-center space-x-3">
@@ -157,8 +157,8 @@ export default function SignupPage() {
               />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-indigo-700">Student Portal</h1>
-              <p className="text-sm text-gray-500">Join our learning community</p>
+              <h1 className="text-2xl font-bold" style={{color: `hsl(var(--primary))`}}>Student Portal</h1>
+              <p className="text-sm" style={{color: `hsl(var(--muted-foreground))`}}>Join our learning community</p>
             </div>
           </div>
           
@@ -169,16 +169,22 @@ export default function SignupPage() {
         </div>
 
         <div className="text-center mb-6">
-          <div className="text-3xl font-bold text-indigo-700 mb-2">Sign Up</div>
-          <div className="text-sm text-gray-500">Create your student account</div>
+          <div className="text-3xl font-bold mb-2" style={{color: `hsl(var(--primary))`}}>Sign Up</div>
+          <div className="text-sm" style={{color: `hsl(var(--muted-foreground))`}}>Create your student account</div>
         </div>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-gray-700 font-medium mb-1">Name</label>
+            <label className="block font-medium mb-1" style={{color: `hsl(var(--card-foreground))`}}>Name</label>
             <input
               type="text"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all duration-200"
+              className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200"
+              style={{
+                border: `1px solid hsl(var(--border))`,
+                backgroundColor: `hsl(var(--background))`,
+                color: `hsl(var(--foreground))`,
+                '--tw-ring-color': `hsl(var(--ring))`
+              }}
               value={name}
               onChange={e => setName(e.target.value)}
               required
@@ -186,10 +192,16 @@ export default function SignupPage() {
             />
           </div>
           <div>
-            <label className="block text-gray-700 font-medium mb-1">Email</label>
+            <label className="block font-medium mb-1" style={{color: `hsl(var(--card-foreground))`}}>Email</label>
             <input
               type="email"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all duration-200"
+              className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200"
+              style={{
+                border: `1px solid hsl(var(--border))`,
+                backgroundColor: `hsl(var(--background))`,
+                color: `hsl(var(--foreground))`,
+                '--tw-ring-color': `hsl(var(--ring))`
+              }}
               value={email}
               onChange={e => setEmail(e.target.value)}
               required
@@ -197,9 +209,15 @@ export default function SignupPage() {
             />
           </div>
           <div>
-            <label className="block text-gray-700 font-medium mb-1">Programme</label>
+            <label className="block font-medium mb-1" style={{color: `hsl(var(--card-foreground))`}}>Programme</label>
             <select
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all duration-200"
+              className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200"
+              style={{
+                border: `1px solid hsl(var(--border))`,
+                backgroundColor: `hsl(var(--background))`,
+                color: `hsl(var(--foreground))`,
+                '--tw-ring-color': `hsl(var(--ring))`
+              }}
               value={programme}
               onChange={e => setProgramme(e.target.value)}
               required
@@ -221,47 +239,70 @@ export default function SignupPage() {
                 </optgroup>
               ))}
             </select>
-            <span className="text-xs text-gray-400 mt-1">Currently only BSSE and BSCS are available for enrollment</span>
+            <span className="text-xs mt-1" style={{color: `hsl(var(--muted-foreground))`}}>Currently only BSSE and BSCS are available for enrollment</span>
           </div>
           <div>
-            <label className="block text-gray-700 font-medium mb-1">Password</label>
+            <label className="block font-medium mb-1" style={{color: `hsl(var(--card-foreground))`}}>Password</label>
             <input
               type="password"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all duration-200"
+              className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200"
+              style={{
+                border: `1px solid hsl(var(--border))`,
+                backgroundColor: `hsl(var(--background))`,
+                color: `hsl(var(--foreground))`,
+                '--tw-ring-color': `hsl(var(--ring))`
+              }}
               value={password}
               onChange={e => setPassword(e.target.value)}
               required
               disabled={isLoading}
             />
-            <span className="text-xs text-gray-400">Min 8 chars, 1 uppercase, 1 number, 1 symbol</span>
+            <span className="text-xs" style={{color: `hsl(var(--muted-foreground))`}}>Min 8 chars, 1 uppercase, 1 number, 1 symbol</span>
           </div>
           <div>
-            <label className="block text-gray-700 font-medium mb-1">Confirm Password</label>
+            <label className="block font-medium mb-1" style={{color: `hsl(var(--card-foreground))`}}>Confirm Password</label>
             <input
               type="password"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all duration-200"
+              className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200"
+              style={{
+                border: `1px solid hsl(var(--border))`,
+                backgroundColor: `hsl(var(--background))`,
+                color: `hsl(var(--foreground))`,
+                '--tw-ring-color': `hsl(var(--ring))`
+              }}
               value={confirmPassword}
               onChange={e => setConfirmPassword(e.target.value)}
               required
               disabled={isLoading}
             />
           </div>
-          {error && <div className="text-red-500 text-sm bg-red-50 p-3 rounded-lg border border-red-200">{error}</div>}
-          {success && <div className="text-green-600 text-sm bg-green-50 p-3 rounded-lg border border-green-200">{success}</div>}
+          {error && <div className="text-sm p-3 rounded-lg" style={{color: `hsl(var(--destructive))`, backgroundColor: `hsl(var(--destructive) / 0.1)`, border: `1px solid hsl(var(--destructive) / 0.2)`}}>{error}</div>}
+          {success && <div className="text-sm p-3 rounded-lg" style={{color: `hsl(var(--success))`, backgroundColor: `hsl(var(--success) / 0.1)`, border: `1px solid hsl(var(--success) / 0.2)`}}>{success}</div>}
           <button
             type="submit"
             disabled={isLoading}
-            className={`w-full font-semibold py-3 rounded-lg transition-all duration-200 transform hover:scale-[1.02] shadow-lg hover:shadow-xl ${
-              isLoading 
-                ? 'bg-gray-400 text-white cursor-not-allowed' 
-                : 'bg-indigo-600 hover:bg-indigo-700 text-white'
-            }`}
+            className="w-full font-semibold py-3 rounded-lg transition-all duration-200 transform hover:scale-[1.02] shadow-lg hover:shadow-xl"
+            style={{
+              backgroundColor: isLoading ? `hsl(var(--muted))` : `hsl(var(--primary))`,
+              color: isLoading ? `hsl(var(--muted-foreground))` : `hsl(var(--primary-foreground))`,
+              cursor: isLoading ? 'not-allowed' : 'pointer'
+            }}
+            onMouseEnter={(e) => {
+              if (!isLoading) {
+                e.target.style.backgroundColor = `hsl(var(--primary) / 0.9)`;
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!isLoading) {
+                e.target.style.backgroundColor = `hsl(var(--primary))`;
+              }
+            }}
           >
             {isLoading ? 'Creating Account...' : 'Sign Up'}
           </button>
         </form>
-        <div className="mt-6 text-center text-sm text-gray-500">
-          Already have an account? <a href="/login" className="text-indigo-600 hover:underline font-medium">Sign In</a>
+        <div className="mt-6 text-center text-sm" style={{color: `hsl(var(--muted-foreground))`}}>
+          Already have an account? <a href="/login" className="hover:underline font-medium" style={{color: `hsl(var(--primary))`}}>Sign In</a>
         </div>
       </div>
     </div>

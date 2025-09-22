@@ -1,9 +1,11 @@
 "use client";
 import DashboardLayout from "../components/DashboardLayout";
 import { useState, useEffect } from "react";
+
 import { supabase } from "../../lib/supabase";
 
 export default function NotesPage() {
+
   const [notes, setNotes] = useState([]);
   const [selectedNote, setSelectedNote] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -109,23 +111,26 @@ export default function NotesPage() {
     <DashboardLayout currentPage="/notes">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">My Notes</h1>
-          <p className="text-gray-600">Organize and manage your academic notes across all courses.</p>
+          <div>
+            <h1 className="text-3xl font-bold mb-2" style={{ color: 'hsl(var(--foreground))' }}>My Notes</h1>
+            <p style={{ color: 'hsl(var(--muted-foreground))' }}>Organize and manage your academic notes across all courses.</p>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Notes List */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div className="rounded-lg shadow-sm border p-6" style={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-gray-900">All Notes</h2>
+                <h2 className="text-lg font-semibold" style={{ color: 'hsl(var(--card-foreground))' }}>All Notes</h2>
                 <button
                   onClick={() => {
                     setSelectedNote(null);
                     setIsEditing(false);
                     setNewNote({ title: "", content: "", course: "", tags: "" });
                   }}
-                  className="px-3 py-1 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition text-sm"
+                  className="px-3 py-1 rounded-lg transition text-sm hover:opacity-90"
+                  style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))' }}
                 >
                   + New Note
                 </button>
@@ -134,18 +139,19 @@ export default function NotesPage() {
               <div className="space-y-3 max-h-96 overflow-y-auto">
                 {notes.length === 0 ? (
                   <div className="text-center py-8">
-                    <svg className="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <svg className="w-12 h-12 mx-auto mb-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" style={{ color: 'hsl(var(--muted-foreground))' }}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">No notes yet</h3>
-                    <p className="text-gray-500 mb-4">Start organizing your academic notes by creating your first note.</p>
+                    <h3 className="text-lg font-medium mb-2" style={{ color: 'hsl(var(--card-foreground))' }}>No notes yet</h3>
+                    <p className="mb-4" style={{ color: 'hsl(var(--muted-foreground))' }}>Start organizing your academic notes by creating your first note.</p>
                     <button
                       onClick={() => {
                         setSelectedNote(null);
                         setIsEditing(false);
                         setNewNote({ title: "", content: "", course: "", tags: "" });
                       }}
-                      className="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition"
+                      className="px-4 py-2 rounded-lg transition hover:opacity-90"
+                      style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))' }}
                     >
                       Create Your First Note
                     </button>
@@ -158,23 +164,23 @@ export default function NotesPage() {
                         setSelectedNote(note);
                         setIsEditing(false);
                       }}
-                      className={`p-3 border rounded-lg cursor-pointer transition ${
-                        selectedNote?.id === note.id 
-                          ? 'border-indigo-300 bg-indigo-50' 
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
+                      className="p-3 border rounded-lg cursor-pointer transition hover:opacity-80"
+                      style={{
+                        borderColor: selectedNote?.id === note.id ? 'hsl(var(--primary))' : 'hsl(var(--border))',
+                        backgroundColor: selectedNote?.id === note.id ? 'hsl(var(--primary) / 0.1)' : 'transparent'
+                      }}
                     >
-                      <h3 className="font-medium text-gray-900 mb-1 truncate">{note.title}</h3>
-                      <p className="text-sm text-gray-600 mb-2">{note.course}</p>
-                      <p className="text-xs text-gray-500">{note.date}</p>
+                      <h3 className="font-medium mb-1 truncate" style={{ color: 'hsl(var(--card-foreground))' }}>{note.title}</h3>
+                      <p className="text-sm mb-2" style={{ color: 'hsl(var(--muted-foreground))' }}>{note.course}</p>
+                      <p className="text-xs" style={{ color: 'hsl(var(--muted-foreground))' }}>{note.date}</p>
                       <div className="flex flex-wrap gap-1 mt-2">
                         {note.tags.slice(0, 2).map((tag, index) => (
-                          <span key={index} className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">
+                          <span key={index} className="px-2 py-1 text-xs rounded" style={{ backgroundColor: 'hsl(var(--muted))', color: 'hsl(var(--muted-foreground))' }}>
                             {tag}
                           </span>
                         ))}
                         {note.tags.length > 2 && (
-                          <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">
+                          <span className="px-2 py-1 text-xs rounded" style={{ backgroundColor: 'hsl(var(--muted))', color: 'hsl(var(--muted-foreground))' }}>
                             +{note.tags.length - 2}
                           </span>
                         )}
@@ -188,25 +194,27 @@ export default function NotesPage() {
 
           {/* Note Editor/Viewer */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div className="rounded-lg shadow-sm border p-6" style={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
               {selectedNote && !isEditing ? (
                 /* Note Viewer */
                 <div>
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <h2 className="text-xl font-semibold text-gray-900">{selectedNote.title}</h2>
-                      <p className="text-sm text-gray-600">{selectedNote.course}</p>
+                      <h2 className="text-xl font-semibold" style={{ color: 'hsl(var(--card-foreground))' }}>{selectedNote.title}</h2>
+                      <p className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>{selectedNote.course}</p>
                     </div>
                     <div className="flex space-x-2">
                       <button
                         onClick={() => startEditing(selectedNote)}
-                        className="px-3 py-1 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition text-sm"
+                        className="px-3 py-1 rounded-lg transition text-sm hover:opacity-90"
+                        style={{ backgroundColor: 'hsl(var(--muted))', color: 'hsl(var(--muted-foreground))' }}
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => handleDeleteNote(selectedNote.id)}
-                        className="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 transition text-sm"
+                        className="px-3 py-1 rounded-lg transition text-sm hover:opacity-90"
+                        style={{ backgroundColor: 'hsl(var(--destructive))', color: 'hsl(var(--destructive-foreground))' }}
                       >
                         Delete
                       </button>
@@ -216,7 +224,7 @@ export default function NotesPage() {
                   <div className="mb-4">
                     <div className="flex flex-wrap gap-2">
                       {selectedNote.tags.map((tag, index) => (
-                        <span key={index} className="px-3 py-1 bg-indigo-100 text-indigo-700 text-sm rounded-full">
+                        <span key={index} className="px-3 py-1 text-sm rounded-full" style={{ backgroundColor: 'hsl(var(--primary) / 0.1)', color: 'hsl(var(--primary))' }}>
                           {tag}
                         </span>
                       ))}
@@ -224,39 +232,51 @@ export default function NotesPage() {
                   </div>
                   
                   <div className="prose max-w-none">
-                    <p className="text-gray-700 whitespace-pre-wrap">{selectedNote.content}</p>
+                    <p className="whitespace-pre-wrap" style={{ color: 'hsl(var(--card-foreground))' }}>{selectedNote.content}</p>
                   </div>
                   
-                  <div className="mt-6 pt-4 border-t border-gray-200">
-                    <p className="text-sm text-gray-500">Created: {selectedNote.date}</p>
+                  <div className="mt-6 pt-4 border-t" style={{ borderColor: 'hsl(var(--border))' }}>
+                    <p className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>Created: {selectedNote.date}</p>
                   </div>
                 </div>
               ) : (
                 /* Note Editor */
                 <div>
-                  <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                  <h2 className="text-xl font-semibold mb-4" style={{ color: 'hsl(var(--card-foreground))' }}>
                     {isEditing ? 'Edit Note' : 'Create New Note'}
                   </h2>
                   
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                      <label className="block text-sm font-medium mb-1" style={{ color: 'hsl(var(--card-foreground))' }}>Title</label>
                       <input
                         type="text"
                         value={newNote.title}
                         onChange={(e) => setNewNote({ ...newNote, title: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2"
+                        style={{ 
+                          backgroundColor: 'hsl(var(--background))', 
+                          borderColor: 'hsl(var(--border))', 
+                          color: 'hsl(var(--foreground))',
+                          '--tw-ring-color': 'hsl(var(--primary))'
+                        }}
                         placeholder="Enter note title..."
                         suppressHydrationWarning={true}
                       />
                     </div>
                     
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Course</label>
+                      <label className="block text-sm font-medium mb-1" style={{ color: 'hsl(var(--card-foreground))' }}>Course</label>
                       <select
                         value={newNote.course}
                         onChange={(e) => setNewNote({ ...newNote, course: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2"
+                        style={{ 
+                          backgroundColor: 'hsl(var(--background))', 
+                          borderColor: 'hsl(var(--border))', 
+                          color: 'hsl(var(--foreground))',
+                          '--tw-ring-color': 'hsl(var(--primary))'
+                        }}
                         disabled={loading}
                       >
                         <option value="">
@@ -267,31 +287,43 @@ export default function NotesPage() {
                         ))}
                       </select>
                       {enrolledCourses.length === 0 && !loading && (
-                        <p className="text-sm text-red-600 mt-1">
+                        <p className="text-sm mt-1" style={{ color: 'hsl(var(--destructive))' }}>
                           You need to enroll in courses first. Go to the Home page to enroll.
                         </p>
                       )}
                     </div>
                     
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Content</label>
+                      <label className="block text-sm font-medium mb-1" style={{ color: 'hsl(var(--card-foreground))' }}>Content</label>
                       <textarea
                         value={newNote.content}
                         onChange={(e) => setNewNote({ ...newNote, content: e.target.value })}
                         rows={8}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2"
+                        style={{ 
+                          backgroundColor: 'hsl(var(--background))', 
+                          borderColor: 'hsl(var(--border))', 
+                          color: 'hsl(var(--foreground))',
+                          '--tw-ring-color': 'hsl(var(--primary))'
+                        }}
                         placeholder="Write your notes here..."
                         suppressHydrationWarning={true}
                       />
                     </div>
                     
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Tags (comma-separated)</label>
+                      <label className="block text-sm font-medium mb-1" style={{ color: 'hsl(var(--card-foreground))' }}>Tags (comma-separated)</label>
                       <input
                         type="text"
                         value={newNote.tags}
                         onChange={(e) => setNewNote({ ...newNote, tags: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2"
+                        style={{ 
+                          backgroundColor: 'hsl(var(--background))', 
+                          borderColor: 'hsl(var(--border))', 
+                          color: 'hsl(var(--foreground))',
+                          '--tw-ring-color': 'hsl(var(--primary))'
+                        }}
                         placeholder="e.g., programming, variables, basics"
                         suppressHydrationWarning={true}
                       />
@@ -300,7 +332,8 @@ export default function NotesPage() {
                     <div className="flex space-x-3">
                       <button
                         onClick={isEditing ? handleUpdateNote : handleCreateNote}
-                        className="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition"
+                        className="px-4 py-2 rounded-lg transition hover:opacity-90"
+                        style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))' }}
                       >
                         {isEditing ? 'Update Note' : 'Create Note'}
                       </button>
@@ -310,7 +343,8 @@ export default function NotesPage() {
                             setIsEditing(false);
                             setSelectedNote(null);
                           }}
-                          className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition"
+                          className="px-4 py-2 rounded-lg transition hover:opacity-90"
+                          style={{ backgroundColor: 'hsl(var(--muted))', color: 'hsl(var(--muted-foreground))' }}
                         >
                           Cancel
                         </button>
