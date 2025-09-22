@@ -2,9 +2,11 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '../../lib/supabase';
+import { useTheme } from './ThemeProvider';
 import Toast from './Toast';
 
 export default function AIChatInterface({ user }) {
+  const { theme, toggleTheme } = useTheme();
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -340,21 +342,21 @@ export default function AIChatInterface({ user }) {
       // Handle headings (## or ###)
       if (line.startsWith('### ')) {
         return (
-          <h3 key={index} className="text-lg font-semibold mt-4 mb-2 text-gray-800">
+          <h3 key={index} className="text-lg font-semibold mt-4 mb-2" style={{ color: 'hsl(var(--card-foreground))' }}>
             {line.substring(4)}
           </h3>
         );
       }
       if (line.startsWith('## ')) {
         return (
-          <h2 key={index} className="text-xl font-bold mt-4 mb-2 text-gray-900">
+          <h2 key={index} className="text-xl font-bold mt-4 mb-2" style={{ color: 'hsl(var(--card-foreground))' }}>
             {line.substring(3)}
           </h2>
         );
       }
       if (line.startsWith('# ')) {
         return (
-          <h1 key={index} className="text-2xl font-bold mt-4 mb-3 text-gray-900">
+          <h1 key={index} className="text-2xl font-bold mt-4 mb-3" style={{ color: 'hsl(var(--card-foreground))' }}>
             {line.substring(2)}
           </h1>
         );
@@ -365,7 +367,7 @@ export default function AIChatInterface({ user }) {
         const bulletContent = line.substring(2);
         return (
           <div key={index} className="flex items-start mb-1">
-            <span className="text-blue-600 mr-2 mt-1">•</span>
+            <span className="mr-2 mt-1" style={{ color: 'hsl(var(--primary))' }}>•</span>
             <span>{processBoldText(bulletContent)}</span>
           </div>
         );
@@ -376,7 +378,7 @@ export default function AIChatInterface({ user }) {
       if (numberedMatch) {
         return (
           <div key={index} className="flex items-start mb-1">
-            <span className="text-blue-600 mr-2 mt-1 font-medium">{numberedMatch[1]}</span>
+            <span className="mr-2 mt-1 font-medium" style={{ color: 'hsl(var(--primary))' }}>{numberedMatch[1]}</span>
             <span>{processBoldText(numberedMatch[2])}</span>
           </div>
         );
@@ -408,30 +410,40 @@ export default function AIChatInterface({ user }) {
   };
 
   return (
-    <div className="flex flex-col h-full bg-white font-inter">
+    <div className="flex flex-col h-full font-inter" style={{ backgroundColor: 'hsl(var(--background))' }}>
       {/* Chat Header */}
-      <div className="bg-white border-b border-gray-200 p-6">
-        <div className="flex items-center space-x-4">
-          <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
-            <span className="text-lg font-bold text-white">S</span>
+      <div className="border-b p-6" style={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: 'hsl(var(--primary))' }}>
+              <span className="text-lg font-bold" style={{ color: 'hsl(var(--primary-foreground))' }}>S</span>
+            </div>
+            <div>
+              <h2 className="text-xl font-semibold" style={{ color: 'hsl(var(--card-foreground))' }}>StudyBuddy</h2>
+              <p className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>Hello! I'm here to help you with your studies. What topic are you interested in today?</p>
+            </div>
           </div>
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900">StudyBuddy</h2>
-            <p className="text-sm text-gray-600">Hello! I'm here to help you with your studies. What topic are you interested in today?</p>
-          </div>
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-lg transition-colors hover:bg-opacity-80"
+            style={{ backgroundColor: 'hsl(var(--muted))', color: 'hsl(var(--muted-foreground))' }}
+            title="Toggle theme"
+          >
+            {theme === 'dark' ? '☀️' : '🌙'}
+          </button>
         </div>
       </div>
 
       {/* Messages Container */}
       <div 
-        className="flex-1 overflow-y-auto p-6 space-y-6 bg-gray-50 custom-scrollbar"
-        style={{ maxHeight: 'calc(100% - 200px)' }}
+        className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar"
+        style={{ maxHeight: 'calc(100% - 200px)', backgroundColor: 'hsl(var(--muted) / 0.3)' }}
       >
         {messages.length === 0 ? (
-          <div className="text-center text-gray-500 mt-12">
+          <div className="text-center mt-12" style={{ color: 'hsl(var(--muted-foreground))' }}>
               <div className="text-5xl mb-6">💬</div>
-              <p className="text-xl font-medium text-gray-900 mb-2">Start a conversation!</p>
-              <p className="text-base text-gray-600">Ask me anything you'd like to know!</p>
+              <p className="text-xl font-medium mb-2" style={{ color: 'hsl(var(--card-foreground))' }}>Start a conversation!</p>
+              <p className="text-base" style={{ color: 'hsl(var(--muted-foreground))' }}>Ask me anything you'd like to know!</p>
             </div>
         ) : (
           messages.map((message) => (
@@ -440,19 +452,20 @@ export default function AIChatInterface({ user }) {
               className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               <div
-                className={`max-w-2xl px-6 py-4 rounded-2xl shadow-sm ${
-                  message.sender === 'user'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-white text-gray-900 border border-gray-200'
-                }`}
+                className="max-w-2xl px-6 py-4 rounded-2xl shadow-sm"
+                style={{
+                  backgroundColor: message.sender === 'user' ? 'hsl(var(--primary))' : 'hsl(var(--card))',
+                  color: message.sender === 'user' ? 'hsl(var(--primary-foreground))' : 'hsl(var(--card-foreground))',
+                  border: message.sender === 'user' ? 'none' : '1px solid hsl(var(--border))'
+                }}
               >
 
                 <div className="whitespace-pre-wrap text-base leading-relaxed">
                   {formatMessage(message.text)}
                 </div>
-                <div className={`text-xs mt-2 ${
-                  message.sender === 'user' ? 'text-blue-100' : 'text-gray-500'
-                }`}>
+                <div className="text-xs mt-2" style={{
+                  color: message.sender === 'user' ? 'hsl(var(--primary-foreground) / 0.7)' : 'hsl(var(--muted-foreground))'
+                }}>
                   {message.timestamp.toLocaleTimeString()}
                 </div>
               </div>
@@ -466,19 +479,22 @@ export default function AIChatInterface({ user }) {
 
       {/* File Upload Area */}
       {showFileActions && (
-        <div className="p-4 border-t border-gray-200 bg-blue-50">
+        <div className="p-4 border-t" style={{ borderColor: 'hsl(var(--border))', backgroundColor: 'hsl(var(--muted) / 0.5)' }}>
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ backgroundColor: 'hsl(var(--primary) / 0.1)' }}>
+                <svg className="w-4 h-4" style={{ color: 'hsl(var(--primary))' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
-              <span className="text-sm font-medium text-gray-700">{uploadedFile?.name}</span>
+              <span className="text-sm font-medium" style={{ color: 'hsl(var(--card-foreground))' }}>{uploadedFile?.name}</span>
             </div>
             <button
               onClick={resetFileState}
-              className="text-gray-400 hover:text-gray-600 transition-colors"
+              className="transition-colors"
+              style={{ color: 'hsl(var(--muted-foreground))' }}
+              onMouseEnter={(e) => e.target.style.color = 'hsl(var(--card-foreground))'}
+              onMouseLeave={(e) => e.target.style.color = 'hsl(var(--muted-foreground))'}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -489,14 +505,28 @@ export default function AIChatInterface({ user }) {
             <button
               onClick={handleSummarize}
               disabled={isLoading}
-              className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+              className="flex-1 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+              style={{ 
+                backgroundColor: 'hsl(var(--success))', 
+                color: 'hsl(var(--success-foreground))',
+                focusRingColor: 'hsl(var(--success))'
+              }}
+              onMouseEnter={(e) => !isLoading && (e.target.style.opacity = '0.9')}
+              onMouseLeave={(e) => !isLoading && (e.target.style.opacity = '1')}
             >
               📝 Summarize
             </button>
             <button
               onClick={handleMCQs}
               disabled={isLoading}
-              className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+              className="flex-1 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+              style={{ 
+                backgroundColor: 'hsl(var(--secondary))', 
+                color: 'hsl(var(--secondary-foreground))',
+                focusRingColor: 'hsl(var(--secondary))'
+              }}
+              onMouseEnter={(e) => !isLoading && (e.target.style.opacity = '0.9')}
+              onMouseLeave={(e) => !isLoading && (e.target.style.opacity = '1')}
             >
               📋 MCQs
             </button>
@@ -505,7 +535,7 @@ export default function AIChatInterface({ user }) {
       )}
 
       {/* Input Area */}
-      <div className="border-t border-gray-200 p-6 bg-white">
+      <div className="border-t p-6" style={{ borderColor: 'hsl(var(--border))', backgroundColor: 'hsl(var(--card))' }}>
         <div className="flex space-x-4 items-end mb-3">
           <input
             ref={fileInputRef}
@@ -517,11 +547,28 @@ export default function AIChatInterface({ user }) {
           />
           <label
             htmlFor="file-upload"
-            className={`px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-colors flex items-center space-x-2 text-sm text-gray-600 ${isProcessingFile ? 'opacity-50 cursor-not-allowed' : ''}`}
+            className={`px-4 py-2 border-2 border-dashed rounded-lg cursor-pointer transition-colors flex items-center space-x-2 text-sm ${isProcessingFile ? 'opacity-50 cursor-not-allowed' : ''}`}
+            style={{ 
+              borderColor: 'hsl(var(--border))', 
+              color: 'hsl(var(--muted-foreground))',
+              backgroundColor: 'hsl(var(--muted) / 0.3)'
+            }}
+            onMouseEnter={(e) => {
+              if (!isProcessingFile) {
+                e.target.style.borderColor = 'hsl(var(--primary))';
+                e.target.style.backgroundColor = 'hsl(var(--primary) / 0.1)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!isProcessingFile) {
+                e.target.style.borderColor = 'hsl(var(--border))';
+                e.target.style.backgroundColor = 'hsl(var(--muted) / 0.3)';
+              }
+            }}
           >
             {isProcessingFile ? (
               <>
-                <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-4 h-4 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: 'hsl(var(--primary))' }}></div>
                 <span>Processing...</span>
               </>
             ) : (
@@ -540,7 +587,14 @@ export default function AIChatInterface({ user }) {
             onChange={(e) => setInputMessage(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="Ask me anything..."
-            className="flex-1 px-4 py-3 bg-white border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none text-gray-900 placeholder-gray-500 text-base leading-relaxed"
+            className="flex-1 px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 resize-none text-base leading-relaxed"
+            style={{
+              backgroundColor: 'hsl(var(--background))',
+              borderColor: 'hsl(var(--border))',
+              color: 'hsl(var(--foreground))',
+              focusRingColor: 'hsl(var(--primary))',
+              focusBorderColor: 'hsl(var(--primary))'
+            }}
             rows={2}
             disabled={isLoading}
             suppressHydrationWarning={true}
@@ -548,11 +602,25 @@ export default function AIChatInterface({ user }) {
           <button
             onClick={handleSendMessage}
             disabled={isLoading || !inputMessage.trim()}
-            className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium shadow-sm"
+            className="px-6 py-3 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium shadow-sm"
+            style={{
+              backgroundColor: 'hsl(var(--primary))',
+              color: 'hsl(var(--primary-foreground))'
+            }}
+            onMouseEnter={(e) => {
+              if (!isLoading && inputMessage.trim()) {
+                e.target.style.opacity = '0.9';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!isLoading && inputMessage.trim()) {
+                e.target.style.opacity = '1';
+              }
+            }}
           >
             {isLoading ? (
               <div className="flex items-center space-x-2">
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2" style={{ borderColor: 'hsl(var(--primary-foreground))' }}></div>
                 <span>Sending...</span>
               </div>
             ) : (

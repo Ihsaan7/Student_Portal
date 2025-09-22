@@ -32,6 +32,13 @@ export default function AdminCourseGuidancePanel({ courseCode: propCourseCode })
 
   const fetchCourses = async () => {
     try {
+      // Check if user is authenticated
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        console.log('User not authenticated, skipping courses fetch');
+        return;
+      }
+      
       const { data, error } = await supabase
         .from('enrolled_courses')
         .select('course_code, course_name')
@@ -65,6 +72,15 @@ export default function AdminCourseGuidancePanel({ courseCode: propCourseCode })
     
     try {
       setLoading(true);
+      
+      // Check if user is authenticated
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        console.log('User not authenticated, skipping guidance fetch');
+        setLoading(false);
+        return;
+      }
+      
       const { data, error } = await supabase
         .from('course_guidance')
         .select('*')
