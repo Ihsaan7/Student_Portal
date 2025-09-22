@@ -10,6 +10,8 @@ export default function CalendarPage() {
   const [noteText, setNoteText] = useState("");
   const [notes, setNotes] = useState({});
   const [user, setUser] = useState(null);
+  const [announcements, setAnnouncements] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
   
   // Generate calendar days
   const getDaysInMonth = (date) => {
@@ -53,9 +55,20 @@ export default function CalendarPage() {
       if (user) {
         setUser(user);
         await loadNotes(user.id);
+        await loadAnnouncements(user.id);
       }
     };
     getUserAndNotes();
+    
+    // Handle anchor link navigation to announcements section
+    if (window.location.hash === '#announcements') {
+      setTimeout(() => {
+        const announcementsSection = document.getElementById('announcements-section');
+        if (announcementsSection) {
+          announcementsSection.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    }
   }, []);
 
   // Load notes from database
@@ -80,6 +93,56 @@ export default function CalendarPage() {
       setNotes(notesObj);
     } catch (error) {
       console.error('Error loading notes:', error);
+    }
+  };
+
+  // Load announcements with read status
+  const loadAnnouncements = async (userId) => {
+    try {
+      const { data, error } = await supabase
+        .rpc('get_recent_announcements_with_read_status', {
+          user_uuid: userId,
+          limit_count: 3
+        });
+
+      if (error) {
+        console.error('Error loading announcements:', error);
+        return;
+      }
+
+      setAnnouncements(data || []);
+      
+      // Count unread announcements
+      const unread = data?.filter(announcement => !announcement.is_read).length || 0;
+      setUnreadCount(unread);
+    } catch (error) {
+      console.error('Error loading announcements:', error);
+    }
+  };
+
+  // Mark announcement as read
+  const markAnnouncementRead = async (announcementId) => {
+    if (!user) return;
+    
+    try {
+      await supabase.rpc('mark_announcement_read', {
+        announcement_uuid: announcementId,
+        user_uuid: user.id
+      });
+      
+      // Update local state
+      setAnnouncements(prev => 
+        prev.map(announcement => 
+          announcement.id === announcementId 
+            ? { ...announcement, is_read: true }
+            : announcement
+        )
+      );
+      
+      // Update unread count
+      setUnreadCount(prev => Math.max(0, prev - 1));
+    } catch (error) {
+      console.error('Error marking announcement as read:', error);
     }
   };
 
@@ -187,27 +250,39 @@ export default function CalendarPage() {
     <DashboardLayout currentPage="/calendar">
       <div className="max-w-6xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Academic Calendar</h1>
-          <p className="text-gray-600">View your schedule, deadlines, and important academic events.</p>
+          <h1 className="text-3xl font-bold mb-2" style={{ color: 'hsl(var(--card-foreground))' }}>Academic Calendar</h1>
+          <p style={{ color: 'hsl(var(--muted-foreground))' }}>View your schedule, deadlines, and important academic events.</p>
         </div>
 
         {/* Calendar Navigation */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+        <div className="rounded-lg shadow-sm border p-6 mb-6" style={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
           <div className="flex items-center justify-between mb-6">
             <button
               onClick={prevMonth}
-              className="p-2 rounded-lg hover:bg-gray-100 transition"
+              className="p-2 rounded-lg transition"
+              style={{ 
+                color: 'hsl(var(--card-foreground))',
+                ':hover': { backgroundColor: 'hsl(var(--muted))' }
+              }}
+              onMouseEnter={(e) => e.target.style.backgroundColor = 'hsl(var(--muted))'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
               </svg>
             </button>
-            <h2 className="text-xl font-semibold text-gray-900">
+            <h2 className="text-xl font-semibold" style={{ color: 'hsl(var(--card-foreground))' }}>
               {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
             </h2>
             <button
               onClick={nextMonth}
-              className="p-2 rounded-lg hover:bg-gray-100 transition"
+              className="p-2 rounded-lg transition"
+              style={{ 
+                color: 'hsl(var(--card-foreground))',
+                ':hover': { backgroundColor: 'hsl(var(--muted))' }
+              }}
+              onMouseEnter={(e) => e.target.style.backgroundColor = 'hsl(var(--muted))'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
@@ -219,7 +294,7 @@ export default function CalendarPage() {
           <div className="grid grid-cols-7 gap-1">
             {/* Day Headers */}
             {dayNames.map(day => (
-              <div key={day} className="p-3 text-center text-sm font-medium text-gray-500 bg-gray-50 rounded">
+              <div key={day} className="p-3 text-center text-sm font-medium rounded" style={{ color: 'hsl(var(--muted-foreground))', backgroundColor: 'hsl(var(--muted))' }}>
                 {day}
               </div>
             ))}
@@ -231,17 +306,36 @@ export default function CalendarPage() {
                 <div
                   key={index}
                   onClick={() => handleDateClick(day)}
-                  className={`p-3 min-h-[80px] border border-gray-100 relative ${
-                    day ? 'bg-white hover:bg-gray-50 cursor-pointer' : 'bg-gray-50'
-                  } ${note ? 'bg-yellow-50 hover:bg-yellow-100' : ''}`}
+                  className={`p-3 min-h-[80px] border relative ${
+                    day ? 'cursor-pointer' : ''
+                  }`}
+                  style={{
+                    borderColor: 'hsl(var(--border))',
+                    backgroundColor: day 
+                      ? (note ? 'hsl(var(--primary) / 0.1)' : 'hsl(var(--card))')
+                      : 'hsl(var(--muted))',
+                    ':hover': day ? {
+                      backgroundColor: note ? 'hsl(var(--primary) / 0.2)' : 'hsl(var(--muted))'
+                    } : {}
+                  }}
+                  onMouseEnter={(e) => {
+                    if (day) {
+                      e.target.style.backgroundColor = note ? 'hsl(var(--primary) / 0.2)' : 'hsl(var(--muted))';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (day) {
+                      e.target.style.backgroundColor = note ? 'hsl(var(--primary) / 0.1)' : 'hsl(var(--card))';
+                    }
+                  }}
                 >
                   {day && (
                     <>
-                      <div className="text-sm font-medium text-gray-900 mb-1">
+                      <div className="text-sm font-medium mb-1" style={{ color: 'hsl(var(--card-foreground))' }}>
                         {day.getDate()}
                       </div>
                       {note && (
-                        <div className="text-xs text-gray-600 bg-yellow-200 p-1 rounded truncate">
+                        <div className="text-xs p-1 rounded truncate" style={{ color: 'hsl(var(--primary-foreground))', backgroundColor: 'hsl(var(--primary))' }}>
                           📝 {note}
                         </div>
                       )}
@@ -253,61 +347,137 @@ export default function CalendarPage() {
           </div>
         </div>
 
-        {/* Upcoming Events */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Upcoming Events</h3>
-          <div className="space-y-3">
-            <div className="flex items-center p-3 bg-red-50 rounded-lg border-l-4 border-red-400">
-              <div className="p-2 bg-red-100 rounded-lg mr-3">
-                <svg className="w-4 h-4 text-red-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <div>
-                <p className="font-medium text-gray-900">Assignment Deadline</p>
-                <p className="text-sm text-gray-600">CS101 - Programming Fundamentals</p>
-                <p className="text-xs text-red-600">Due: Dec 15, 2024</p>
-              </div>
-            </div>
-            
-            <div className="flex items-center p-3 bg-blue-50 rounded-lg border-l-4 border-blue-400">
-              <div className="p-2 bg-blue-100 rounded-lg mr-3">
-                <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <div>
-                <p className="font-medium text-gray-900">Exam Schedule</p>
-                <p className="text-sm text-gray-600">Mathematics Final Exam</p>
-                <p className="text-xs text-blue-600">Dec 20, 2024 - 10:00 AM</p>
-              </div>
-            </div>
+        {/* Announcements Section */}
+        <div id="announcements-section" className="rounded-lg shadow-sm border p-6 mb-6" style={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-semibold" style={{ color: 'hsl(var(--card-foreground))' }}>Recent Announcements</h2>
+            {unreadCount > 0 && (
+              <span className="text-xs px-2 py-1 rounded-full" style={{ backgroundColor: 'hsl(var(--destructive))', color: 'hsl(var(--destructive-foreground))' }}>
+                {unreadCount} new
+              </span>
+            )}
           </div>
+          
+          {announcements.length === 0 ? (
+            <div className="text-center py-8">
+              <svg className="w-12 h-12 mx-auto mb-4" style={{ color: 'hsl(var(--muted-foreground))' }} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+              </svg>
+              <p style={{ color: 'hsl(var(--muted-foreground))' }}>No announcements available</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {announcements.map((announcement) => (
+                <div 
+                  key={announcement.id} 
+                  className="border rounded-lg p-4 transition-colors"
+                  style={{
+                    borderColor: announcement.is_read 
+                      ? 'hsl(var(--border))' 
+                      : 'hsl(var(--primary))',
+                    backgroundColor: announcement.is_read 
+                      ? 'hsl(var(--card))' 
+                      : 'hsl(var(--primary) / 0.1)'
+                  }}
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="text-lg font-medium" style={{ color: 'hsl(var(--card-foreground))' }}>
+                      {announcement.title}
+                      {!announcement.is_read && (
+                        <span className="ml-2 inline-block w-2 h-2 rounded-full" style={{ backgroundColor: 'hsl(var(--primary))' }}></span>
+                      )}
+                    </h3>
+                    <span className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>
+                      {new Date(announcement.created_at).toLocaleDateString()}
+                    </span>
+                  </div>
+                  
+                  <p className="mb-3" style={{ color: 'hsl(var(--muted-foreground))' }}>{announcement.content}</p>
+                  
+                  {announcement.video_url && (
+                    <div className="mb-3">
+                      {/* Check if it's a YouTube embed URL */}
+                      {announcement.video_url.includes('youtube.com/embed') || announcement.video_url.includes('youtu.be') ? (
+                        <iframe
+                          src={announcement.video_url}
+                          className="w-full max-w-md rounded-lg"
+                          style={{ height: '315px' }}
+                          frameBorder="0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                          title="Announcement Video"
+                        ></iframe>
+                      ) : (
+                        <video 
+                          controls 
+                          className="w-full max-w-md rounded-lg"
+                          preload="metadata"
+                        >
+                          <source src={announcement.video_url} type="video/mp4" />
+                          Your browser does not support the video tag.
+                        </video>
+                      )}
+                    </div>
+                  )}
+                  
+                  {!announcement.is_read && (
+                    <button
+                      onClick={() => markAnnouncementRead(announcement.id)}
+                      className="text-sm font-medium transition-colors"
+                      style={{ color: 'hsl(var(--primary))' }}
+                      onMouseEnter={(e) => e.target.style.opacity = '0.8'}
+                      onMouseLeave={(e) => e.target.style.opacity = '1'}
+                    >
+                      Mark as read
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Note Modal */}
         {showNoteModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          <div className="fixed inset-0 flex items-center justify-center z-50" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+            <div className="rounded-lg p-6 max-w-md w-full mx-4" style={{ backgroundColor: 'hsl(var(--card))' }}>
+              <h3 className="text-lg font-semibold mb-4" style={{ color: 'hsl(var(--card-foreground))' }}>
                 Add Note for {selectedDate && formatDate(selectedDate)}
               </h3>
               <textarea
                 value={noteText}
                 onChange={(e) => setNoteText(e.target.value)}
                 placeholder="Enter your reminder or note here..."
-                className="w-full h-32 p-3 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full h-32 p-3 border rounded-lg resize-none focus:ring-2 focus:border-transparent"
+                style={{ 
+                  backgroundColor: 'hsl(var(--background))',
+                  borderColor: 'hsl(var(--border))',
+                  color: 'hsl(var(--foreground))',
+                  '--tw-ring-color': 'hsl(var(--primary))'
+                }}
               />
               <div className="flex space-x-3 mt-4">
                 <button
                   onClick={handleCancelNote}
-                  className="flex-1 px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors"
+                  className="flex-1 px-4 py-2 rounded-lg transition-colors"
+                  style={{ 
+                    color: 'hsl(var(--muted-foreground))',
+                    backgroundColor: 'hsl(var(--muted))'
+                  }}
+                  onMouseEnter={(e) => e.target.style.opacity = '0.8'}
+                  onMouseLeave={(e) => e.target.style.opacity = '1'}
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSaveNote}
-                  className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                  className="flex-1 px-4 py-2 rounded-lg transition-colors"
+                  style={{ 
+                    backgroundColor: 'hsl(var(--primary))',
+                    color: 'hsl(var(--primary-foreground))'
+                  }}
+                  onMouseEnter={(e) => e.target.style.opacity = '0.9'}
+                  onMouseLeave={(e) => e.target.style.opacity = '1'}
                 >
                   Save Note
                 </button>
@@ -318,4 +488,4 @@ export default function CalendarPage() {
       </div>
     </DashboardLayout>
   );
-} 
+}

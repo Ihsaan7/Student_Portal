@@ -2,6 +2,7 @@
 import DashboardLayout from "../components/DashboardLayout";
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "../../lib/supabase";
+import { LoadingSpinner } from "../components/LoadingSpinner";
 
 export default function ChatPage() {
   const [user, setUser] = useState(null);
@@ -431,8 +432,8 @@ export default function ChatPage() {
       <DashboardLayout currentPage="/chat">
         <div className="max-w-4xl mx-auto h-[calc(100vh-200px)] flex items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading support queries...</p>
+            <LoadingSpinner size="large" variant="primary" />
+            <p className="mt-4" style={{color: 'hsl(var(--muted-foreground))'}}>Loading support queries...</p>
           </div>
         </div>
       </DashboardLayout>
@@ -441,98 +442,92 @@ export default function ChatPage() {
 
   return (
     <DashboardLayout currentPage="/chat">
-      <div className="max-w-4xl mx-auto h-[calc(100vh-200px)]">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Student Support</h1>
-          <p className="text-gray-600">Submit your queries and get help from our support team.</p>
-        </div>
-
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 h-full flex flex-col">
-          {/* Header */}
-          <div className="p-6 border-b border-gray-200">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h2 className="text-xl font-semibold text-gray-900">Support Queries</h2>
-                <p className="text-sm text-gray-600">You have {queries.length} query{queries.length !== 1 ? 's' : ''}</p>
+      <div className="max-w-7xl mx-auto h-[calc(100vh-160px)] px-4">
+        <div className="rounded-lg shadow-sm border h-full flex flex-col" style={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
+          {/* Compact Header */}
+          <div className="px-6 py-4 border-b" style={{ borderColor: 'hsl(var(--border))' }}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div>
+                  <h1 className="text-xl font-bold" style={{ color: 'hsl(var(--card-foreground))' }}>Student Support</h1>
+                  <p className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>{queries.length} query{queries.length !== 1 ? 's' : ''}</p>
+                </div>
+                {queries.length > 0 && (
+                  <div className="flex items-center space-x-6 text-sm">
+                    <div className="flex items-center space-x-1">
+                      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'hsl(var(--success))' }}></div>
+                      <span className="font-medium" style={{ color: 'hsl(var(--success))' }}>{getQueryStats().solved} Solved</span>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'hsl(var(--warning))' }}></div>
+                      <span className="font-medium" style={{ color: 'hsl(var(--warning))' }}>{getQueryStats().pending} Pending</span>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'hsl(var(--destructive))' }}></div>
+                      <span className="font-medium" style={{ color: 'hsl(var(--destructive))' }}>{getQueryStats().unsolved} Unsolved</span>
+                    </div>
+                  </div>
+                )}
               </div>
               <div className="flex items-center space-x-2">
-                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                <span className="text-sm text-gray-600">Support Team Online</span>
+                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'hsl(var(--success))' }}></div>
+                <span className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>Support Online</span>
               </div>
             </div>
-            
-            {/* Query Statistics */}
-            {queries.length > 0 && (
-              <div className="grid grid-cols-4 gap-4 pt-4 border-t border-gray-100">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-gray-900">{getQueryStats().total}</div>
-                  <div className="text-xs text-gray-600">Total</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-green-600">{getQueryStats().solved}</div>
-                  <div className="text-xs text-gray-600">Solved</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-yellow-600">{getQueryStats().pending}</div>
-                  <div className="text-xs text-gray-600">Pending</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-red-600">{getQueryStats().unsolved}</div>
-                  <div className="text-xs text-gray-600">Unsolved</div>
-                </div>
-              </div>
-            )}
           </div>
 
           {/* Queries List */}
-          <div className="flex-1 overflow-y-auto p-6">
+          <div className="flex-1 overflow-y-auto px-4 py-3">
             {queries.length === 0 ? (
-              <div className="text-center py-12">
-                <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <div className="text-center py-8">
+                <svg className="w-12 h-12 mx-auto mb-3" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" style={{ color: 'hsl(var(--muted-foreground))' }}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No queries yet</h3>
-                <p className="text-gray-500">Submit your first query below and our support team will help you!</p>
+                <h3 className="text-lg font-medium mb-2" style={{ color: 'hsl(var(--card-foreground))' }}>No queries yet</h3>
+                <p style={{ color: 'hsl(var(--muted-foreground))' }}>Submit your first query below and our support team will help you!</p>
               </div>
             ) : (
-              <div className="space-y-6">
+              <div className="space-y-3">
                 {queries.map((query) => (
-                  <div key={query.id} className="bg-gray-50 rounded-lg p-6 border border-gray-200">
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
-                          <span className="text-indigo-600 font-semibold">
-                            {userProfile?.name?.charAt(0) || user?.email?.charAt(0)}
-                          </span>
+                  <div key={query.id} className="rounded-lg p-4 border" style={{ backgroundColor: 'hsl(var(--muted))', borderColor: 'hsl(var(--border))' }}>
+                    <div className="flex items-start justify-between mb-3">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ backgroundColor: 'hsl(var(--primary) / 0.1)' }}>
+                            <span className="font-semibold text-sm" style={{ color: 'hsl(var(--primary))' }}>
+                              {userProfile?.name?.charAt(0) || user?.email?.charAt(0)}
+                            </span>
+                          </div>
+                          <div>
+                            <h3 className="font-medium text-sm" style={{ color: 'hsl(var(--card-foreground))' }}>{userProfile?.name || user?.email}</h3>
+                            <p className="text-xs" style={{ color: 'hsl(var(--muted-foreground))' }}>{formatTime(query.created_at)}</p>
+                          </div>
                         </div>
-                        <div>
-                          <h3 className="font-medium text-gray-900">{userProfile?.name || user?.email}</h3>
-                          <p className="text-sm text-gray-600">{formatTime(query.created_at)}</p>
-                        </div>
-                      </div>
-                      <span className={`px-3 py-1 text-xs font-medium rounded-full border ${getStatusBadge(query.status)}`}>
+                      <span className={`px-2 py-1 text-xs font-medium rounded-full border ${getStatusBadge(query.status)}`}>
                         {query.status.charAt(0).toUpperCase() + query.status.slice(1)}
                       </span>
                     </div>
 
-                    <div className="mb-4">
+                    <div className="mb-3">
                       {query.query_type === 'file' ? (
                         <div>
-                          <p className="text-gray-700 mb-3">{query.query_text}</p>
-                          <div className="bg-white rounded-lg p-4 border border-gray-200">
+                          <p className="mb-3" style={{ color: 'hsl(var(--card-foreground))' }}>{query.query_text}</p>
+                          <div className="rounded-lg p-4 border" style={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
                             <div className="flex items-center space-x-3">
-                              <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                              <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" style={{ color: 'hsl(var(--muted-foreground))' }}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
                               </svg>
                               <div className="flex-1">
-                                <p className="font-medium text-gray-900">{query.file_name}</p>
-                                <p className="text-sm text-gray-600">{formatFileSize(query.file_size)}</p>
+                                <p className="font-medium" style={{ color: 'hsl(var(--card-foreground))' }}>{query.file_name}</p>
+                                <p className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>{formatFileSize(query.file_size)}</p>
                               </div>
                               <a
                                 href={query.file_url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-md text-sm hover:bg-indigo-200 transition"
+                                className="px-3 py-1 rounded-md text-sm transition"
+                                style={{ backgroundColor: 'hsl(var(--primary) / 0.1)', color: 'hsl(var(--primary))' }}
+                                onMouseEnter={(e) => e.target.style.backgroundColor = 'hsl(var(--primary) / 0.2)'}
+                                onMouseLeave={(e) => e.target.style.backgroundColor = 'hsl(var(--primary) / 0.1)'}
                               >
                                 Download
                               </a>
@@ -546,20 +541,27 @@ export default function ChatPage() {
                               <textarea
                                 value={editText}
                                 onChange={(e) => setEditText(e.target.value)}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2"
+                                style={{ borderColor: 'hsl(var(--border))', backgroundColor: 'hsl(var(--background))', color: 'hsl(var(--foreground))', '--tw-ring-color': 'hsl(var(--ring))' }}
                                 rows="3"
                                 placeholder="Edit your query..."
                               />
                               <div className="flex space-x-2">
                                 <button
                                   onClick={() => saveEdit(query.id)}
-                                  className="px-3 py-1 bg-green-500 text-white rounded-md text-sm hover:bg-green-600 transition"
+                                  className="px-3 py-1 rounded-md text-sm transition"
+                                  style={{ backgroundColor: 'hsl(var(--success))', color: 'white' }}
+                                  onMouseEnter={(e) => e.target.style.opacity = '0.9'}
+                                  onMouseLeave={(e) => e.target.style.opacity = '1'}
                                 >
                                   Save
                                 </button>
                                 <button
                                   onClick={cancelEditing}
-                                  className="px-3 py-1 bg-gray-500 text-white rounded-md text-sm hover:bg-gray-600 transition"
+                                  className="px-3 py-1 rounded-md text-sm transition"
+                                  style={{ backgroundColor: 'hsl(var(--muted))', color: 'hsl(var(--muted-foreground))' }}
+                                  onMouseEnter={(e) => e.target.style.opacity = '0.8'}
+                                  onMouseLeave={(e) => e.target.style.opacity = '1'}
                                 >
                                   Cancel
                                 </button>
@@ -567,11 +569,20 @@ export default function ChatPage() {
                             </div>
                           ) : (
                             <div className="flex items-start justify-between">
-                              <p className="text-gray-700 flex-1">{query.query_text}</p>
+                              <p className="flex-1" style={{ color: 'hsl(var(--card-foreground))' }}>{query.query_text}</p>
                               {query.status === 'pending' && (
                                 <button
                                   onClick={() => startEditing(query)}
-                                  className="ml-2 px-2 py-1 text-xs text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 rounded transition"
+                                  className="ml-2 px-2 py-1 text-xs rounded transition"
+                                  style={{ color: 'hsl(var(--primary))' }}
+                                  onMouseEnter={(e) => {
+                                    e.target.style.color = 'hsl(var(--primary))';
+                                    e.target.style.backgroundColor = 'hsl(var(--primary) / 0.1)';
+                                  }}
+                                  onMouseLeave={(e) => {
+                                    e.target.style.color = 'hsl(var(--primary))';
+                                    e.target.style.backgroundColor = 'transparent';
+                                  }}
                                   title="Edit query"
                                 >
                                   <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
@@ -586,14 +597,14 @@ export default function ChatPage() {
                     </div>
 
                     {query.admin_response && (
-                      <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                      <div className="rounded-lg p-3 border mt-3" style={{ backgroundColor: 'hsl(var(--primary) / 0.05)', borderColor: 'hsl(var(--primary) / 0.2)' }}>
                         <div className="flex items-center space-x-2 mb-2">
-                          <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
-                            <span className="text-blue-600 font-semibold text-xs">A</span>
+                          <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ backgroundColor: 'hsl(var(--primary) / 0.1)' }}>
+                            <span className="font-semibold text-xs" style={{ color: 'hsl(var(--primary))' }}>A</span>
                           </div>
-                          <span className="font-medium text-blue-900">Admin Response</span>
+                          <span className="font-medium text-sm" style={{ color: 'hsl(var(--primary))' }}>Admin Response</span>
                         </div>
-                        <p className="text-blue-800">{query.admin_response}</p>
+                        <p className="text-sm" style={{ color: 'hsl(var(--card-foreground))' }}>{query.admin_response}</p>
                       </div>
                     )}
                   </div>
@@ -604,15 +615,16 @@ export default function ChatPage() {
           </div>
 
           {/* Query Input */}
-          <div className="p-6 border-t border-gray-200">
-            <form onSubmit={handleSubmitQuery} className="space-y-4">
-              <div className="flex space-x-2">
+          <div className="px-4 py-3 border-t" style={{ borderColor: 'hsl(var(--border))', backgroundColor: 'hsl(var(--muted))' }}>
+            <form onSubmit={handleSubmitQuery}>
+              <div className="flex space-x-2 mb-2">
                 <input
                   type="text"
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder="Describe your issue or question..."
-                  className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="flex-1 px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 text-sm"
+                  style={{ borderColor: 'hsl(var(--border))', backgroundColor: 'hsl(var(--background))', color: 'hsl(var(--foreground))', '--tw-ring-color': 'hsl(var(--ring))' }}
                   disabled={sendingMessage}
                 />
                 
@@ -620,21 +632,33 @@ export default function ChatPage() {
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="px-4 py-3 text-gray-600 hover:text-indigo-600 transition border border-gray-300 rounded-lg hover:border-indigo-300"
+                  className="px-3 py-2.5 transition border rounded-lg"
+                  style={{ color: 'hsl(var(--muted-foreground))', borderColor: 'hsl(var(--border))' }}
+                  onMouseEnter={(e) => {
+                    e.target.style.color = 'hsl(var(--primary))';
+                    e.target.style.borderColor = 'hsl(var(--primary))';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.color = 'hsl(var(--muted-foreground))';
+                    e.target.style.borderColor = 'hsl(var(--border))';
+                  }}
                   disabled={sendingMessage}
-                  title="Attach file (images, PDFs, Word docs - max 5MB)"
+                  title="Attach file (max 5MB)"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
                   </svg>
                 </button>
                 
                 <button
                   type="submit"
-                  className="px-6 py-3 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition disabled:opacity-50 font-medium"
+                  className="px-5 py-2.5 rounded-lg transition disabled:opacity-50 font-medium text-sm"
+                  style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))' }}
+                  onMouseEnter={(e) => !e.target.disabled && (e.target.style.opacity = '0.9')}
+                  onMouseLeave={(e) => !e.target.disabled && (e.target.style.opacity = '1')}
                   disabled={!message.trim() || sendingMessage}
                 >
-                  {sendingMessage ? 'Submitting...' : 'Submit Query'}
+                  {sendingMessage ? 'Submitting...' : 'Submit'}
                 </button>
               </div>
               
@@ -652,8 +676,8 @@ export default function ChatPage() {
                 }}
               />
               
-              <p className="text-xs text-gray-500">
-                You can attach images, PDFs, or Word documents (max 5MB). Our support team will respond within 24 hours.
+              <p className="text-xs" style={{ color: 'hsl(var(--muted-foreground))' }}>
+                Attach files (images, PDFs, Word docs - max 5MB) • Support responds within 24 hours
               </p>
             </form>
           </div>
@@ -661,4 +685,4 @@ export default function ChatPage() {
       </div>
     </DashboardLayout>
   );
-} 
+}

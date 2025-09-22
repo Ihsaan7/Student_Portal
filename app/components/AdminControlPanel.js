@@ -14,26 +14,47 @@ const ConfirmationDialog = ({ isOpen, onClose, onConfirm, title, message, type =
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4 shadow-xl">
-        <div className={`p-4 rounded-lg border ${typeStyles[type]} mb-4`}>
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+      <div 
+        className="rounded-xl p-6 max-w-md w-full mx-4 shadow-2xl border"
+        style={{ 
+          backgroundColor: 'hsl(var(--card))', 
+          borderColor: 'hsl(var(--border))'
+        }}
+      >
+        <div className="p-4 rounded-lg border mb-4" style={{
+          backgroundColor: type === 'danger' ? 'hsl(var(--destructive) / 0.1)' :
+                          type === 'warning' ? 'hsl(25 95% 53% / 0.1)' :
+                          'hsl(var(--primary) / 0.1)',
+          borderColor: type === 'danger' ? 'hsl(var(--destructive) / 0.2)' :
+                      type === 'warning' ? 'hsl(25 95% 53% / 0.2)' :
+                      'hsl(var(--primary) / 0.2)',
+          color: type === 'danger' ? 'hsl(var(--destructive))' :
+                type === 'warning' ? 'hsl(25 95% 53%)' :
+                'hsl(var(--primary))'
+        }}>
           <h3 className="font-bold text-lg mb-2">{title}</h3>
           <p>{message}</p>
         </div>
         <div className="flex gap-3 justify-end">
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition"
+            className="px-4 py-2 rounded-lg border transition-all duration-200 hover:shadow-sm"
+            style={{ 
+              backgroundColor: 'hsl(var(--secondary))', 
+              color: 'hsl(var(--secondary-foreground))',
+              borderColor: 'hsl(var(--border))'
+            }}
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
-            className={`px-4 py-2 rounded-md transition ${
-              type === "danger" 
-                ? "bg-red-600 text-white hover:bg-red-700" 
-                : "bg-blue-600 text-white hover:bg-blue-700"
-            }`}
+            className="px-4 py-2 rounded-lg transition-all duration-200 hover:shadow-sm"
+            style={{
+              backgroundColor: type === "danger" ? 'hsl(var(--destructive))' : 'hsl(var(--primary))',
+              color: type === "danger" ? 'hsl(var(--destructive-foreground))' : 'hsl(var(--primary-foreground))'
+            }}
           >
             Confirm
           </button>
@@ -122,73 +143,111 @@ const UserManagement = ({ userId, userProfile, onUpdate }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg border border-orange-200 p-4 mb-4">
-      <h3 className="text-lg font-semibold text-orange-700 mb-3 flex items-center gap-2">
-        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+    <div 
+      className="rounded-xl border p-6 mb-6 shadow-sm"
+      style={{ 
+        backgroundColor: 'hsl(var(--card))', 
+        borderColor: 'hsl(var(--border))'
+      }}
+    >
+      <h3 className="text-lg font-semibold mb-4 flex items-center gap-2" style={{ color: 'hsl(var(--card-foreground))' }}>
+        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" style={{ color: 'hsl(var(--primary))' }}>
           <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
         </svg>
         User Management (Admin Only)
       </h3>
       
       {isEditing ? (
-        <div className="space-y-3">
+        <div className="space-y-4">
           <input
             type="text"
             placeholder="Name"
             value={editData.name}
             onChange={(e) => setEditData({...editData, name: e.target.value})}
-            className="w-full p-2 border rounded-md"
+            className="w-full p-3 border rounded-lg transition-all duration-200 focus:outline-none focus:ring-2"
+            style={{ 
+              backgroundColor: 'hsl(var(--background))', 
+              borderColor: 'hsl(var(--border))',
+              color: 'hsl(var(--foreground))'
+            }}
           />
           <input
             type="email"
             placeholder="Email"
             value={editData.email}
             onChange={(e) => setEditData({...editData, email: e.target.value})}
-            className="w-full p-2 border rounded-md"
+            className="w-full p-3 border rounded-lg transition-all duration-200 focus:outline-none focus:ring-2"
+            style={{ 
+              backgroundColor: 'hsl(var(--background))', 
+              borderColor: 'hsl(var(--border))',
+              color: 'hsl(var(--foreground))'
+            }}
           />
           <input
             type="text"
             placeholder="Programme"
             value={editData.programme}
             onChange={(e) => setEditData({...editData, programme: e.target.value})}
-            className="w-full p-2 border rounded-md"
+            className="w-full p-3 border rounded-lg transition-all duration-200 focus:outline-none focus:ring-2"
+            style={{ 
+              backgroundColor: 'hsl(var(--background))', 
+              borderColor: 'hsl(var(--border))',
+              color: 'hsl(var(--foreground))'
+            }}
           />
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <button
               onClick={handleSaveProfile}
-              className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition"
+              className="px-4 py-2 rounded-lg transition-all duration-200 hover:shadow-sm"
+              style={{ 
+                backgroundColor: 'hsl(var(--primary))', 
+                color: 'hsl(var(--primary-foreground))'
+              }}
             >
               Save
             </button>
             <button
               onClick={() => setIsEditing(false)}
-              className="px-4 py-2 bg-gray-400 text-white rounded-md hover:bg-gray-500 transition"
+              className="px-4 py-2 rounded-lg border transition-all duration-200 hover:shadow-sm"
+              style={{ 
+                backgroundColor: 'hsl(var(--secondary))', 
+                color: 'hsl(var(--secondary-foreground))',
+                borderColor: 'hsl(var(--border))'
+              }}
             >
               Cancel
             </button>
           </div>
         </div>
       ) : (
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-3">
           <button
             onClick={handleEditProfile}
-            className="px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition text-sm"
+            className="px-4 py-2 rounded-lg transition-all duration-200 hover:shadow-sm text-sm"
+            style={{ 
+              backgroundColor: 'hsl(var(--primary))', 
+              color: 'hsl(var(--primary-foreground))'
+            }}
           >
             Edit Profile
           </button>
           <button
             onClick={handleResetPassword}
-            className="px-3 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 transition text-sm"
+            className="px-4 py-2 rounded-lg transition-all duration-200 hover:shadow-sm text-sm"
+            style={{ 
+              backgroundColor: 'hsl(25 95% 53%)', 
+              color: 'white'
+            }}
           >
             Reset Password
           </button>
           <button
             onClick={handleToggleAccount}
-            className={`px-3 py-2 rounded-md transition text-sm ${
-              userProfile?.status === 'active'
-                ? 'bg-red-600 text-white hover:bg-red-700'
-                : 'bg-green-600 text-white hover:bg-green-700'
-            }`}
+            className="px-4 py-2 rounded-lg transition-all duration-200 hover:shadow-sm text-sm"
+            style={{
+              backgroundColor: userProfile?.status === 'active' ? 'hsl(var(--destructive))' : 'hsl(142 70% 50%)',
+              color: 'white'
+            }}
           >
             {userProfile?.status === 'active' ? 'Suspend Account' : 'Activate Account'}
           </button>
