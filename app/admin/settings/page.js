@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import AdminMiddleware from '../../../components/AdminMiddleware';
 import { logAdminAction } from '../../../lib/adminAuth';
 import { supabase } from '../../../lib/supabase';
-import { LoadingSpinner } from '../../components/LoadingSpinner';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 const AdminSettings = ({ adminData }) => {
   const [settings, setSettings] = useState({});

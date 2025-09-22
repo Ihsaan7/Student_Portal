@@ -8,7 +8,7 @@ import CareerDevelopmentAdminPanel from '../components/CareerDevelopmentAdminPan
 import AnnouncementAdminPanel from '../components/AnnouncementAdminPanel';
 import { getAdminStats, updateSystemStats, logAdminAction } from '../../lib/adminAuth';
 import { supabase } from '../../lib/supabase';
-import { LoadingSpinner } from '../components/LoadingSpinner';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const AdminDashboard = ({ adminData }) => {
   const [stats, setStats] = useState(null);
