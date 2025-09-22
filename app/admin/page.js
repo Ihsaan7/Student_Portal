@@ -4,8 +4,11 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import AdminMiddleware from '../../components/AdminMiddleware';
 import HandoutApprovalPanel from '../components/HandoutApprovalPanel';
 import AdminCourseGuidancePanel from '../components/AdminCourseGuidancePanel';
+import CareerDevelopmentAdminPanel from '../components/CareerDevelopmentAdminPanel';
+import AnnouncementAdminPanel from '../components/AnnouncementAdminPanel';
 import { getAdminStats, updateSystemStats, logAdminAction } from '../../lib/adminAuth';
 import { supabase } from '../../lib/supabase';
+import { LoadingSpinner } from '../components/LoadingSpinner';
 
 const AdminDashboard = ({ adminData }) => {
   const [stats, setStats] = useState(null);
@@ -101,7 +104,7 @@ const AdminDashboard = ({ adminData }) => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <LoadingSpinner size="large" variant="primary" />
       </div>
     );
   }
@@ -244,6 +247,36 @@ const AdminDashboard = ({ adminData }) => {
             </div>
           </div>
 
+          <div 
+            onClick={() => setActiveTab('career-development')}
+            className={`bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer border-l-4 ${
+              activeTab === 'career-development' ? 'border-emerald-500 bg-emerald-50' : 'border-emerald-500'
+            }`}
+          >
+            <div className="flex items-center">
+              <div className="text-3xl mr-4">🚀</div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">Career Development</h3>
+                <p className="text-sm text-gray-600">Manage career path content</p>
+              </div>
+            </div>
+          </div>
+
+          <div 
+            onClick={() => setActiveTab('announcements')}
+            className={`bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer border-l-4 ${
+              activeTab === 'announcements' ? 'border-yellow-500 bg-yellow-50' : 'border-yellow-500'
+            }`}
+          >
+            <div className="flex items-center">
+              <div className="text-3xl mr-4">📢</div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">Announcements</h3>
+                <p className="text-sm text-gray-600">Manage system announcements</p>
+              </div>
+            </div>
+          </div>
+
           {adminData?.role === 'super_admin' && (
             <div 
               onClick={() => router.push('/admin/settings')}
@@ -293,6 +326,26 @@ const AdminDashboard = ({ adminData }) => {
                 }`}
               >
                 Course Guidance
+              </button>
+              <button
+                onClick={() => setActiveTab('career-development')}
+                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === 'career-development'
+                    ? 'border-indigo-500 text-indigo-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                Career Development
+              </button>
+              <button
+                onClick={() => setActiveTab('announcements')}
+                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === 'announcements'
+                    ? 'border-indigo-500 text-indigo-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                Announcements
               </button>
             </nav>
           </div>
@@ -373,6 +426,14 @@ const AdminDashboard = ({ adminData }) => {
 
         {activeTab === 'course-guidance' && (
           <AdminCourseGuidancePanel user={adminData.user} />
+        )}
+
+        {activeTab === 'career-development' && (
+          <CareerDevelopmentAdminPanel user={adminData.user} />
+        )}
+
+        {activeTab === 'announcements' && (
+          <AnnouncementAdminPanel />
         )}
       </main>
     </div>
