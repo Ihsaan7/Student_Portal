@@ -2,6 +2,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabase";
+import { useTheme } from './ThemeProvider';
 
 // Utility function to check if admin is in user mode
 const isAdminMode = () => {
@@ -35,7 +36,7 @@ const clearAdminMode = () => {
 
 const navItems = [
   { name: "Home", icon: (
-    <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7m-9 2v6a2 2 0 002 2h2a2 2 0 002-2v-6m-6 0h6" /></svg>
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9,22 9,12 15,12 15,22" /></svg>
   ), route: "/home" },
   { name: "Calendar", icon: (
     <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="4" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" /></svg>
@@ -58,18 +59,17 @@ const navItems = [
   { name: "Student Services", icon: (
     <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
   ), route: "/student-services" },
-  { name: "Contact Us", icon: (
-    <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-  ), route: "/contact" },
 ];
 
 export default function DashboardLayout({ children, currentPage }) {
   const router = useRouter();
+  const { theme, toggleTheme } = useTheme();
   const [profileOpen, setProfileOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
   const [adminMode, setAdminMode] = useState(false);
   const [adminData, setAdminData] = useState(null);
+  const [unreadAnnouncementCount, setUnreadAnnouncementCount] = useState(0);
 
   useEffect(() => {
     const getUser = async () => {
@@ -90,10 +90,64 @@ export default function DashboardLayout({ children, currentPage }) {
         if (isAdmin) {
           setAdminData(getAdminData());
         }
+        
+        // Load unread announcement count
+        await loadUnreadAnnouncementCount(user.id);
       }
     };
     getUser();
   }, []);
+
+  // Load unread announcement count
+  const loadUnreadAnnouncementCount = async (userId) => {
+    try {
+      const { data, error } = await supabase
+        .rpc('get_unread_announcements_count', {
+          user_uuid: userId
+        });
+
+      if (error) {
+        console.error('Error loading unread announcement count:', error);
+        return;
+      }
+
+      setUnreadAnnouncementCount(data || 0);
+    } catch (error) {
+      console.error('Error loading unread announcement count:', error);
+    }
+  };
+
+  // Handle bell notification click
+  const handleBellClick = async () => {
+    // Navigate to calendar page with announcement section
+    router.push('/calendar#announcements');
+    
+    // Mark all announcements as read for this user
+    if (user && unreadAnnouncementCount > 0) {
+      try {
+        const { data: announcements } = await supabase
+          .from('announcements')
+          .select('id')
+          .eq('is_active', true)
+          .order('created_at', { ascending: false })
+          .limit(10);
+
+        if (announcements) {
+          for (const announcement of announcements) {
+            await supabase.rpc('mark_announcement_read', {
+              announcement_uuid: announcement.id,
+              user_uuid: user.id
+            });
+          }
+        }
+        
+        // Reset unread count
+        setUnreadAnnouncementCount(0);
+      } catch (error) {
+        console.error('Error marking announcements as read:', error);
+      }
+    }
+  };
 
   const studentName = userProfile?.name || user?.email || "Student Name";
 
@@ -116,28 +170,43 @@ export default function DashboardLayout({ children, currentPage }) {
   };
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="flex min-h-screen" style={{ backgroundColor: 'hsl(var(--background))' }}>
       {/* Sidebar */}
-      <aside className="fixed top-0 left-0 h-screen w-20 md:w-64 bg-gradient-to-b from-white to-gray-50 border-r border-gray-200 flex flex-col justify-between z-30 transition-all duration-200 shadow-lg">
+      <aside className="fixed top-0 left-0 h-screen w-20 md:w-64 flex flex-col justify-between z-30 transition-all duration-300 border-r" style={{ backgroundColor: 'hsl(var(--sidebar))', borderColor: 'hsl(var(--sidebar-border))', boxShadow: theme === 'dark' ? 'none' : '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}>
         <div>
           <div className="flex items-center justify-center md:justify-start gap-2 px-4 py-6">
-            <span className="font-bold text-indigo-700 text-lg md:text-xl text-center md:text-left">Virtual University</span>
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-lg" style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))' }}>
+              V
+            </div>
+            <span className="hidden md:inline font-bold text-lg" style={{ color: 'hsl(var(--sidebar-foreground))' }}>Virtual University</span>
           </div>
           <nav className="flex-1">
-            <ul className="space-y-1 mt-4">
+            <ul className="space-y-3 mt-6 px-3">
               {navItems.map(item => (
                 <li key={item.name}>
                   <a 
                     href={item.route} 
-                    className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all group mx-2 ${
+                    className={`flex items-center gap-4 px-4 py-4 rounded-lg transition-all duration-200 group ${
                       currentPage === item.route 
-                        ? 'bg-gradient-to-r from-indigo-100 to-indigo-200 text-indigo-700' 
-                        : 'text-gray-700 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-indigo-100 hover:text-indigo-700'
+                        ? 'shadow-sm font-medium' 
+                        : 'hover:shadow-sm'
                     }`}
+                    style={{
+                      backgroundColor: currentPage === item.route ? 'hsl(var(--sidebar-accent))' : 'transparent',
+                      color: currentPage === item.route ? 'hsl(var(--sidebar-primary))' : 'hsl(var(--sidebar-foreground))',
+                    }}
+                    onMouseEnter={(e) => {
+                      if (currentPage !== item.route) {
+                        e.target.style.backgroundColor = 'hsl(var(--sidebar-accent) / 0.5)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (currentPage !== item.route) {
+                        e.target.style.backgroundColor = 'transparent';
+                      }
+                    }}
                   >
-                    <span className={`w-7 h-7 flex items-center justify-center ${
-                      currentPage === item.route ? 'text-indigo-800' : 'text-indigo-600 group-hover:text-indigo-800'
-                    }`}>
+                    <span className="w-6 h-6 flex items-center justify-center">
                       {item.icon}
                     </span>
                     <span className="hidden md:inline text-base font-medium">{item.name}</span>
@@ -147,8 +216,8 @@ export default function DashboardLayout({ children, currentPage }) {
             </ul>
           </nav>
         </div>
-        <div className="px-4 py-6 text-xs text-gray-500 border-t border-gray-100 hidden md:block bg-gradient-to-t from-gray-50 to-transparent">
-          <div className="font-bold text-indigo-700">Virtual University of Pakistan</div>
+        <div className="px-4 py-6 text-xs border-t hidden md:block" style={{ color: 'hsl(var(--sidebar-muted))', borderColor: 'hsl(var(--sidebar-border))', backgroundColor: theme === 'dark' ? 'hsl(var(--sidebar) / 0.8)' : 'linear-gradient(to top, #f8fafc, transparent)' }}>
+          <div className="font-bold" style={{ color: 'hsl(var(--sidebar-primary))' }}>Virtual University of Pakistan</div>
           <div>Federal Government University</div>
         </div>
       </aside>
@@ -156,55 +225,133 @@ export default function DashboardLayout({ children, currentPage }) {
       {/* Main content area (with top navbar) */}
       <div className="flex-1 min-h-screen md:ml-64 ml-20 flex flex-col">
         {/* Top Navbar */}
-        <header className="flex items-center justify-between h-20 px-4 bg-gradient-to-r from-white to-gray-50 border-b border-gray-200 shadow-sm sticky top-0 z-20">
-          <div className="font-bold text-xl text-indigo-700 tracking-wide">
+        <header className="flex items-center justify-between h-20 px-4 border-b sticky top-0 z-20 backdrop-blur-sm" style={{ backgroundColor: 'hsl(var(--header))', borderColor: 'hsl(var(--border))', boxShadow: theme === 'dark' ? 'none' : '0 1px 3px 0 rgba(0, 0, 0, 0.1)' }}>
+          <div className="font-bold text-xl tracking-wide" style={{ color: 'hsl(var(--foreground))' }}>
             <span className="hidden sm:inline">LMS Learning Management System</span>
             <span className="sm:hidden">LMS</span>
           </div>
           <div className="flex items-center gap-4">
-            {/* Notification Icon */}
-            <button
-              className="relative p-2 rounded-full hover:bg-gradient-to-r hover:from-indigo-50 hover:to-indigo-100 transition"
-              onClick={() => router.push("/notifications")}
-              aria-label="Notifications"
+            {/* Theme Toggle */}
+            <button 
+              onClick={toggleTheme}
+              className="p-2 rounded-lg transition-all duration-200 hover:shadow-sm"
+              style={{ 
+                backgroundColor: 'hsl(var(--muted))',
+                color: 'hsl(var(--muted-foreground))'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = 'hsl(var(--muted) / 0.8)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = 'hsl(var(--muted))';
+              }}
             >
-              <svg className="w-7 h-7 text-indigo-700" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
+              {theme === 'dark' ? (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+              ) : (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+              )}
+            </button>
+            {/* Bell Notification Icon */}
+            <button
+              className="relative p-2 rounded-lg transition-all duration-200 hover:shadow-sm"
+              onClick={handleBellClick}
+              aria-label="Announcements"
+              style={{ 
+                backgroundColor: 'hsl(var(--muted))',
+                color: 'hsl(var(--muted-foreground))'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = 'hsl(var(--muted) / 0.8)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = 'hsl(var(--muted))';
+              }}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+              </svg>
+              {unreadAnnouncementCount > 0 && (
+                <span className="absolute -top-1 -right-1 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center" style={{ backgroundColor: 'hsl(var(--destructive))' }}>
+                  {unreadAnnouncementCount > 9 ? '9+' : unreadAnnouncementCount}
+                </span>
+              )}
             </button>
             {/* Student Name Only */}
             <div className="hidden sm:block text-right">
-              <div className="font-medium text-gray-700">{studentName}</div>
+              <div className="font-medium" style={{ color: 'hsl(var(--foreground))' }}>{studentName}</div>
             </div>
             {/* Profile Dropdown */}
             <div className="relative">
               <button
-                className="w-10 h-10 rounded-full border-2 border-indigo-200 flex items-center justify-center bg-gradient-to-br from-indigo-100 to-indigo-200 hover:border-indigo-400 hover:from-indigo-200 hover:to-indigo-300 transition"
+                className="w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all duration-200 hover:shadow-sm"
                 onClick={() => setProfileOpen(v => !v)}
                 aria-label="Profile"
+                style={{
+                  borderColor: 'hsl(var(--border))',
+                  backgroundColor: 'hsl(var(--muted))',
+                  color: 'hsl(var(--muted-foreground))'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.borderColor = 'hsl(var(--primary))';
+                  e.target.style.backgroundColor = 'hsl(var(--muted) / 0.8)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.borderColor = 'hsl(var(--border))';
+                  e.target.style.backgroundColor = 'hsl(var(--muted))';
+                }}
               >
-                <svg className="w-7 h-7 text-indigo-700" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.5-1.8 4.5-4.5S14.7 3 12 3 7.5 4.8 7.5 7.5 9.3 12 12 12zm0 2c-3 0-9 1.5-9 4.5V21h18v-2.5c0-3-6-4.5-9-4.5z" /></svg>
+                <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.5-1.8 4.5-4.5S14.7 3 12 3 7.5 4.8 7.5 7.5 9.3 12 12 12zm0 2c-3 0-9 1.5-9 4.5V21h18v-2.5c0-3-6-4.5-9-4.5z" /></svg>
               </button>
               {profileOpen && (
-                <div className="absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-50 bg-gradient-to-b from-white to-gray-50">
-                  <div className="px-4 py-2 border-b border-gray-100">
-                    <div className="font-medium text-gray-900">{studentName}</div>
+                <div className="absolute right-0 mt-2 w-64 rounded-lg shadow-lg py-2 z-50" style={{ backgroundColor: 'hsl(var(--popover))', border: '1px solid hsl(var(--border))' }}>
+                  <div className="px-4 py-2 border-b" style={{ borderColor: 'hsl(var(--border))' }}>
+                    <div className="font-medium" style={{ color: 'hsl(var(--popover-foreground))' }}>{studentName}</div>
                     {adminMode && (
-                      <div className="text-xs text-orange-600 font-medium mt-1">
+                      <div className="text-xs font-medium mt-1" style={{ color: 'hsl(var(--destructive))' }}>
                         Admin Mode Active
                       </div>
                     )}
                   </div>
-                  <a href="/profile" className="block px-4 py-2 text-gray-700 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-indigo-100">Profile</a>
+                  <a href="/profile" className="block px-4 py-2 transition-colors hover:shadow-sm rounded-md mx-1" style={{ color: 'hsl(var(--popover-foreground))' }}
+                    onMouseEnter={(e) => {
+                      e.target.style.backgroundColor = 'hsl(var(--muted))';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.backgroundColor = 'transparent';
+                    }}
+                  >Profile</a>
                   {adminMode && (
                     <button
                       onClick={handleReturnToAdmin}
-                      className="w-full text-left px-4 py-2 text-orange-600 hover:bg-gradient-to-r hover:from-orange-50 hover:to-orange-100 font-medium"
+                      className="w-full text-left px-4 py-2 font-medium transition-colors hover:shadow-sm rounded-md mx-1"
+                      style={{ color: 'hsl(var(--destructive))' }}
+                      onMouseEnter={(e) => {
+                        e.target.style.backgroundColor = 'hsl(var(--destructive) / 0.1)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.backgroundColor = 'transparent';
+                      }}
                     >
                       Return to Admin Panel
                     </button>
                   )}
                   <button
                     onClick={handleSignOut}
-                    className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-indigo-100"
+                    className="w-full text-left px-4 py-2 transition-colors hover:shadow-sm rounded-md mx-1"
+                    style={{ color: 'hsl(var(--popover-foreground))' }}
+                    onMouseEnter={(e) => {
+                      e.target.style.backgroundColor = 'hsl(var(--destructive) / 0.1)';
+                      e.target.style.color = 'hsl(var(--destructive))';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.backgroundColor = 'transparent';
+                      e.target.style.color = 'hsl(var(--popover-foreground))';
+                    }}
                   >Logout</button>
                 </div>
               )}
@@ -214,15 +361,24 @@ export default function DashboardLayout({ children, currentPage }) {
         
         {/* Admin Mode Banner */}
         {adminMode && (
-          <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 text-center text-sm font-medium shadow-md">
-            <div className="flex items-center justify-center gap-2">
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-              </svg>
-              <span>Admin Mode: Viewing as User | Admin: {adminData?.role === 'super_admin' ? 'Super Admin' : 'Admin'} ({adminData?.name || 'Loading...'})</span>
+          <div className="border-l-4 p-4 mx-6 mt-4 rounded-lg" style={{ backgroundColor: 'hsl(var(--destructive) / 0.1)', borderColor: 'hsl(var(--destructive))' }}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" style={{ color: 'hsl(var(--destructive))' }}>
+                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
+                <span className="font-medium" style={{ color: 'hsl(var(--destructive))' }}>Admin Mode: Viewing as User | Admin: {adminData?.role === 'super_admin' ? 'Super Admin' : 'Admin'} ({adminData?.name || 'Loading...'})</span>
+              </div>
               <button
                 onClick={handleReturnToAdmin}
-                className="ml-4 px-4 py-1 bg-white text-red-600 font-semibold rounded-md hover:bg-gray-100 transition-all duration-200 shadow-sm border border-white border-opacity-30"
+                className="font-medium transition-colors px-4 py-1 rounded-md"
+                style={{ color: 'hsl(var(--destructive))', backgroundColor: 'hsl(var(--background))', border: '1px solid hsl(var(--destructive))' }}
+                onMouseEnter={(e) => {
+                  e.target.style.opacity = '0.8';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.opacity = '1';
+                }}
               >
                 ← Return to Admin Panel
               </button>
@@ -231,7 +387,7 @@ export default function DashboardLayout({ children, currentPage }) {
         )}
         
         {/* Main content area */}
-        <main className="flex-1 p-4 md:p-6 bg-gradient-to-br from-gray-50 to-gray-100">
+        <main className="flex-1 p-4 md:p-6">
           {children}
         </main>
       </div>

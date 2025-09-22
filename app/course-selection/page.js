@@ -429,25 +429,31 @@ export default function CourseSelectionPage() {
       
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Course Selection</h1>
-          <p className="text-gray-600">Browse and enroll in courses for your selected programme and semester.</p>
+          <h1 className="text-3xl font-bold mb-2" style={{ color: 'hsl(var(--foreground))' }}>Course Selection</h1>
+          <p style={{ color: 'hsl(var(--muted-foreground))' }}>Browse and enroll in courses for your selected programme and semester.</p>
         </div>
 
         {/* Programme and Semester Selection */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+        <div className="rounded-lg shadow-sm p-6 mb-6" style={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))' }}>
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div className="flex items-center space-x-4">
               <div>
-                <label className="text-sm font-medium text-gray-700">Programme:</label>
-                <div className="text-lg font-semibold text-indigo-700">{userProgramme}</div>
+                <label className="text-sm font-medium" style={{ color: 'hsl(var(--card-foreground))' }}>Programme:</label>
+                <div className="text-lg font-semibold" style={{ color: 'hsl(var(--primary))' }}>{userProgramme}</div>
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <label className="text-sm font-medium text-gray-700">Semester:</label>
+              <label className="text-sm font-medium" style={{ color: 'hsl(var(--card-foreground))' }}>Semester:</label>
               <select
                 value={selectedSemester}
                 onChange={(e) => setSelectedSemester(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="px-3 py-2 rounded-lg focus:outline-none focus:ring-2"
+                style={{
+                  backgroundColor: 'hsl(var(--background))',
+                  border: '1px solid hsl(var(--border))',
+                  color: 'hsl(var(--foreground))',
+                  '--tw-ring-color': 'hsl(var(--primary))'
+                }}
               >
                 <option value="">Select Semester</option>
                 {semesters.map((semester) => (
@@ -461,7 +467,14 @@ export default function CourseSelectionPage() {
                 placeholder="Search courses by name, code, or department..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-3 py-2 rounded-lg focus:outline-none focus:ring-2"
+                style={{
+                  backgroundColor: 'hsl(var(--background))',
+                  border: '1px solid hsl(var(--border))',
+                  color: 'hsl(var(--foreground))',
+                  '--tw-ring-color': 'hsl(var(--primary))'
+                }}
+                suppressHydrationWarning={true}
               />
             </div>
           </div>
@@ -470,24 +483,24 @@ export default function CourseSelectionPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Course List */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            <div className="rounded-lg shadow-sm p-6" style={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))' }}>
+              <h2 className="text-lg font-semibold mb-4" style={{ color: 'hsl(var(--card-foreground))' }}>
                 Available Courses {selectedSemester && `- ${selectedSemester}`}
               </h2>
               
               {!selectedSemester ? (
                 <div className="text-center py-12">
-                  <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <svg className="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" style={{ color: 'hsl(var(--muted-foreground))' }}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                   </svg>
-                  <p className="text-gray-500">Please select a semester to view available courses</p>
+                  <p style={{ color: 'hsl(var(--muted-foreground))' }}>Please select a semester to view available courses</p>
                 </div>
               ) : availableCourses.length === 0 ? (
                 <div className="text-center py-12">
-                  <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <svg className="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" style={{ color: 'hsl(var(--muted-foreground))' }}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.47-.881-6.08-2.33" />
                   </svg>
-                  <p className="text-gray-500">No courses found for the selected criteria</p>
+                  <p style={{ color: 'hsl(var(--muted-foreground))' }}>No courses found for the selected criteria</p>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -495,35 +508,41 @@ export default function CourseSelectionPage() {
                     const enrollmentStatus = getEnrollmentStatus(course);
                     const alreadyEnrolled = isAlreadyEnrolled(course);
                     return (
-                      <div key={course.id} className={`border rounded-lg p-4 transition-all ${
-                        alreadyEnrolled 
-                          ? 'border-green-300 bg-green-50' 
-                          : 'border-gray-200'
-                      }`}>
+                      <div key={course.id} className="rounded-lg p-4 transition-all" style={{
+                        border: alreadyEnrolled 
+                          ? '1px solid hsl(var(--primary))' 
+                          : '1px solid hsl(var(--border))',
+                        backgroundColor: alreadyEnrolled 
+                          ? 'hsl(var(--primary) / 0.1)' 
+                          : 'transparent'
+                      }}>
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex-1">
                             <div className="flex items-center space-x-2 mb-1">
-                              <h3 className="font-semibold text-gray-900">{course.code}</h3>
-                              <span className="text-sm text-gray-500">•</span>
-                              <span className="text-sm text-gray-600">{course.credits} credits</span>
+                              <h3 className="font-semibold" style={{ color: 'hsl(var(--card-foreground))' }}>{course.code}</h3>
+                              <span className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>•</span>
+                              <span className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>{course.credits} credits</span>
                               {alreadyEnrolled && (
-                                <span className="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full font-medium">
+                                <span className="px-2 py-1 text-xs rounded-full font-medium" style={{
+                                  backgroundColor: 'hsl(var(--primary) / 0.1)',
+                                  color: 'hsl(var(--primary))'
+                                }}>
                                   ✓ Enrolled
                                 </span>
                               )}
                             </div>
-                            <h4 className="text-lg font-medium text-gray-900 mb-1">{course.name}</h4>
-                            <p className="text-sm text-gray-600 mb-2">{course.instructor}</p>
-                            <p className="text-sm text-gray-700 mb-3">{course.description}</p>
+                            <h4 className="text-lg font-medium mb-1" style={{ color: 'hsl(var(--card-foreground))' }}>{course.name}</h4>
+                            <p className="text-sm mb-2" style={{ color: 'hsl(var(--muted-foreground))' }}>{course.instructor}</p>
+                            <p className="text-sm mb-3" style={{ color: 'hsl(var(--card-foreground))' }}>{course.description}</p>
                             
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                               <div>
-                                <span className="font-medium text-gray-700">Schedule:</span>
-                                <p className="text-gray-600">{course.schedule}</p>
+                                <span className="font-medium" style={{ color: 'hsl(var(--card-foreground))' }}>Schedule:</span>
+                                <p style={{ color: 'hsl(var(--muted-foreground))' }}>{course.schedule}</p>
                               </div>
                               <div>
-                                <span className="font-medium text-gray-700">Prerequisites:</span>
-                                <p className="text-gray-600">{course.prerequisites}</p>
+                                <span className="font-medium" style={{ color: 'hsl(var(--card-foreground))' }}>Prerequisites:</span>
+                                <p style={{ color: 'hsl(var(--muted-foreground))' }}>{course.prerequisites}</p>
                               </div>
                             </div>
                           </div>
@@ -538,20 +557,29 @@ export default function CourseSelectionPage() {
                           </div>
                         </div>
                         
-                        <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-                          <span className="text-sm text-gray-600">{course.department}</span>
+                        <div className="flex items-center justify-between pt-3" style={{ borderTop: '1px solid hsl(var(--border))' }}>
+                          <span className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>{course.department}</span>
                           <button
                             onClick={() => handleCourseSelection(course.id)}
                             disabled={enrollmentStatus.status === "Full" || alreadyEnrolled}
-                            className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
-                              alreadyEnrolled
-                                ? 'bg-green-500 text-white cursor-not-allowed'
+                            className="px-4 py-2 rounded-lg text-sm font-medium transition"
+                            style={{
+                              backgroundColor: alreadyEnrolled
+                                ? 'hsl(var(--primary))'
                                 : selectedCourses.includes(course.id)
-                                ? 'bg-red-500 text-white hover:bg-red-600'
+                                ? 'hsl(var(--destructive))'
                                 : enrollmentStatus.status === "Full"
-                                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                : 'bg-indigo-500 text-white hover:bg-indigo-600'
-                            }`}
+                                ? 'hsl(var(--muted))'
+                                : 'hsl(var(--primary))',
+                              color: alreadyEnrolled
+                                ? 'hsl(var(--primary-foreground))'
+                                : selectedCourses.includes(course.id)
+                                ? 'hsl(var(--destructive-foreground))'
+                                : enrollmentStatus.status === "Full"
+                                ? 'hsl(var(--muted-foreground))'
+                                : 'hsl(var(--primary-foreground))',
+                              cursor: enrollmentStatus.status === "Full" || alreadyEnrolled ? 'not-allowed' : 'pointer'
+                            }}
                           >
                             {alreadyEnrolled 
                               ? 'Already Enrolled' 
@@ -571,29 +599,29 @@ export default function CourseSelectionPage() {
 
           {/* Selected Courses */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 sticky top-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Selected Courses</h2>
+            <div className="rounded-lg shadow-sm p-6 sticky top-6" style={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))' }}>
+              <h2 className="text-lg font-semibold mb-4" style={{ color: 'hsl(var(--card-foreground))' }}>Selected Courses</h2>
               
               {selectedCoursesData.length === 0 ? (
-                <p className="text-gray-500 text-center py-8">No courses selected</p>
+                <p className="text-center py-8" style={{ color: 'hsl(var(--muted-foreground))' }}>No courses selected</p>
               ) : (
                 <>
                   <div className="space-y-3 mb-4">
                     {selectedCoursesData.map((course) => (
-                      <div key={course.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div key={course.id} className="flex items-center justify-between p-3 rounded-lg" style={{ backgroundColor: 'hsl(var(--muted) / 0.1)' }}>
                         <div>
-                          <p className="font-medium text-gray-900">{course.code}</p>
-                          <p className="text-sm text-gray-600">{course.name}</p>
+                          <p className="font-medium" style={{ color: 'hsl(var(--card-foreground))' }}>{course.code}</p>
+                          <p className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>{course.name}</p>
                         </div>
-                        <span className="text-sm text-gray-600">{course.credits} cr</span>
+                        <span className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>{course.credits} cr</span>
                       </div>
                     ))}
                   </div>
                   
-                  <div className="border-t border-gray-200 pt-4 mb-4">
+                  <div className="pt-4 mb-4" style={{ borderTop: '1px solid hsl(var(--border))' }}>
                     <div className="flex justify-between items-center">
-                      <span className="font-medium text-gray-900">Total Credits:</span>
-                      <span className="font-semibold text-gray-900">{totalCredits}</span>
+                      <span className="font-medium" style={{ color: 'hsl(var(--card-foreground))' }}>Total Credits:</span>
+                      <span className="font-semibold" style={{ color: 'hsl(var(--card-foreground))' }}>{totalCredits}</span>
                     </div>
                   </div>
                   
@@ -602,9 +630,17 @@ export default function CourseSelectionPage() {
                     disabled={isEnrolling || selectedCoursesData.length === 0}
                     className={`w-full px-4 py-2 rounded-lg transition font-medium ${
                       isEnrolling || selectedCoursesData.length === 0
-                        ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
-                        : 'bg-green-500 text-white hover:bg-green-600'
+                        ? 'cursor-not-allowed'
+                        : 'hover:opacity-90'
                     }`}
+                    style={{
+                      backgroundColor: isEnrolling || selectedCoursesData.length === 0
+                        ? 'hsl(var(--muted))'
+                        : 'hsl(var(--primary))',
+                      color: isEnrolling || selectedCoursesData.length === 0
+                        ? 'hsl(var(--muted-foreground))'
+                        : 'hsl(var(--primary-foreground))'
+                    }}
                   >
                     {isEnrolling ? (
                       <div className="flex items-center justify-center">
@@ -626,4 +662,4 @@ export default function CourseSelectionPage() {
       </div>
     </DashboardLayout>
   );
-} 
+}

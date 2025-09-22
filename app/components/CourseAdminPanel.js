@@ -46,15 +46,19 @@ export default function CourseAdminPanel({ courseId, courseName, onUpdate }) {
       if (error) {
         if (error.code === 'PGRST116' || error.message.includes('relation "announcements" does not exist')) {
           setAnnouncementsError('table_missing');
+          console.warn('Announcements table does not exist. Please run database setup.');
+          return;
         } else {
           setAnnouncementsError('general_error');
+          console.error('Error loading announcements:', error);
+          return;
         }
-        throw error;
       }
       setAnnouncements(data || []);
       setAnnouncementsError(null);
     } catch (error) {
       console.error('Error loading announcements:', error);
+      setAnnouncementsError('general_error');
     }
   };
 
