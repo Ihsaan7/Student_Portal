@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS public.users (
     name TEXT,
     email TEXT,
     programme TEXT,
+    avatar_url TEXT DEFAULT '/avatars/avatar1.svg',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
