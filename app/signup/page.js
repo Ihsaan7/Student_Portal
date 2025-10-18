@@ -3,6 +3,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { supabase } from "../../lib/supabase";
 import { useRouter } from "next/navigation";
+import { sanitizeInput, isValidEmail as validateEmail, isStrongPassword as validatePassword, checkRateLimit } from "../../lib/security";
 
 export default function SignupPage() {
   const [name, setName] = useState("");
@@ -23,32 +24,33 @@ export default function SignupPage() {
     ]
   };
 
-  function isValidEmail(email) {
-    return /\S+@\S+\.\S+/.test(email);
-  }
-  function isStrongPassword(password) {
-    return password.length >= 8 && /[A-Z]/.test(password) && /[0-9]/.test(password) && /[^A-Za-z0-9]/.test(password);
-  }
-
   async function handleSubmit(e) {
     e.preventDefault();
     setError("");
     setSuccess("");
+    
+    // Rate limiting check
+    if (!checkRateLimit('signup', 3, 60000)) {
+      setError("Too many signup attempts. Please wait a minute.");
+      return;
+    }
+    
     setIsLoading(true);
 
-    // Validation
-    if (!name.trim()) {
-      setError("Name is required");
+    // Validation with sanitization
+    const sanitizedName = sanitizeInput(name);
+    if (!sanitizedName.trim() || sanitizedName.length < 2) {
+      setError("Please enter a valid name (at least 2 characters)");
       setIsLoading(false);
       return;
     }
-    if (!isValidEmail(email)) {
+    if (!validateEmail(email)) {
       setError("Invalid email address");
       setIsLoading(false);
       return;
     }
-    if (!isStrongPassword(password)) {
-      setError("Password must be at least 8 characters, include an uppercase letter, a number, and a symbol.");
+    if (!validatePassword(password)) {
+      setError("Password must be at least 8 characters with uppercase, lowercase, and numbers");
       setIsLoading(false);
       return;
     }

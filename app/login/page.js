@@ -4,6 +4,7 @@ import Image from "next/image";
 import { supabase } from "../../lib/supabase";
 import { useRouter } from "next/navigation";
 import { performConnectivityCheck, addNetworkListeners } from "../../lib/networkUtils";
+import { sanitizeInput, isValidEmail, checkRateLimit } from "../../lib/security";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -61,6 +62,19 @@ export default function LoginPage() {
     e.preventDefault();
     setError("");
     setSuccess("");
+    
+    // Rate limiting check
+    if (!checkRateLimit('login', 5, 60000)) {
+      setError("Too many login attempts. Please wait a minute.");
+      return;
+    }
+    
+    // Validate email format
+    if (!isValidEmail(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+    
     setIsLoading(true);
     setConnectivityIssue(false);
 
