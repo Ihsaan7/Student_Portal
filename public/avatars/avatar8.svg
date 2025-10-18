@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <linearGradient id="grad8" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#a8edea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#fed6e3;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <circle cx="100" cy="100" r="90" fill="url(#grad8)"/>
+  <ellipse cx="75" cy="85" rx="12" ry="18" fill="#fff">
+    <animate attributeName="ry" values="18;12;18" dur="5s" repeatCount="indefinite"/>
+  </ellipse>
+  <ellipse cx="125" cy="85" rx="12" ry="18" fill="#fff">
+    <animate attributeName="ry" values="18;12;18" dur="5s" repeatCount="indefinite"/>
+  </ellipse>
+  <circle cx="75" cy="85" r="6" fill="#333">
+    <animate attributeName="cy" values="85;82;85" dur="5s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="125" cy="85" r="6" fill="#333">
+    <animate attributeName="cy" values="85;82;85" dur="5s" repeatCount="indefinite"/>
+  </circle>
+  <path d="M 80 120 L 85 125 L 90 120" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round">
+    <animate attributeName="opacity" values="1;0.5;1" dur="3s" repeatCount="indefinite"/>
+  </path>
+  <path d="M 110 120 L 115 125 L 120 120" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round">
+    <animate attributeName="opacity" values="1;0.5;1" dur="3s" repeatCount="indefinite"/>
+  </path>
+  <ellipse cx="100" cy="135" rx="20" ry="10" fill="#fed6e3" opacity="0.7">
+    <animate attributeName="rx" values="20;23;20" dur="2s" repeatCount="indefinite"/>
+  </ellipse>
+  <path d="M 70 55 Q 100 40 130 55" stroke="#a8edea" stroke-width="8" fill="none" stroke-linecap="round">
+    <animate attributeName="d" values="M 70 55 Q 100 40 130 55;M 70 53 Q 100 38 130 53;M 70 55 Q 100 40 130 55" dur="3s" repeatCount="indefinite"/>
+  </path>
+</svg>
