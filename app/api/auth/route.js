@@ -1,6 +1,6 @@
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
-import { NextResponse } from 'next/server';
+import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
+import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 
 // API route for authentication status check
 export async function GET(request) {
@@ -8,20 +8,20 @@ export async function GET(request) {
     const cookieStore = cookies();
     const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
 
-    const { data: { session }, error } = await supabase.auth.getSession();
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.getSession();
 
     if (error) {
       return NextResponse.json(
-        { authenticated: false, error: 'Session error' },
+        { authenticated: false, error: "Session error" },
         { status: 401 }
       );
     }
 
     if (!session) {
-      return NextResponse.json(
-        { authenticated: false },
-        { status: 401 }
-      );
+      return NextResponse.json({ authenticated: false }, { status: 401 });
     }
 
     return NextResponse.json({
@@ -32,9 +32,9 @@ export async function GET(request) {
       },
     });
   } catch (error) {
-    console.error('Auth check error:', error);
+    console.error("Auth check error:", error);
     return NextResponse.json(
-      { authenticated: false, error: 'Internal server error' },
+      { authenticated: false, error: "Internal server error" },
       { status: 500 }
     );
   }

@@ -1,5 +1,6 @@
 "use client";
 import DashboardLayout from "../components/DashboardLayout";
+import AuthGuard from "../../components/AuthGuard";
 import { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabase";
 
@@ -247,7 +248,8 @@ export default function CalendarPage() {
   };
 
   return (
-    <DashboardLayout currentPage="/calendar">
+    <AuthGuard>
+      <DashboardLayout currentPage="/calendar">
       <div className="max-w-6xl mx-auto">
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2" style={{ color: 'hsl(var(--card-foreground))' }}>Academic Calendar</h1>
@@ -487,5 +489,6 @@ export default function CalendarPage() {
         )}
       </div>
     </DashboardLayout>
+    </AuthGuard>
   );
 }

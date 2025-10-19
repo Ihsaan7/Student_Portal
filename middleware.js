@@ -1,5 +1,5 @@
-import { createServerClient } from '@supabase/ssr';
-import { NextResponse } from 'next/server';
+import { createServerClient } from "@supabase/ssr";
+import { NextResponse } from "next/server";
 
 export async function middleware(req) {
   let res = NextResponse.next({
@@ -37,7 +37,7 @@ export async function middleware(req) {
         remove(name, options) {
           req.cookies.set({
             name,
-            value: '',
+            value: "",
             ...options,
           });
           res = NextResponse.next({
@@ -47,7 +47,7 @@ export async function middleware(req) {
           });
           res.cookies.set({
             name,
-            value: '',
+            value: "",
             ...options,
           });
         },
@@ -55,55 +55,40 @@ export async function middleware(req) {
     }
   );
 
-  // Refresh session if expired
-  const { data: { session } } = await supabase.auth.getSession();
-
-  const { pathname } = req.nextUrl;
-
-  // Public routes that don't require authentication
-  const publicRoutes = ['/login', '/signup', '/'];
-  const isPublicRoute = publicRoutes.includes(pathname);
-
-  // If user is not authenticated and trying to access protected route
-  if (!session && !isPublicRoute) {
-    const redirectUrl = new URL('/login', req.url);
-    redirectUrl.searchParams.set('redirect', pathname);
-    return NextResponse.redirect(redirectUrl);
-  }
-
-  // If user is authenticated and trying to access login/signup
-  if (session && (pathname === '/login' || pathname === '/signup')) {
-    return NextResponse.redirect(new URL('/home', req.url));
-  }
+  // Skip auth checks - let client-side handle all authentication
+  // This prevents middleware/client-side conflicts and redirect loops
 
   // Add security headers
   const response = res;
-  
+
   // Prevent clickjacking attacks
-  response.headers.set('X-Frame-Options', 'DENY');
-  
+  response.headers.set("X-Frame-Options", "DENY");
+
   // Prevent MIME type sniffing
-  response.headers.set('X-Content-Type-Options', 'nosniff');
-  
+  response.headers.set("X-Content-Type-Options", "nosniff");
+
   // Enable XSS protection
-  response.headers.set('X-XSS-Protection', '1; mode=block');
-  
+  response.headers.set("X-XSS-Protection", "1; mode=block");
+
   // Referrer policy
-  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-  
+  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+
   // Permissions policy (formerly Feature-Policy)
-  response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
-  
+  response.headers.set(
+    "Permissions-Policy",
+    "camera=(), microphone=(), geolocation=()"
+  );
+
   // Content Security Policy
   response.headers.set(
-    'Content-Security-Policy',
+    "Content-Security-Policy",
     "default-src 'self'; " +
-    "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://accounts.google.com; " +
-    "style-src 'self' 'unsafe-inline'; " +
-    "img-src 'self' data: blob: https:; " +
-    "font-src 'self' data:; " +
-    "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://generativelanguage.googleapis.com; " +
-    "frame-ancestors 'none';"
+      "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://accounts.google.com; " +
+      "style-src 'self' 'unsafe-inline'; " +
+      "img-src 'self' data: blob: https:; " +
+      "font-src 'self' data:; " +
+      "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://generativelanguage.googleapis.com; " +
+      "frame-ancestors 'none';"
   );
 
   return response;
@@ -120,6 +105,6 @@ export const config = {
      * - public folder
      * - api routes (they have their own protection)
      */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif)$).*)',
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif)$).*)",
   ],
 };

@@ -3,6 +3,7 @@
 ## ✅ Before You Deploy
 
 ### 1. Install Required Package
+
 ```bash
 npm install @supabase/auth-helpers-nextjs
 ```
@@ -24,6 +25,7 @@ NEXT_PUBLIC_GEMINI_API_KEY=your_gemini_api_key
 Login to your Supabase dashboard and configure:
 
 #### A. Authentication Settings
+
 1. Go to **Authentication** → **Settings**
 2. Enable **Email Confirmations** (recommended)
 3. Set **Site URL** to your production domain
@@ -31,6 +33,7 @@ Login to your Supabase dashboard and configure:
 5. Enable **Rate Limiting** (default is good)
 
 #### B. Row Level Security (RLS)
+
 Run this in your Supabase SQL Editor:
 
 ```sql
@@ -82,6 +85,7 @@ CREATE POLICY "Users can manage own chat history" ON public.ai_chat_history
 ```
 
 #### C. Storage Security
+
 ```sql
 -- Secure storage buckets
 CREATE POLICY "Users can upload own files" ON storage.objects
@@ -108,6 +112,7 @@ npm run start
 ```
 
 Test these scenarios:
+
 - ✅ Try accessing /home without logging in → should redirect to /login
 - ✅ Login with valid credentials → should work
 - ✅ Login with invalid credentials → should show error
@@ -127,6 +132,7 @@ vercel
 ```
 
 Or use the Vercel dashboard:
+
 1. Connect your GitHub repo
 2. Add environment variables
 3. Deploy
@@ -134,14 +140,17 @@ Or use the Vercel dashboard:
 ### 6. Post-Deployment Verification
 
 #### A. Test Security Headers
+
 Visit: https://securityheaders.com
 Enter your deployed URL and verify you get an **A** rating.
 
 #### B. Test SSL/HTTPS
+
 Visit: https://www.ssllabs.com/ssltest/
 Enter your domain and ensure you have an **A** rating.
 
 #### C. Test Authentication Flow
+
 1. Visit your site (should redirect to login if not authenticated)
 2. Try creating an account
 3. Try logging in
@@ -149,16 +158,19 @@ Enter your domain and ensure you have an **A** rating.
 5. Try logging out
 
 #### D. Test Rate Limiting
+
 1. Try logging in with wrong password 5+ times rapidly
 2. Should get "Too many attempts" error
 
 ### 7. Monitoring Setup
 
 #### Option A: Vercel Analytics (Built-in)
+
 - Automatically enabled on Vercel
 - View in Vercel dashboard
 
 #### Option B: Sentry (Error Tracking)
+
 ```bash
 npm install @sentry/nextjs
 npx @sentry/wizard -i nextjs
@@ -177,18 +189,21 @@ npx @sentry/wizard -i nextjs
 If you detect a security breach:
 
 ### Immediate Actions:
+
 1. **Disable affected features** in Supabase dashboard
 2. **Force logout all users**: Supabase → Authentication → Users → Bulk Actions
 3. **Check logs**: Review Supabase logs for suspicious activity
 4. **Change API keys**: Generate new ones in Supabase dashboard
 
 ### Investigation:
+
 1. Identify the attack vector
 2. Check database for unauthorized changes
 3. Review all admin actions
 4. Check for data exfiltration
 
 ### Recovery:
+
 1. Patch the vulnerability
 2. Force password reset for affected users
 3. Notify users about the incident
@@ -231,11 +246,13 @@ Before going live with students:
 Create a "Security Tips" page with:
 
 1. **Password Security**
+
    - Use at least 8 characters
    - Mix uppercase, lowercase, numbers
    - Don't reuse passwords from other sites
 
 2. **Account Safety**
+
    - Never share your credentials
    - Log out after use
    - Report suspicious emails/messages
@@ -250,6 +267,7 @@ Create a "Security Tips" page with:
 ## 📞 Support
 
 If you encounter issues:
+
 1. Check Vercel deployment logs
 2. Check Supabase logs
 3. Review browser console errors

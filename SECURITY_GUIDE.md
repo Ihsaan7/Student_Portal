@@ -1,17 +1,20 @@
 # 🔒 Security Implementation Guide
 
 ## Overview
+
 This application implements multiple layers of security to protect against common web vulnerabilities and attacks.
 
 ## 🛡️ Security Features Implemented
 
 ### 1. **Route Protection (middleware.js)**
+
 - ✅ Automatic authentication check on all routes
 - ✅ Redirects unauthenticated users to login
 - ✅ Prevents authenticated users from accessing login/signup
 - ✅ Server-side session validation
 
 ### 2. **Security Headers**
+
 All responses include these protective headers:
 
 - **X-Frame-Options: DENY** - Prevents clickjacking attacks
@@ -22,6 +25,7 @@ All responses include these protective headers:
 - **Content-Security-Policy** - Prevents inline script execution and XSS
 
 ### 3. **Input Validation & Sanitization (lib/security.js)**
+
 - ✅ Email validation
 - ✅ Password strength checking (min 8 chars, uppercase, lowercase, number)
 - ✅ Username validation (alphanumeric only)
@@ -30,23 +34,26 @@ All responses include these protective headers:
 - ✅ File upload validation
 
 ### 4. **Rate Limiting**
+
 - ✅ Client-side rate limiting for forms
 - ✅ Prevents brute force attacks
 - ✅ Configurable attempt limits and time windows
 
 ### 5. **Supabase Row Level Security (RLS)**
+
 Your database already has RLS policies. Verify these are enabled:
 
 ```sql
 -- Check RLS status
-SELECT schemaname, tablename, rowsecurity 
-FROM pg_tables 
+SELECT schemaname, tablename, rowsecurity
+FROM pg_tables
 WHERE schemaname = 'public';
 ```
 
 All tables should have `rowsecurity = true`.
 
 ### 6. **Session Management**
+
 - ✅ Secure session storage
 - ✅ Automatic session refresh
 - ✅ Session expiration handling
@@ -57,6 +64,7 @@ All tables should have `rowsecurity = true`.
 ### Before Deployment:
 
 1. **Environment Variables**
+
    ```bash
    # Ensure these are set in your hosting platform
    NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
@@ -65,6 +73,7 @@ All tables should have `rowsecurity = true`.
    ```
 
 2. **Supabase Security**
+
    - ✅ Enable RLS on all tables
    - ✅ Review RLS policies for each table
    - ✅ Enable email confirmation for signups
@@ -72,12 +81,14 @@ All tables should have `rowsecurity = true`.
    - ✅ Enable CAPTCHA for authentication (optional)
 
 3. **Install Required Package**
+
    ```bash
    npm install @supabase/auth-helpers-nextjs
    ```
 
 4. **Verify Security Headers**
    After deployment, test your site at:
+
    - https://securityheaders.com
    - https://observatory.mozilla.org
 
@@ -90,6 +101,7 @@ All tables should have `rowsecurity = true`.
 ### For Your Users (Add to your UI):
 
 **Strong Password Requirements:**
+
 - Minimum 8 characters
 - At least 1 uppercase letter
 - At least 1 lowercase letter
@@ -97,6 +109,7 @@ All tables should have `rowsecurity = true`.
 - Consider adding special characters
 
 **Account Security Tips:**
+
 - Never share passwords
 - Use unique passwords for this platform
 - Log out on shared computers
@@ -105,30 +118,37 @@ All tables should have `rowsecurity = true`.
 ## 🛡️ Protection Against Common Attacks
 
 ### 1. **Cross-Site Scripting (XSS)**
+
 - **Protection**: Input sanitization, CSP headers, React's built-in escaping
 - **Status**: ✅ Protected
 
 ### 2. **SQL Injection**
+
 - **Protection**: Supabase parameterized queries, input sanitization
 - **Status**: ✅ Protected
 
 ### 3. **Cross-Site Request Forgery (CSRF)**
+
 - **Protection**: SameSite cookies, Supabase auth tokens
 - **Status**: ✅ Protected
 
 ### 4. **Clickjacking**
+
 - **Protection**: X-Frame-Options header
 - **Status**: ✅ Protected
 
 ### 5. **Session Hijacking**
+
 - **Protection**: HttpOnly cookies, secure sessions, session timeout
 - **Status**: ✅ Protected
 
 ### 6. **Brute Force Attacks**
+
 - **Protection**: Rate limiting, account lockout (Supabase)
 - **Status**: ✅ Protected
 
 ### 7. **Man-in-the-Middle (MITM)**
+
 - **Protection**: HTTPS/TLS encryption
 - **Status**: ✅ Protected (when deployed with HTTPS)
 
@@ -137,16 +157,19 @@ All tables should have `rowsecurity = true`.
 ### Test These Before Launch:
 
 1. **Authentication Flow**
+
    - ✅ Unauthenticated users can't access /home, /profile, etc.
    - ✅ Authenticated users redirect from /login
    - ✅ Session persists on page refresh
    - ✅ Logout works correctly
 
 2. **Input Validation**
+
    - ✅ Try entering `<script>alert('xss')</script>` in forms
    - ✅ Should be sanitized/rejected
 
 3. **Password Security**
+
    - ✅ Weak passwords rejected
    - ✅ Password not visible in network tab
    - ✅ Password reset works
@@ -161,11 +184,13 @@ All tables should have `rowsecurity = true`.
 If you detect suspicious activity:
 
 1. **Immediately**:
+
    - Check Supabase auth logs
    - Review database activity logs
    - Lock affected accounts if needed
 
 2. **Investigation**:
+
    - Identify attack vector
    - Check for data breaches
    - Review all admin actions
@@ -180,11 +205,13 @@ If you detect suspicious activity:
 ### Set Up (Recommended):
 
 1. **Supabase Dashboard**
+
    - Monitor API requests
    - Check auth failure rates
    - Review database queries
 
 2. **Application Logs**
+
    - Track failed login attempts
    - Monitor unusual access patterns
    - Log security events
@@ -199,16 +226,20 @@ If you detect suspicious activity:
 ### For Production:
 
 1. **Add CAPTCHA**
+
    ```bash
    npm install @hcaptcha/react-hcaptcha
    ```
+
    Add to login/signup forms
 
 2. **Two-Factor Authentication (2FA)**
+
    - Supabase supports this
    - Enable in Supabase dashboard
 
 3. **IP Whitelisting**
+
    - For admin routes
    - Configure in Supabase or hosting platform
 
