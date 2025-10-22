@@ -76,7 +76,7 @@ COMMENT ON COLUMN announcements.updated_at IS 'When the announcement was last up
 -- Insert some sample data for testing
 INSERT INTO announcements (title, content, is_active) 
 VALUES 
-    ('Welcome to VU Clone', 'Welcome to our Virtual University clone application! Explore all the features available.', true),
+    ('Welcome to StudentNest', 'Welcome to StudentNest! Explore all the features available.', true),
     ('System Maintenance', 'The system will undergo maintenance this weekend. Please save your work regularly.', true),
     ('New Features Available', 'Check out the new AI chat assistant and announcement system!', true)
 ON CONFLICT DO NOTHING;

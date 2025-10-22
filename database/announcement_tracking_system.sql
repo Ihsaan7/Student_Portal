@@ -234,7 +234,7 @@ BEGIN
     -- Only insert if no announcements exist
     IF NOT EXISTS (SELECT 1 FROM announcements LIMIT 1) THEN
         INSERT INTO announcements (title, content, is_active) VALUES
-            ('Welcome to VU Clone', 'Welcome to our Virtual University clone application! Explore all the features available.', true),
+            ('Welcome to StudentNest', 'Welcome to StudentNest! Explore all the features available.', true),
             ('System Maintenance', 'The system will undergo maintenance this weekend. Please save your work regularly.', true),
             ('New Features Available', 'Check out the new AI chat assistant and announcement system!', true),
             ('Academic Calendar Update', 'Important dates have been added to the academic calendar. Please review your schedule.', true),

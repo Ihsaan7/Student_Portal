@@ -1,5 +1,5 @@
 -- =============================================
--- COMPREHENSIVE SECURITY SETUP FOR VU CLONE
+-- COMPREHENSIVE SECURITY SETUP FOR STUDENTNEST
 -- Run this in your Supabase SQL Editor
 -- =============================================
 

@@ -1,6 +1,6 @@
 # AI Academic Assistant - Setup Guide
 
-This document provides setup instructions for the AI Academic Assistant feature integrated into the Virtual University Learning Management System.
+This document provides setup instructions for the AI Academic Assistant feature integrated into the StudentNest Learning Management System.
 
 ## Features
 

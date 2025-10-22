@@ -23,7 +23,7 @@ export async function POST(request) {
     const isSummaryRequest = message && (message.toLowerCase().includes('summary') || message.toLowerCase().includes('summarize'));
     
     // Prepare the prompt with enhanced context and instructions
-    let prompt = `You are an AI Academic Assistant for Virtual University of Pakistan's Learning Management System. Your role is to provide comprehensive educational support.
+    let prompt = `You are an AI Academic Assistant for StudentNest's Learning Management System. Your role is to provide comprehensive educational support.
 
 ## Your Capabilities:
 

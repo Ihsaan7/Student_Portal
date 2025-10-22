@@ -1,9 +1,4 @@
--- Complete Database Setup for VU Clone Application
--- Run this script in your Supabase SQL Editor to set up all required tables
-
--- 1. Create the users table (extends auth.users)
-CREATE TABLE IF NOT EXISTS public.users (
-    id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+-- Complete Database Setup for StudentNest Application
     name TEXT,
     email TEXT,
     programme TEXT,

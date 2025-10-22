@@ -1,4 +1,4 @@
-# Troubleshooting Guide for VU Clone Loading Issues
+# Troubleshooting Guide for StudentNest Loading Issues
 
 ## Issue: Home page stuck on loading screen
 

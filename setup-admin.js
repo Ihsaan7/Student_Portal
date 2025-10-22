@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Admin Setup Script for VU Clone
+ * Admin Setup Script for StudentNest
  * 
  * This script helps set up the admin panel by:
  * 1. Checking if required files exist
@@ -32,7 +32,7 @@ function readFile(filePath) {
 
 function printHeader() {
   console.log('\n' + '='.repeat(60));
-  console.log('           VU CLONE ADMIN PANEL SETUP');
+  console.log('           StudentNest ADMIN PANEL SETUP');
   console.log('='.repeat(60) + '\n');
 }
 

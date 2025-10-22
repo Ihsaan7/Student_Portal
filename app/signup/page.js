@@ -21,7 +21,7 @@ export default function SignupPage() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  // Virtual University Programs - Only BSSE and BSCS available
+  // StudentNest Programs - Only BSSE and BSCS available
   const programmes = {
     "4-Year Programs": [
       {

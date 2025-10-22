@@ -106,7 +106,7 @@ If you're experiencing "Failed to fetch" errors or login issues:
 
 ## 🔐 Admin Panel
 
-The VU Clone includes a comprehensive admin panel with role-based access control:
+The StudentNest project includes a comprehensive admin panel with role-based access control:
 
 ### Admin Roles
 - **Student** (default): Regular user access

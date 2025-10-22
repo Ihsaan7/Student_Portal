@@ -1,6 +1,6 @@
 # Admin Panel Setup Guide
 
-This guide will help you set up the admin panel for your VU Clone application.
+This guide will help you set up the admin panel for your StudentNest application.
 
 ## Prerequisites
 

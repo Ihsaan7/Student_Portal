@@ -228,7 +228,7 @@ quickNetworkTest();
   }
 
   async run() {
-    console.log('🚀 VU Clone Network Issue Fixer');
+    console.log('🚀 StudentNest Network Issue Fixer');
     console.log('='.repeat(50));
     
     // Run all checks

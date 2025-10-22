@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Student Portal - VU Clone",
+  title: "Student Portal - StudentNest",
   description: "A modern student portal for educational management",
 };
 

@@ -178,7 +178,7 @@ export default function DashboardLayout({ children, currentPage }) {
             <div className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-lg" style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))' }}>
               V
             </div>
-            <span className="hidden md:inline font-bold text-lg" style={{ color: 'hsl(var(--sidebar-foreground))' }}>Virtual University</span>
+            <span className="hidden md:inline font-bold text-lg" style={{ color: 'hsl(var(--sidebar-foreground))' }}>StudentNest</span>
           </div>
           <nav className="flex-1">
             <ul className="space-y-3 mt-6 px-3">
@@ -217,7 +217,7 @@ export default function DashboardLayout({ children, currentPage }) {
           </nav>
         </div>
         <div className="px-4 py-6 text-xs border-t hidden md:block" style={{ color: 'hsl(var(--sidebar-muted))', borderColor: 'hsl(var(--sidebar-border))', backgroundColor: theme === 'dark' ? 'hsl(var(--sidebar) / 0.8)' : 'linear-gradient(to top, #f8fafc, transparent)' }}>
-          <div className="font-bold" style={{ color: 'hsl(var(--sidebar-primary))' }}>Virtual University of Pakistan</div>
+          <div className="font-bold" style={{ color: 'hsl(var(--sidebar-primary))' }}>StudentNest — Your learning hub</div>
           <div>Federal Government University</div>
         </div>
       </aside>

@@ -74,4 +74,4 @@ If you continue to experience issues:
 
 ---
 
-**Note**: The AI chatbot is designed to help with academic questions, course guidance, and PDF document analysis. It's specifically tailored for the Virtual University learning environment.
+**Note**: The AI chatbot is designed to help with academic questions, course guidance, and PDF document analysis. It's specifically tailored for the StudentNest learning environment.

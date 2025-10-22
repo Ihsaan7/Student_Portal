@@ -1,8 +1,4 @@
--- Create enrolled_courses table for Virtual University LMS
--- Run this in your Supabase SQL Editor
-
--- Create the enrolled_courses table
-CREATE TABLE IF NOT EXISTS enrolled_courses (
+-- Create enrolled_courses table for StudentNest LMS
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
     course_code TEXT NOT NULL,
