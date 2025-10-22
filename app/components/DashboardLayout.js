@@ -394,7 +394,7 @@ export default function DashboardLayout({ children, currentPage }) {
           >
             StudentNest — Your learning hub
           </div>
-          <div>Federal Government University</div>
+          <div>Learn , Grow and Help others</div>
         </div>
       </aside>
 
