@@ -249,7 +249,7 @@ Add this to your help/FAQ page:
 - ✅ Use a unique password (not used elsewhere)
 - ✅ Never share your password
 - ✅ Log out on shared computers
--- ✅ Report suspicious emails claiming to be from StudentNest
+  -- ✅ Report suspicious emails claiming to be from StudentNest
 - ✅ Keep your email address up to date
 
 ### What We Do to Protect You:

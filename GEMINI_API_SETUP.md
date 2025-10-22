@@ -30,12 +30,14 @@ npm run dev
 ## Important Notes
 
 ### Free Tier Limits
+
 - Google Gemini offers a generous free tier
 - 15 requests per minute
 - 1 million tokens per minute
 - 1,500 requests per day
 
 ### Security
+
 - **Never commit your API key to version control**
 - The `.env.local` file is already in `.gitignore`
 - Keep your API key secure and don't share it publicly

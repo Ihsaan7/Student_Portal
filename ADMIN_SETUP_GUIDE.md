@@ -77,8 +77,8 @@ If you already have a user account:
 4. Go to SQL Editor and run:
 
 ```sql
-UPDATE users 
-SET role = 'super_admin' 
+UPDATE users
+SET role = 'super_admin'
 WHERE id = 'your-user-id-here';
 ```
 
@@ -117,8 +117,8 @@ ALTER TABLE system_stats ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Admin full access to admin_settings" ON admin_settings
   FOR ALL USING (
     EXISTS (
-      SELECT 1 FROM users 
-      WHERE users.id = auth.uid() 
+      SELECT 1 FROM users
+      WHERE users.id = auth.uid()
       AND users.role IN ('admin', 'super_admin')
     )
   );
@@ -126,8 +126,8 @@ CREATE POLICY "Admin full access to admin_settings" ON admin_settings
 CREATE POLICY "Admin full access to admin_logs" ON admin_logs
   FOR ALL USING (
     EXISTS (
-      SELECT 1 FROM users 
-      WHERE users.id = auth.uid() 
+      SELECT 1 FROM users
+      WHERE users.id = auth.uid()
       AND users.role IN ('admin', 'super_admin')
     )
   );
@@ -135,8 +135,8 @@ CREATE POLICY "Admin full access to admin_logs" ON admin_logs
 CREATE POLICY "Admin read access to system_stats" ON system_stats
   FOR SELECT USING (
     EXISTS (
-      SELECT 1 FROM users 
-      WHERE users.id = auth.uid() 
+      SELECT 1 FROM users
+      WHERE users.id = auth.uid()
       AND users.role IN ('admin', 'super_admin')
     )
   );
@@ -145,6 +145,7 @@ CREATE POLICY "Admin read access to system_stats" ON system_stats
 ## Step 4: Test Admin Access
 
 1. Start your development server:
+
    ```bash
    npm run dev
    ```
@@ -165,10 +166,12 @@ CREATE POLICY "Admin read access to system_stats" ON system_stats
 ## Admin Roles
 
 ### Student (default)
+
 - Regular user access
 - Can access courses and support
 
 ### Admin
+
 - Access to admin panel
 - Can manage users (except super admins)
 - Can handle support queries
@@ -176,6 +179,7 @@ CREATE POLICY "Admin read access to system_stats" ON system_stats
 - Can view system analytics
 
 ### Super Admin
+
 - All admin permissions
 - Can manage other admins
 - Can access system settings
@@ -193,16 +197,19 @@ CREATE POLICY "Admin read access to system_stats" ON system_stats
 ## Troubleshooting
 
 ### "Access Denied" Error
+
 - Check that your user has the correct role in the database
 - Verify RLS policies are set up correctly
 - Clear browser cache and try again
 
 ### Admin Panel Not Loading
+
 - Check browser console for JavaScript errors
 - Verify all admin files are created correctly
 - Check network connectivity
 
 ### Database Errors
+
 - Ensure all SQL commands ran successfully
 - Check Supabase logs for detailed error messages
 - Verify table permissions and RLS policies

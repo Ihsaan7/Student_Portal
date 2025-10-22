@@ -5,24 +5,30 @@ This is a [Next.js](https://nextjs.org) project that replicates a university stu
 ## Quick Start
 
 ### 1. Environment Setup
+
 Create a `.env.local` file with your Supabase credentials:
+
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
 ```
 
 ### 2. Database Setup
+
 Run the SQL script to set up your database:
+
 ```sql
 -- Execute the contents of complete-database-setup.sql in your Supabase SQL editor
 ```
 
 ### 3. Install Dependencies
+
 ```bash
 npm install
 ```
 
 ### 4. Start Development Server
+
 ```bash
 npm run dev
 ```
@@ -34,7 +40,9 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 If you're experiencing "Failed to fetch" errors or login issues:
 
 ### Quick Diagnosis
+
 1. **Run the automated fixer:**
+
    ```bash
    node fix-network-issues.js
    ```
@@ -46,21 +54,25 @@ If you're experiencing "Failed to fetch" errors or login issues:
 ### Common Issues & Solutions
 
 #### "Failed to fetch" during login
+
 - ✅ **Auto-retry:** The app automatically retries failed requests 3 times
 - ✅ **Network detection:** Real-time network status monitoring
 - ✅ **Enhanced errors:** Detailed error messages with troubleshooting tips
 
 #### Environment configuration issues
+
 - Run `node fix-network-issues.js` to check configuration
 - Verify `.env.local` file exists and contains correct Supabase credentials
 - Restart development server after environment changes
 
 #### Connectivity problems
+
 - Check the network indicator on the login page
 - Visit `/test-connection` for comprehensive diagnostics
 - Review `NETWORK_TROUBLESHOOTING.md` for detailed solutions
 
 ### Enhanced Features
+
 - 🔄 **Automatic retry logic** for network failures
 - 🌐 **Real-time network status** indicators
 - 🔍 **Comprehensive connectivity testing** at `/test-connection`
@@ -109,11 +121,13 @@ If you're experiencing "Failed to fetch" errors or login issues:
 The StudentNest project includes a comprehensive admin panel with role-based access control:
 
 ### Admin Roles
+
 - **Student** (default): Regular user access
 - **Admin**: Can manage users, support queries, and view courses
 - **Super Admin**: Full system access including settings and admin management
 
 ### Admin Features
+
 - **Dashboard**: System overview with statistics
 - **User Management**: View, edit roles, and manage users
 - **Support Management**: Handle support queries and responses
@@ -124,15 +138,18 @@ The StudentNest project includes a comprehensive admin panel with role-based acc
 ### Quick Admin Setup
 
 1. **Run the setup script**:
+
    ```bash
    node setup-admin.js
    ```
 
 2. **Set up database**:
+
    - Copy content from `admin-setup.sql`
    - Run in Supabase SQL Editor
 
 3. **Create first admin**:
+
    ```sql
    UPDATE users SET role = 'super_admin' WHERE email = 'your-email@domain.com';
    ```

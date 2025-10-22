@@ -5,18 +5,21 @@ This document provides setup instructions for the AI Academic Assistant feature 
 ## Features
 
 ### 🤖 AI Academic Assistant
+
 - **General Q&A**: Ask questions about courses, assignments, and academic topics
 - **PDF Analysis**: Upload lecture PDFs for automatic summarization with headings and key points
 - **Conversation History**: All chats are saved and can be referenced later
 - **Academic Focus**: Specialized prompts for educational content and study guidance
 
 ### 📄 PDF Processing
+
 - **Text Extraction**: Automatic text extraction from PDF files
 - **Smart Formatting**: Detects headings and structures content appropriately
 - **Metadata Display**: Shows page count, word count, and file information
 - **File Validation**: Supports PDF files up to 10MB
 
 ### 💬 Chat Interface
+
 - **Real-time Messaging**: Instant responses with typing indicators
 - **File Upload**: Drag-and-drop PDF upload functionality
 - **Message History**: Persistent conversation storage
@@ -33,6 +36,7 @@ npm install
 ```
 
 This will install:
+
 - `@google/generative-ai` - Google Gemini AI integration
 - `pdf-parse` - PDF text extraction
 
@@ -81,6 +85,7 @@ CREATE TABLE ai_chat_history (
 4. Copy the generated key to your `.env.local` file
 
 **Note**: Google Gemini offers a generous free tier with:
+
 - 1M+ context window
 - Multimodal capabilities (text, images)
 - High rate limits for development
@@ -128,9 +133,11 @@ database/
 ## API Endpoints
 
 ### POST /api/ai-chat
+
 Handles AI conversation requests
 
 **Request Body:**
+
 ```json
 {
   "message": "Your question here",
@@ -140,6 +147,7 @@ Handles AI conversation requests
 ```
 
 **Response:**
+
 ```json
 {
   "response": "AI generated response"
@@ -147,11 +155,13 @@ Handles AI conversation requests
 ```
 
 ### POST /api/extract-pdf
+
 Extracts text from uploaded PDF files
 
 **Request:** FormData with PDF file
 
 **Response:**
+
 ```json
 {
   "text": "Extracted and formatted text",
@@ -202,6 +212,7 @@ Extracts text from uploaded PDF files
 ## Support
 
 For issues or questions:
+
 1. Check the troubleshooting section above
 2. Review the console logs for detailed error messages
 3. Ensure all environment variables are properly set

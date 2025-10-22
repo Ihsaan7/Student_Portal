@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { NextResponse } from "next/server";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // Initialize Gemini AI
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -10,18 +10,26 @@ export async function POST(request) {
 
     if (!message && !fileContent) {
       return NextResponse.json(
-        { error: 'Message or file content is required' },
+        { error: "Message or file content is required" },
         { status: 400 }
       );
     }
 
     // Get the Gemini model
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     // Detect the type of request based on the message content
-    const isMCQRequest = message && (message.toLowerCase().includes('mcq') || message.toLowerCase().includes('multiple choice') || message.toLowerCase().includes('test') && message.toLowerCase().includes('question'));
-    const isSummaryRequest = message && (message.toLowerCase().includes('summary') || message.toLowerCase().includes('summarize'));
-    
+    const isMCQRequest =
+      message &&
+      (message.toLowerCase().includes("mcq") ||
+        message.toLowerCase().includes("multiple choice") ||
+        (message.toLowerCase().includes("test") &&
+          message.toLowerCase().includes("question")));
+    const isSummaryRequest =
+      message &&
+      (message.toLowerCase().includes("summary") ||
+        message.toLowerCase().includes("summarize"));
+
     // Prepare the prompt with enhanced context and instructions
     let prompt = `You are an AI Academic Assistant for StudentNest's Learning Management System. Your role is to provide comprehensive educational support.
 
@@ -58,7 +66,7 @@ export async function POST(request) {
 - IMPORTANT: Follow the user's specific request type (MCQ generation, summary, etc.) exactly as requested
 
 ## Current User Query:
-${message}`
+${message}`;
 
     // If there's file content, add specific instructions based on request type
     if (fileContent) {
@@ -75,84 +83,111 @@ ${message}`
     let text;
     let retryCount = 0;
     const maxRetries = 3;
-    
+
     while (retryCount < maxRetries) {
       try {
         const result = await model.generateContent(prompt);
         const response = await result.response;
         text = response.text();
-        
+
         // If successful, break out of retry loop
         break;
       } catch (retryError) {
         retryCount++;
-        console.log(`Gemini API attempt ${retryCount} failed:`, retryError.message);
-        
+        console.log(
+          `Gemini API attempt ${retryCount} failed:`,
+          retryError.message
+        );
+
         // If this is a 503 overloaded error and we have retries left
-        if (retryError.message?.includes('overloaded') || retryError.message?.includes('503')) {
+        if (
+          retryError.message?.includes("overloaded") ||
+          retryError.message?.includes("503")
+        ) {
           if (retryCount < maxRetries) {
             const delay = Math.pow(2, retryCount) * 1000; // Exponential backoff: 2s, 4s, 8s
             console.log(`Retrying in ${delay}ms...`);
-            await new Promise(resolve => setTimeout(resolve, delay));
+            await new Promise((resolve) => setTimeout(resolve, delay));
             continue;
           }
         }
-        
+
         // If not a retryable error or out of retries, throw the error
         throw retryError;
       }
     }
 
     // Log the interaction (optional, for monitoring)
-    console.log(`AI Chat - User: ${userId}, Message length: ${message?.length || 0}, Has file: ${!!fileContent}`);
+    console.log(
+      `AI Chat - User: ${userId}, Message length: ${
+        message?.length || 0
+      }, Has file: ${!!fileContent}`
+    );
     if (fileContent) {
-      console.log('File content preview:', fileContent.substring(0, 200) + '...');
+      console.log(
+        "File content preview:",
+        fileContent.substring(0, 200) + "..."
+      );
     }
 
     return NextResponse.json({ response: text });
-
   } catch (error) {
-    console.error('Error in AI chat API:', error);
-    console.error('Error details:', {
+    console.error("Error in AI chat API:", error);
+    console.error("Error details:", {
       message: error.message,
       status: error.status,
       code: error.code,
-      stack: error.stack?.substring(0, 500)
+      stack: error.stack?.substring(0, 500),
     });
-    
+
     // Handle specific Gemini API errors
-    if (error.message?.includes('API_KEY')) {
+    if (error.message?.includes("API_KEY")) {
       return NextResponse.json(
-        { error: 'AI service configuration error. Please contact support.' },
+        { error: "AI service configuration error. Please contact support." },
         { status: 500 }
       );
     }
-    
-    if (error.message?.includes('quota') || error.message?.includes('limit')) {
+
+    if (error.message?.includes("quota") || error.message?.includes("limit")) {
       return NextResponse.json(
-        { error: 'AI service is temporarily unavailable. Please try again later.' },
+        {
+          error:
+            "AI service is temporarily unavailable. Please try again later.",
+        },
         { status: 503 }
       );
     }
 
     // Handle model overloaded error
-    if (error.message?.includes('overloaded') || error.message?.includes('503')) {
+    if (
+      error.message?.includes("overloaded") ||
+      error.message?.includes("503")
+    ) {
       return NextResponse.json(
-        { error: 'The AI service is currently experiencing high demand. Please wait a moment and try again.' },
+        {
+          error:
+            "The AI service is currently experiencing high demand. Please wait a moment and try again.",
+        },
         { status: 503 }
       );
     }
 
     // Handle network/timeout errors
-    if (error.message?.includes('fetch') || error.message?.includes('network')) {
+    if (
+      error.message?.includes("fetch") ||
+      error.message?.includes("network")
+    ) {
       return NextResponse.json(
-        { error: 'Network connection issue. Please check your internet connection and try again.' },
+        {
+          error:
+            "Network connection issue. Please check your internet connection and try again.",
+        },
         { status: 503 }
       );
     }
 
     return NextResponse.json(
-      { error: 'Failed to process your request. Please try again.' },
+      { error: "Failed to process your request. Please try again." },
       { status: 500 }
     );
   }
@@ -163,9 +198,9 @@ export async function OPTIONS(request) {
   return new NextResponse(null, {
     status: 200,
     headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type",
     },
   });
 }
