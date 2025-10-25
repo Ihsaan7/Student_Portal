@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from "../../lib/supabase";
 import { useTheme } from "./ThemeProvider";
 import StudyBuddyLogo from "./StudyBuddyLogo";
@@ -198,6 +198,7 @@ export default function DashboardLayout({ children, currentPage }) {
   const [adminMode, setAdminMode] = useState(false);
   const [adminData, setAdminData] = useState(null);
   const [unreadAnnouncementCount, setUnreadAnnouncementCount] = useState(0);
+  const profileDropdownRef = useRef(null);
 
   useEffect(() => {
     const getUser = async () => {
@@ -227,6 +228,25 @@ export default function DashboardLayout({ children, currentPage }) {
     };
     getUser();
   }, []);
+
+  // Handle click outside to close profile dropdown
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target)) {
+        setProfileOpen(false);
+      }
+    };
+
+    // Add event listener when dropdown is open
+    if (profileOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    // Cleanup event listener
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [profileOpen]);
 
   // Load unread announcement count
   const loadUnreadAnnouncementCount = async (userId) => {
@@ -510,29 +530,46 @@ export default function DashboardLayout({ children, currentPage }) {
               </div>
             </div>
             {/* Profile Dropdown */}
-            <div className="relative">
+            <div className="relative" ref={profileDropdownRef}>
               <button
-                className="w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all duration-200 hover:shadow-sm"
+                className="w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all duration-200 hover:shadow-sm overflow-hidden"
                 onClick={() => setProfileOpen((v) => !v)}
                 aria-label="Profile"
                 style={{
                   borderColor: "hsl(var(--border))",
-                  backgroundColor: "hsl(var(--muted))",
+                  backgroundColor: userProfile?.avatar_url ? "transparent" : "hsl(var(--muted))",
                   color: "hsl(var(--muted-foreground))",
                 }}
                 onMouseEnter={(e) => {
                   e.target.style.borderColor = "hsl(var(--primary))";
-                  e.target.style.backgroundColor = "hsl(var(--muted) / 0.8)";
+                  if (!userProfile?.avatar_url) {
+                    e.target.style.backgroundColor = "hsl(var(--muted) / 0.8)";
+                  }
                 }}
                 onMouseLeave={(e) => {
                   e.target.style.borderColor = "hsl(var(--border))";
-                  e.target.style.backgroundColor = "hsl(var(--muted))";
+                  if (!userProfile?.avatar_url) {
+                    e.target.style.backgroundColor = "hsl(var(--muted))";
+                  }
                 }}
               >
+                {userProfile?.avatar_url ? (
+                  <img
+                    src={userProfile.avatar_url}
+                    alt="Profile Avatar"
+                    className="w-full h-full object-cover rounded-full"
+                    onError={(e) => {
+                      // Fallback to default icon if avatar fails to load
+                      e.target.style.display = 'none';
+                      e.target.nextSibling.style.display = 'block';
+                    }}
+                  />
+                ) : null}
                 <svg
                   className="w-7 h-7"
                   fill="currentColor"
                   viewBox="0 0 24 24"
+                  style={{ display: userProfile?.avatar_url ? 'none' : 'block' }}
                 >
                   <path d="M12 12c2.7 0 4.5-1.8 4.5-4.5S14.7 3 12 3 7.5 4.8 7.5 7.5 9.3 12 12 12zm0 2c-3 0-9 1.5-9 4.5V21h18v-2.5c0-3-6-4.5-9-4.5z" />
                 </svg>
@@ -546,23 +583,54 @@ export default function DashboardLayout({ children, currentPage }) {
                   }}
                 >
                   <div
-                    className="px-4 py-2 border-b"
+                    className="px-4 py-2 border-b flex items-center space-x-3"
                     style={{ borderColor: "hsl(var(--border))" }}
                   >
-                    <div
-                      className="font-medium"
-                      style={{ color: "hsl(var(--popover-foreground))" }}
+                    <div className="w-10 h-10 rounded-full border-2 flex items-center justify-center overflow-hidden flex-shrink-0"
+                      style={{
+                        borderColor: "hsl(var(--border))",
+                        backgroundColor: userProfile?.avatar_url ? "transparent" : "hsl(var(--muted))",
+                      }}
                     >
-                      {studentName}
-                    </div>
-                    {adminMode && (
-                      <div
-                        className="text-xs font-medium mt-1"
-                        style={{ color: "hsl(var(--destructive))" }}
+                      {userProfile?.avatar_url ? (
+                        <img
+                          src={userProfile.avatar_url}
+                          alt="Profile Avatar"
+                          className="w-full h-full object-cover rounded-full"
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                            e.target.nextSibling.style.display = 'block';
+                          }}
+                        />
+                      ) : null}
+                      <svg
+                        className="w-6 h-6"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                        style={{ 
+                          display: userProfile?.avatar_url ? 'none' : 'block',
+                          color: "hsl(var(--muted-foreground))"
+                        }}
                       >
-                        Admin Mode Active
+                        <path d="M12 12c2.7 0 4.5-1.8 4.5-4.5S14.7 3 12 3 7.5 4.8 7.5 7.5 9.3 12 12 12zm0 2c-3 0-9 1.5-9 4.5V21h18v-2.5c0-3-6-4.5-9-4.5z" />
+                      </svg>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div
+                        className="font-medium truncate"
+                        style={{ color: "hsl(var(--popover-foreground))" }}
+                      >
+                        {studentName}
                       </div>
-                    )}
+                      {adminMode && (
+                        <div
+                          className="text-xs font-medium mt-1"
+                          style={{ color: "hsl(var(--destructive))" }}
+                        >
+                          Admin Mode Active
+                        </div>
+                      )}
+                    </div>
                   </div>
                   <a
                     href="/profile"
