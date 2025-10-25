@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useTheme } from './ThemeProvider';
+import StudyBuddyLogo from './StudyBuddyLogo';
 import Toast from './Toast';
 
 export default function AIChatInterface({ user }) {
@@ -65,7 +66,7 @@ export default function AIChatInterface({ user }) {
         // Welcome message for new users
         setMessages([{
           id: 'welcome',
-          text: "# 👋 Welcome to StudyBuddy!\n\nI'm your **AI assistant** and I can help you with:\n\n• **General Questions** - Ask me anything you'd like to know\n• **Conversations** - Have a friendly chat about any topic\n• **Information** - Get explanations and answers\n\nHow can I help you today?",
+          text: "# 👋 Welcome to StudentNest!\n\nI'm your **AI assistant** and I can help you with:\n\n• **General Questions** - Ask me anything you'd like to know\n• **Conversations** - Have a friendly chat about any topic\n• **Information** - Get explanations and answers\n\nHow can I help you today?",
           sender: 'ai',
           timestamp: new Date()
         }]);
@@ -84,7 +85,7 @@ export default function AIChatInterface({ user }) {
       // Show welcome message even if history loading fails
       setMessages([{
         id: 'welcome',
-        text: "# 👋 Welcome to StudyBuddy!\n\nI'm your **AI assistant** and I can help you with:\n\n• **General Questions** - Ask me anything you'd like to know\n• **Conversations** - Have a friendly chat about any topic\n• **Information** - Get explanations and answers\n\n## How can I assist you today?",
+        text: "# 👋 Welcome to StudentNest!\n\nI'm your **AI assistant** and I can help you with:\n\n• **General Questions** - Ask me anything you'd like to know\n• **Conversations** - Have a friendly chat about any topic\n• **Information** - Get explanations and answers\n\n## How can I assist you today?",
         sender: 'ai',
         timestamp: new Date()
       }]);
@@ -250,7 +251,7 @@ export default function AIChatInterface({ user }) {
   const handleSummarize = async () => {
     if (!extractedText) return;
     
-    const prompt = `Can you shorten this in easier and simpler wording, include examples with headings and subheadings:\n\n${extractedText}`;
+    const prompt = `SUMMARIZE: Please shorten this content in easier and simpler wording, include examples with headings and subheadings`;
     await sendMessageWithPrompt(prompt);
     resetFileState();
   };
@@ -258,7 +259,7 @@ export default function AIChatInterface({ user }) {
   const handleMCQs = async () => {
     if (!extractedText) return;
     
-    const prompt = `Can you prepare a test for me from this file of 10 MCQs and 3 short answers (give the answers at the bottom so I don't get a proper glance and solve these questions myself and then see the answers):\n\n${extractedText}`;
+    const prompt = `GENERATE_MCQS: Please prepare a test for me from this file with 10 MCQs and 3 short answers (give the answers at the bottom so I don't get a proper glance and solve these questions myself and then see the answers)`;
     await sendMessageWithPrompt(prompt);
     resetFileState();
   };
@@ -276,11 +277,29 @@ export default function AIChatInterface({ user }) {
     setIsTyping(true);
 
     try {
-      const response = await callGeminiAPI(prompt);
+      // Call the AI API with file content
+      const response = await fetch('/api/ai-chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: prompt,
+          fileContent: extractedText,
+          userId: user?.id
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to get AI response');
+      }
+
+      const data = await response.json();
+      const aiResponse = data.response;
       
       const aiMessage = {
         id: Date.now() + 1,
-        text: response,
+        text: aiResponse,
         sender: 'ai',
         timestamp: new Date()
       };
@@ -454,11 +473,9 @@ export default function AIChatInterface({ user }) {
       <div className="border-b p-6" style={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: 'hsl(var(--primary))' }}>
-              <span className="text-lg font-bold" style={{ color: 'hsl(var(--primary-foreground))' }}>S</span>
-            </div>
+            <StudyBuddyLogo size="medium" showText={false} />
             <div>
-              <h2 className="text-xl font-semibold" style={{ color: 'hsl(var(--card-foreground))' }}>StudyBuddy</h2>
+              <h2 className="text-xl font-semibold" style={{ color: 'hsl(var(--card-foreground))' }}>StudentNest AI Assistant</h2>
               <p className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>Hello! I'm here to help you with your studies. What topic are you interested in today?</p>
             </div>
           </div>
@@ -544,28 +561,50 @@ export default function AIChatInterface({ user }) {
             <button
               onClick={handleSummarize}
               disabled={isLoading}
-              className="flex-1 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+              className="flex-1 px-4 py-2 rounded-lg border-2 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
               style={{ 
                 backgroundColor: 'hsl(var(--success))', 
                 color: 'hsl(var(--success-foreground))',
+                borderColor: 'hsl(var(--success))',
                 focusRingColor: 'hsl(var(--success))'
               }}
-              onMouseEnter={(e) => !isLoading && (e.target.style.opacity = '0.9')}
-              onMouseLeave={(e) => !isLoading && (e.target.style.opacity = '1')}
+              onMouseEnter={(e) => {
+                if (!isLoading) {
+                  e.target.style.opacity = '0.9';
+                  e.target.style.borderColor = 'hsl(var(--success-foreground))';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isLoading) {
+                  e.target.style.opacity = '1';
+                  e.target.style.borderColor = 'hsl(var(--success))';
+                }
+              }}
             >
               📝 Summarize
             </button>
             <button
               onClick={handleMCQs}
               disabled={isLoading}
-              className="flex-1 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+              className="flex-1 px-4 py-2 rounded-lg border-2 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
               style={{ 
                 backgroundColor: 'hsl(var(--secondary))', 
                 color: 'hsl(var(--secondary-foreground))',
+                borderColor: 'hsl(var(--secondary))',
                 focusRingColor: 'hsl(var(--secondary))'
               }}
-              onMouseEnter={(e) => !isLoading && (e.target.style.opacity = '0.9')}
-              onMouseLeave={(e) => !isLoading && (e.target.style.opacity = '1')}
+              onMouseEnter={(e) => {
+                if (!isLoading) {
+                  e.target.style.opacity = '0.9';
+                  e.target.style.borderColor = 'hsl(var(--secondary-foreground))';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isLoading) {
+                  e.target.style.opacity = '1';
+                  e.target.style.borderColor = 'hsl(var(--secondary))';
+                }
+              }}
             >
               📋 MCQs
             </button>
@@ -619,6 +658,34 @@ export default function AIChatInterface({ user }) {
               </>
             )}
           </label>
+          
+          <button
+            onClick={() => {
+              const text = prompt("Paste your text content here (since PDF text extraction failed):");
+              if (text && text.trim()) {
+                setExtractedText(text);
+                setUploadedFile({ name: "Manual Text Input" });
+                setShowFileActions(true);
+              }
+            }}
+            className="px-4 py-2 border-2 rounded-lg transition-colors flex items-center space-x-2 text-sm"
+            style={{ 
+              borderColor: 'hsl(var(--primary))', 
+              color: 'hsl(var(--primary))',
+              backgroundColor: 'hsl(var(--background))'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.backgroundColor = 'hsl(var(--primary) / 0.1)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.backgroundColor = 'hsl(var(--background))';
+            }}
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+            <span>Paste Text</span>
+          </button>
         </div>
         <div className="flex space-x-4 items-end">
           <textarea

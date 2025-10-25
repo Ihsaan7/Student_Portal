@@ -1,0 +1,26 @@
+{
+  "name": "StudentNest Learning Portal",
+  "short_name": "StudentNest",
+  "description": "Your comprehensive educational platform for better learning and study management",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3B82F6",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/studybuddy-logo.svg",
+      "sizes": "48x48",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/studybuddy-logo.svg",
+      "sizes": "72x72 96x96 128x128 144x144 152x152 192x192 384x384 512x512",
+      "type": "image/svg+xml"
+    }
+  ],
+  "categories": ["education", "productivity", "utilities"],
+  "lang": "en",
+  "dir": "ltr"
+}

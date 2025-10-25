@@ -1,0 +1,25 @@
+<svg width="120" height="40" viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Logo Icon with gradient -->
+  <defs>
+    <linearGradient id="bgGradientLarge" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#374151"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+  </defs>
+  <circle cx="20" cy="20" r="18" fill="url(#bgGradientLarge)"/>
+  
+  <!-- Book -->
+  <path d="M12 8C12 7.44772 12.4477 7 13 7H16C16.5523 7 17 7.44772 17 8V32C17 32.5523 16.5523 33 16 33H13C12.4477 33 12 32.5523 12 32V8Z" fill="#FFFFFF"/>
+  <path d="M23 8C23 7.44772 23.4477 7 24 7H27C27.5523 7 28 7.44772 28 8V32C28 32.5523 27.5523 33 27 33H24C23.4477 33 23 32.5523 23 32V8Z" fill="#FFFFFF"/>
+  
+  <!-- Bookmark -->
+  <path d="M17 7V15L20 13L23 15V7" fill="#10B981"/>
+  
+  <!-- Graduation Cap -->
+  <path d="M20 3L30 8L20 13L10 8L20 3Z" fill="#059669"/>
+  <path d="M27 10V15C27 16.5 23.5 18 20 18C16.5 18 13 16.5 13 15V10" stroke="#059669" stroke-width="1" fill="none"/>
+  
+  <!-- Text -->
+  <text x="45" y="16" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#374151">StudentNest</text>
+  <text x="45" y="28" font-family="Arial, sans-serif" font-size="10" fill="#6B7280">Learning Portal</text>
+</svg>

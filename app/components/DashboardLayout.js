@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabase";
 import { useTheme } from "./ThemeProvider";
+import StudyBuddyLogo from "./StudyBuddyLogo";
 
 // Utility function to check if admin is in user mode
 const isAdminMode = () => {
@@ -392,9 +393,9 @@ export default function DashboardLayout({ children, currentPage }) {
             className="font-bold"
             style={{ color: "hsl(var(--sidebar-primary))" }}
           >
-            StudentNest — Your learning hub
+            StudentNest — Your Learning Hub
           </div>
-          <div>Learn , Grow and Help others</div>
+          <div>Learn Smarter, Study Better, Achieve More</div>
         </div>
       </aside>
 
@@ -410,14 +411,17 @@ export default function DashboardLayout({ children, currentPage }) {
               theme === "dark" ? "none" : "0 1px 3px 0 rgba(0, 0, 0, 0.1)",
           }}
         >
-          <div
-            className="font-bold text-xl tracking-wide"
-            style={{ color: "hsl(var(--foreground))" }}
-          >
-            <span className="hidden sm:inline">
-              LMS Learning Management System
-            </span>
-            <span className="sm:hidden">LMS</span>
+          <div className="flex items-center">
+            <StudyBuddyLogo size="small" showText={false} className="mr-3" />
+            <div
+              className="font-bold text-xl tracking-wide"
+              style={{ color: "hsl(var(--foreground))" }}
+            >
+              <span className="hidden sm:inline">
+                StudentNest Learning Portal
+              </span>
+              <span className="sm:hidden">StudentNest</span>
+            </div>
           </div>
           <div className="flex items-center gap-4">
             {/* Theme Toggle */}

@@ -3,6 +3,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { supabase } from "../../lib/supabase";
 import { useRouter } from "next/navigation";
+import StudyBuddyLogo from "../components/StudyBuddyLogo";
 import {
   sanitizeInput,
   isValidEmail as validateEmail,
@@ -231,23 +232,13 @@ export default function SignupPage() {
         }}
       >
         <div className="flex items-center justify-between mb-8">
-          {/* Logo on the left */}
-          <div className="flex items-center space-x-3">
-            <div className="relative w-12 h-12">
-              <Image
-                src="/R.jpg"
-                alt="Logo"
-                fill
-                sizes="48px"
-                className="rounded-lg object-cover"
-                priority
-              />
-            </div>
-            <div>
-              <h1
-                className="text-2xl font-bold"
-                style={{ color: `hsl(var(--primary))` }}
-              >
+          {/* StudyBuddy Logo */}
+          <StudyBuddyLogo size="medium" showText={true} />
+          <div>
+            <h1
+              className="text-2xl font-bold"
+              style={{ color: `hsl(var(--primary))` }}
+            >
                 Student Portal
               </h1>
               <p

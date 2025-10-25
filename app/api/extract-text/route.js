@@ -47,20 +47,55 @@ export async function POST(request) {
         extractedText = data.text;
       } catch (error) {
         console.error('Error parsing PDF:', error);
-        // Fallback response for PDF files
-        extractedText = `PDF file "${file.name}" was uploaded successfully, but text extraction failed.
+        
+        // Try alternative PDF processing approaches
+        try {
+          // Alternative approach: try to extract as raw text
+          const arrayBuffer = await file.arrayBuffer();
+          const uint8Array = new Uint8Array(arrayBuffer);
+          const text = new TextDecoder('utf-8', { fatal: false }).decode(uint8Array);
+          
+          // Look for readable text patterns in the PDF
+          const textMatches = text.match(/[a-zA-Z0-9\s.,!?;:'"()-]{10,}/g);
+          if (textMatches && textMatches.length > 0) {
+            extractedText = textMatches.join(' ').substring(0, 5000);
+            console.log('Extracted text using alternative method');
+          } else {
+            throw new Error('No readable text found');
+          }
+        } catch (altError) {
+          console.error('Alternative PDF extraction also failed:', altError);
+          
+          // Provide helpful error message with solutions
+          extractedText = `⚠️ PDF Text Extraction Failed
 
-This could be due to:
-• The PDF contains scanned images instead of text
-• The PDF is password protected
-• The file is corrupted
+**File:** ${file.name} (${Math.round(file.size / 1024)}KB)
 
-Please try:
-1. Converting your PDF to a text file
-2. Copy and paste the text content manually
-3. Using a different PDF file
+**Why this happened:**
+• Your PDF contains scanned images instead of selectable text
+• The PDF might be password protected
+• The file could be corrupted or in an unsupported format
 
-File size: ${Math.round(file.size / 1024)}KB`;
+**Solutions:**
+
+**Option 1: Use the "Paste Text" button**
+• Copy text from your PDF manually
+• Click the "Paste Text" button below
+• Paste your content and proceed
+
+**Option 2: Convert your PDF**
+• Use online tools like SmallPDF or ILovePDF
+• Convert PDF to TXT format
+• Upload the TXT file instead
+
+**Option 3: Try a different PDF**
+• Use a PDF with selectable text (not scanned images)
+• Ensure the PDF is not password protected
+
+**Quick Test:** Try selecting text in your PDF with your mouse. If you can't select text, it's a scanned image and needs conversion.
+
+Click "Paste Text" below to manually input your content! 📝`;
+        }
       }
     }
 
@@ -96,11 +131,24 @@ function formatExtractedText(text) {
     return "No text content could be extracted from this file.";
   }
 
-  // Clean up the text
+  // Clean up the text and handle special characters
   let formatted = text
     .replace(/\r\n/g, '\n')  // Normalize line endings
     .replace(/\r/g, '\n')    // Handle old Mac line endings
     .replace(/\n{3,}/g, '\n\n')  // Reduce multiple line breaks
+    .replace(/�/g, '')       // Remove replacement characters
+    .replace(/\u00A0/g, ' ') // Replace non-breaking spaces
+    .replace(/\u2013/g, '-') // Replace en-dash
+    .replace(/\u2014/g, '--') // Replace em-dash
+    .replace(/\u2018/g, "'") // Replace left single quote
+    .replace(/\u2019/g, "'") // Replace right single quote
+    .replace(/\u201C/g, '"') // Replace left double quote
+    .replace(/\u201D/g, '"') // Replace right double quote
+    .replace(/\u2022/g, '•') // Replace bullet point
+    .replace(/\u2026/g, '...') // Replace ellipsis
+    .replace(/e\?/g, 'ef')   // Fix common OCR errors
+    .replace(/\?/g, 'fi')    // Fix ligature issues
+    .replace(/\s+/g, ' ')    // Normalize whitespace
     .trim();
 
   // Try to identify and format headings

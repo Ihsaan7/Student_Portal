@@ -13,8 +13,20 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Student Portal - StudentNest",
-  description: "A modern student portal for educational management",
+  title: "StudentNest - Learning Portal",
+  description: "Your comprehensive educational platform for better learning and study management",
+  keywords: "education, learning, AI tutor, student portal, online learning, LMS",
+  authors: [{ name: "StudentNest Team" }],
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/studybuddy-logo.svg", type: "image/svg+xml", sizes: "48x48" }
+    ],
+    apple: "/studybuddy-logo.svg",
+  },
+  manifest: "/manifest.json",
+  themeColor: "#3B82F6",
+  viewport: "width=device-width, initial-scale=1",
 };
 
 export default function RootLayout({ children }) {

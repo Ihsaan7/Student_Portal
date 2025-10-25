@@ -1,0 +1,17 @@
+<svg width="32" height="32" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="faviconGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#374151"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+  </defs>
+  <circle cx="24" cy="24" r="24" fill="url(#faviconGradient)"/>
+  <path d="M14 12C14 10.8954 14.8954 10 16 10H20C21.1046 10 22 10.8954 22 12V36C22 37.1046 21.1046 38 20 38H16C14.8954 38 14 37.1046 14 36V12Z" fill="#FFFFFF"/>
+  <path d="M26 12C26 10.8954 26.8954 10 28 10H32C33.1046 10 34 10.8954 34 12V36C34 37.1046 33.1046 38 32 38H28C26.8954 38 26 37.1046 26 36V12Z" fill="#FFFFFF"/>
+  <path d="M22 10V20L24 18L26 20V10" fill="#10B981"/>
+  <path d="M24 6L36 12L24 18L12 12L24 6Z" fill="#059669"/>
+  <path d="M33 14V20C33 22 28.5 24 24 24C19.5 24 15 22 15 20V14" stroke="#059669" stroke-width="1.5" fill="none"/>
+  <circle cx="18" cy="28" r="1" fill="#10B981"/>
+  <circle cx="30" cy="28" r="1" fill="#10B981"/>
+  <path d="M16 32H20M28 32H32" stroke="#E5E7EB" stroke-width="1" stroke-linecap="round"/>
+</svg>
