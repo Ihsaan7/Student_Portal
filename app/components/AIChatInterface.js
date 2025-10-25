@@ -57,7 +57,7 @@ export default function AIChatInterface({ user }) {
         const formattedMessages = data.map(msg => ({
           id: msg.id,
           text: msg.message,
-          sender: msg.sender,
+          sender: msg.is_user ? 'user' : 'ai',
           timestamp: new Date(msg.created_at)
         }));
         setMessages(formattedMessages);
@@ -120,46 +120,85 @@ export default function AIChatInterface({ user }) {
 
 
   const callGeminiAPI = async (prompt) => {
-    try {
-      const response = await fetch('/api/ai-chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          message: prompt,
-          userId: user?.id
-        })
-      });
+    const maxRetries = 3;
+    let lastError;
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        console.error('AI API Error:', errorData);
-        console.error('Response status:', response.status);
-        console.error('Response headers:', Object.fromEntries(response.headers.entries()));
-        
-        if (response.status === 500 && errorData.error?.includes('configuration')) {
-          throw new Error('AI service is not configured. Please check the setup guide.');
-        } else if (response.status === 503) {
-          // Handle different types of 503 errors with specific messages
-          if (errorData.error?.includes('high demand') || errorData.error?.includes('overloaded')) {
-            throw new Error('🤖 The AI service is experiencing high demand. The system will automatically retry your request. Please wait a moment...');
-          } else if (errorData.error?.includes('network') || errorData.error?.includes('connection')) {
-            throw new Error('🌐 Network connection issue. Please check your internet and try again.');
-          } else {
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      try {
+        const response = await fetch('/api/ai-chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            message: prompt,
+            userId: user?.id
+          })
+        });
+
+        if (!response.ok) {
+          const rawBody = await response.text().catch(() => '');
+          let errorData = {};
+
+          if (rawBody) {
+            try {
+              errorData = JSON.parse(rawBody);
+            } catch {
+              errorData = { error: rawBody };
+            }
+          }
+
+          console.error('AI API Error:', errorData);
+          console.error('Response status:', response.status);
+          console.error('Response headers:', Object.fromEntries(response.headers.entries()));
+
+          if (response.status === 500 && errorData.error?.includes('configuration')) {
+            throw new Error('AI service is not configured. Please check the setup guide.');
+          }
+
+          if (response.status === 503 && attempt < maxRetries - 1) {
+            const delay = Math.pow(2, attempt) * 1000;
+            await new Promise((resolve) => setTimeout(resolve, delay));
+            continue;
+          }
+
+          if (response.status === 503) {
+            if (errorData.error?.includes('high demand') || errorData.error?.includes('overloaded')) {
+              throw new Error('🤖 The AI service is experiencing high demand. The system will automatically retry your request. Please wait a moment...');
+            }
+            if (errorData.error?.includes('network') || errorData.error?.includes('connection')) {
+              throw new Error('🌐 Network connection issue. Please check your internet and try again.');
+            }
             throw new Error('🔧 AI service is temporarily unavailable. Please try again in a few moments.');
           }
-        } else {
+
           throw new Error(errorData.error || 'Failed to get AI response. Please try again.');
         }
-      }
 
-      const data = await response.json();
-      return data.response;
-    } catch (error) {
-      console.error('Error calling AI API:', error);
-      throw error;
+        const data = await response.json();
+        return data.response;
+      } catch (error) {
+        lastError = error;
+
+        if (error?.name === 'AbortError' && attempt < maxRetries - 1) {
+          const delay = Math.pow(2, attempt) * 1000;
+          await new Promise((resolve) => setTimeout(resolve, delay));
+          continue;
+        }
+
+        if (attempt < maxRetries - 1 && (error?.message?.includes('network') || error?.message?.includes('fetch'))) {
+          const delay = Math.pow(2, attempt) * 1000;
+          await new Promise((resolve) => setTimeout(resolve, delay));
+          continue;
+        }
+
+        console.error('Error calling AI API:', error);
+        throw error;
+      }
     }
+
+    console.error('Error calling AI API:', lastError);
+    throw lastError;
   };
 
 
