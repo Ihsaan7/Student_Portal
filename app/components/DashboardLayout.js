@@ -317,15 +317,7 @@ export default function DashboardLayout({ children, currentPage }) {
       >
         <div>
           <div className="flex items-center justify-center md:justify-start gap-2 px-4 py-6">
-            <div
-              className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-lg"
-              style={{
-                backgroundColor: "hsl(var(--primary))",
-                color: "hsl(var(--primary-foreground))",
-              }}
-            >
-              V
-            </div>
+            <StudyBuddyLogo size="small" showText={false} />
             <span
               className="hidden md:inline font-bold text-lg"
               style={{ color: "hsl(var(--sidebar-foreground))" }}

@@ -234,20 +234,20 @@ export default function SignupPage() {
         <div className="flex items-center justify-between mb-8">
           {/* StudyBuddy Logo */}
           <StudyBuddyLogo size="medium" showText={true} />
+          
           <div>
             <h1
               className="text-2xl font-bold"
               style={{ color: `hsl(var(--primary))` }}
             >
-                Student Portal
-              </h1>
-              <p
-                className="text-sm"
-                style={{ color: `hsl(var(--muted-foreground))` }}
-              >
-                Join our learning community
-              </p>
-            </div>
+              Student Portal
+            </h1>
+            <p
+              className="text-sm"
+              style={{ color: `hsl(var(--muted-foreground))` }}
+            >
+              Join our learning community
+            </p>
           </div>
 
           {/* Decorative element on the right */}

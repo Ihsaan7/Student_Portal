@@ -416,43 +416,43 @@ function LoginPageComponent() {
         <div className="flex items-center justify-between mb-8">
           {/* StudyBuddy Logo */}
           <StudyBuddyLogo size="medium" showText={true} />
+          
           <div>
             <h1
               className="text-2xl font-bold"
-                style={{ color: `hsl(var(--primary))` }}
-              >
-                Student Portal
-              </h1>
-              <p
-                className="text-sm"
-                style={{ color: `hsl(var(--muted-foreground))` }}
-              >
-                Welcome back
-              </p>
+              style={{ color: `hsl(var(--primary))` }}
+            >
+              Student Portal
+            </h1>
+            <p
+              className="text-sm"
+              style={{ color: `hsl(var(--muted-foreground))` }}
+            >
+              Welcome back
+            </p>
 
-              {/* Network Status Indicator */}
-              <div className="mt-1 flex items-center">
-                <div
-                  className="w-2 h-2 rounded-full mr-2"
-                  style={{
-                    backgroundColor:
-                      networkStatus === "online"
-                        ? "hsl(var(--success))"
-                        : "hsl(var(--destructive))",
-                  }}
-                ></div>
-                <span
-                  className="text-xs"
-                  style={{
-                    color:
-                      networkStatus === "online"
-                        ? "hsl(var(--success))"
-                        : "hsl(var(--destructive))",
-                  }}
-                >
-                  {networkStatus === "online" ? "Connected" : "Offline"}
-                </span>
-              </div>
+            {/* Network Status Indicator */}
+            <div className="mt-1 flex items-center">
+              <div
+                className="w-2 h-2 rounded-full mr-2"
+                style={{
+                  backgroundColor:
+                    networkStatus === "online"
+                      ? "hsl(var(--success))"
+                      : "hsl(var(--destructive))",
+                }}
+              ></div>
+              <span
+                className="text-xs"
+                style={{
+                  color:
+                    networkStatus === "online"
+                      ? "hsl(var(--success))"
+                      : "hsl(var(--destructive))",
+                }}
+              >
+                {networkStatus === "online" ? "Connected" : "Offline"}
+              </span>
             </div>
           </div>
 
