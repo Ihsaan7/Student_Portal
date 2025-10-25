@@ -225,19 +225,35 @@ export default function SignupPage() {
       </div>
 
       <div
-        className="backdrop-blur-md p-8 rounded-3xl shadow-2xl w-full max-w-4xl mx-4 relative z-10"
+        className="backdrop-blur-md p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl shadow-2xl w-full max-w-sm sm:max-w-2xl lg:max-w-4xl mx-4 relative z-10"
         style={{
           backgroundColor: `hsl(var(--card) / 0.95)`,
           border: `1px solid hsl(var(--border) / 0.2)`,
         }}
       >
-        <div className="flex items-center justify-between mb-8">
-          {/* StudyBuddy Logo */}
-          <StudyBuddyLogo size="medium" showText={true} />
-          
-          <div>
+        {/* Header Section - Responsive Layout */}
+        <div className="mb-8">
+          {/* Logo and Title Row */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
+            {/* Logo - Responsive sizing */}
+            <div className="flex justify-center sm:justify-start mb-4 sm:mb-0">
+              <StudyBuddyLogo 
+                size="medium" 
+                showText={true} 
+                className="scale-90 sm:scale-100" 
+              />
+            </div>
+            
+            {/* Decorative element - Hidden on small screens */}
+            <div className="hidden lg:block">
+              <div className="text-4xl">🎓</div>
+            </div>
+          </div>
+
+          {/* Title Section */}
+          <div className="text-center sm:text-left">
             <h1
-              className="text-2xl font-bold"
+              className="text-xl sm:text-2xl font-bold mb-1"
               style={{ color: `hsl(var(--primary))` }}
             >
               Student Portal
@@ -248,11 +264,6 @@ export default function SignupPage() {
             >
               Join our learning community
             </p>
-          </div>
-
-          {/* Decorative element on the right */}
-          <div className="hidden md:block">
-            <div className="text-4xl">🎓</div>
           </div>
         </div>
 
