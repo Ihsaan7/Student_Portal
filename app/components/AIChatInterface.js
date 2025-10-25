@@ -19,6 +19,7 @@ export default function AIChatInterface({ user }) {
   const [extractedText, setExtractedText] = useState('');
   const [showFileActions, setShowFileActions] = useState(false);
   const [isProcessingFile, setIsProcessingFile] = useState(false);
+  const [showBetaBanner, setShowBetaBanner] = useState(true);
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
 
@@ -33,6 +34,14 @@ export default function AIChatInterface({ user }) {
   useEffect(() => {
     loadChatHistory();
   }, [user]);
+
+  useEffect(() => {
+    // Check if banner was previously dismissed
+    const dismissed = localStorage.getItem('ai-beta-banner-dismissed');
+    if (dismissed === 'true') {
+      setShowBetaBanner(false);
+    }
+  }, []);
 
   const displayToast = (message, type = 'success') => {
     setToastMessage(message);
@@ -489,6 +498,75 @@ export default function AIChatInterface({ user }) {
           </button>
         </div>
       </div>
+
+      {/* Beta Notice Banner */}
+      {showBetaBanner && (
+        <div 
+          className="border-b px-6 py-4"
+          style={{ 
+            backgroundColor: 'hsl(var(--muted) / 0.3)', 
+            borderColor: 'hsl(var(--border))'
+          }}
+        >
+        <div className="flex items-start space-x-3">
+          <div className="flex-shrink-0 mt-0.5">
+            <div 
+              className="w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold"
+              style={{ 
+                backgroundColor: 'hsl(var(--warning))', 
+                color: 'hsl(var(--warning-foreground))' 
+              }}
+            >
+              β
+            </div>
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p 
+                  className="text-sm font-medium mb-1"
+                  style={{ color: 'hsl(var(--card-foreground))' }}
+                >
+                  🚧 AI Assistant - Beta Version
+                </p>
+                <p 
+                  className="text-xs leading-relaxed"
+                  style={{ color: 'hsl(var(--muted-foreground))' }}
+                >
+                  Our AI assistant is currently in development and may not always provide perfect responses. 
+                  We're continuously working to improve it!
+                </p>
+              </div>
+              <div className="mt-2 sm:mt-0 sm:ml-4 flex-shrink-0">
+                <a
+                  href="/student-services"
+                  className="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-md transition-colors hover:opacity-90"
+                  style={{ 
+                    backgroundColor: 'hsl(var(--primary))', 
+                    color: 'hsl(var(--primary-foreground))' 
+                  }}
+                >
+                  💬 Send Feedback
+                </a>
+              </div>
+            </div>
+          </div>
+          <button
+            onClick={() => {
+              setShowBetaBanner(false);
+              localStorage.setItem('ai-beta-banner-dismissed', 'true');
+            }}
+            className="flex-shrink-0 p-1 rounded-md transition-colors hover:bg-opacity-20"
+            style={{ color: 'hsl(var(--muted-foreground))' }}
+            title="Dismiss notice"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        </div>
+      )}
 
       {/* Messages Container */}
       <div 
