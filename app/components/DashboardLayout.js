@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabase";
 import { useTheme } from "./ThemeProvider";
 import StudyBuddyLogo from "./StudyBuddyLogo";
+import FloatingHelpButton from "./FloatingHelpButton";
 
 // Utility function to check if admin is in user mode
 const isAdminMode = () => {
@@ -670,6 +671,9 @@ export default function DashboardLayout({ children, currentPage }) {
         {/* Main content area */}
         <main className="flex-1 p-4 md:p-6">{children}</main>
       </div>
+      
+      {/* Floating Help Button */}
+      <FloatingHelpButton />
     </div>
   );
 }
