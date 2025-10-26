@@ -16,12 +16,14 @@ export default function ProgressPage() {
   const [studyStreak, setStudyStreak] = useState(0);
   const [handoutCount, setHandoutCount] = useState(0);
   const [courseStats, setCourseStats] = useState({});
-  
+
   // Career Development States
   const [selectedCareerPath, setSelectedCareerPath] = useState(null);
   const [selectedTimeline, setSelectedTimeline] = useState(null);
   const [careerContent, setCareerContent] = useState(null);
   const [loadingCareerContent, setLoadingCareerContent] = useState(false);
+  const [currentSemester, setCurrentSemester] = useState(1);
+  const [completedSteps, setCompletedSteps] = useState({});
 
   const motivationalQuotes = {
     academic: [
@@ -118,7 +120,7 @@ export default function ProgressPage() {
 
     try {
       const stats = {};
-      
+
       for (const course of enrolledCourses) {
         // Get course progress from handout downloads
         const { data: progressData, error: progressError } = await supabase
@@ -149,7 +151,7 @@ export default function ProgressPage() {
           studyHours: studyData || 0
         };
       }
-      
+
       setCourseStats(stats);
     } catch (error) {
       console.error('Error loading course statistics:', error);
@@ -172,27 +174,27 @@ export default function ProgressPage() {
     try {
       // Get user's recent activity (logins and handout interactions)
       const { data: activities, error } = await supabase
-         .from('handouts')
-         .select('created_at')
-         .eq('uploader_id', user?.id)
-         .order('created_at', { ascending: false })
-         .limit(30);
-      
+        .from('handouts')
+        .select('created_at')
+        .eq('uploader_id', user?.id)
+        .order('created_at', { ascending: false })
+        .limit(30);
+
       if (error || !activities) {
         setStudyStreak(0);
         return 0;
       }
-      
+
       // Calculate consecutive days of activity
       const today = new Date();
       const activityDates = activities.map(a => {
         const date = new Date(a.created_at);
         return date.toDateString();
       });
-      
+
       let streak = 0;
       let currentDate = new Date(today);
-      
+
       // Check for consecutive days starting from today
       while (streak < 365) { // Max 365 days to prevent infinite loop
         const dateString = currentDate.toDateString();
@@ -203,7 +205,7 @@ export default function ProgressPage() {
           break;
         }
       }
-      
+
       setStudyStreak(streak);
       return streak;
     } catch (error) {
@@ -219,21 +221,21 @@ export default function ProgressPage() {
 
   const addGoal = async () => {
     if (!newGoal.trim()) return;
-    
+
     const goal = {
       id: Date.now(),
       text: newGoal,
       completed: false,
       deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] // 30 days from now
     };
-    
+
     setGoals([...goals, goal]);
     setNewGoal('');
     setShowGoalModal(false);
   };
 
   const toggleGoal = (goalId) => {
-    setGoals(goals.map(goal => 
+    setGoals(goals.map(goal =>
       goal.id === goalId ? { ...goal, completed: !goal.completed } : goal
     ));
   };
@@ -250,7 +252,7 @@ export default function ProgressPage() {
         <div className="flex items-center justify-center py-12">
           <div className="text-center">
             <LoadingSpinner size="large" variant="primary" />
-            <p className="mt-4" style={{color: 'hsl(var(--muted-foreground))'}}>Loading your academic progress...</p>
+            <p className="mt-4" style={{ color: 'hsl(var(--muted-foreground))' }}>Loading your academic progress...</p>
           </div>
         </div>
       );
@@ -259,7 +261,7 @@ export default function ProgressPage() {
     return (
       <div>
         {/* Motivational Quote */}
-        <div 
+        <div
           className="rounded-lg p-6 mb-8 border-l-4"
           style={{
             background: 'linear-gradient(to right, hsl(var(--muted)), hsl(var(--accent)))',
@@ -267,7 +269,7 @@ export default function ProgressPage() {
           }}
         >
           <div className="flex items-start">
-            <div 
+            <div
               className="p-2 rounded-lg mr-4"
               style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))' }}
             >
@@ -284,15 +286,15 @@ export default function ProgressPage() {
 
         {/* Overall Progress Summary */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div 
+          <div
             className="rounded-lg shadow-sm border p-6"
-            style={{ 
-              backgroundColor: 'hsl(var(--card))', 
-              borderColor: 'hsl(var(--border))' 
+            style={{
+              backgroundColor: 'hsl(var(--card))',
+              borderColor: 'hsl(var(--border))'
             }}
           >
             <div className="flex items-center">
-              <div 
+              <div
                 className="p-2 rounded-lg"
                 style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))' }}
               >
@@ -307,15 +309,15 @@ export default function ProgressPage() {
             </div>
           </div>
 
-          <div 
+          <div
             className="rounded-lg shadow-sm border p-6"
-            style={{ 
-              backgroundColor: 'hsl(var(--card))', 
-              borderColor: 'hsl(var(--border))' 
+            style={{
+              backgroundColor: 'hsl(var(--card))',
+              borderColor: 'hsl(var(--border))'
             }}
           >
             <div className="flex items-center">
-              <div 
+              <div
                 className="p-2 rounded-lg"
                 style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))' }}
               >
@@ -332,15 +334,15 @@ export default function ProgressPage() {
             </div>
           </div>
 
-          <div 
+          <div
             className="rounded-lg shadow-sm border p-6"
-            style={{ 
-              backgroundColor: 'hsl(var(--card))', 
-              borderColor: 'hsl(var(--border))' 
+            style={{
+              backgroundColor: 'hsl(var(--card))',
+              borderColor: 'hsl(var(--border))'
             }}
           >
             <div className="flex items-center">
-              <div 
+              <div
                 className="p-2 rounded-lg"
                 style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))' }}
               >
@@ -359,11 +361,11 @@ export default function ProgressPage() {
         </div>
 
         {/* Academic Goals Section */}
-        <div 
+        <div
           className="rounded-lg shadow-sm border p-6 mb-8"
-          style={{ 
-            backgroundColor: 'hsl(var(--card))', 
-            borderColor: 'hsl(var(--border))' 
+          style={{
+            backgroundColor: 'hsl(var(--card))',
+            borderColor: 'hsl(var(--border))'
           }}
         >
           <div className="flex items-center justify-between mb-4">
@@ -371,9 +373,9 @@ export default function ProgressPage() {
             <button
               onClick={() => setShowGoalModal(true)}
               className="px-3 py-1 rounded-lg transition-colors text-sm"
-              style={{ 
-                backgroundColor: 'hsl(var(--primary))', 
-                color: 'hsl(var(--primary-foreground))' 
+              style={{
+                backgroundColor: 'hsl(var(--primary))',
+                color: 'hsl(var(--primary-foreground))'
               }}
               onMouseEnter={(e) => {
                 e.target.style.opacity = '0.9';
@@ -387,8 +389,8 @@ export default function ProgressPage() {
           </div>
           <div className="space-y-3 max-h-64 overflow-y-auto">
             {goals.map(goal => (
-              <div 
-                key={goal.id} 
+              <div
+                key={goal.id}
                 className="p-3 rounded-lg border"
                 style={{
                   backgroundColor: goal.completed ? 'hsl(var(--accent))' : 'hsl(var(--muted))',
@@ -413,10 +415,10 @@ export default function ProgressPage() {
                       )}
                     </button>
                     <div>
-                      <p 
+                      <p
                         className={`text-sm ${goal.completed ? 'line-through' : ''}`}
-                        style={{ 
-                          color: goal.completed ? 'hsl(var(--muted-foreground))' : 'hsl(var(--card-foreground))' 
+                        style={{
+                          color: goal.completed ? 'hsl(var(--muted-foreground))' : 'hsl(var(--card-foreground))'
                         }}
                       >
                         {goal.text}
@@ -449,11 +451,11 @@ export default function ProgressPage() {
         {/* Study Streak and Handout Stats */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           {/* Study Streak */}
-          <div 
+          <div
             className="rounded-lg shadow-sm border p-6"
-            style={{ 
-              backgroundColor: 'hsl(var(--card))', 
-              borderColor: 'hsl(var(--border))' 
+            style={{
+              backgroundColor: 'hsl(var(--card))',
+              borderColor: 'hsl(var(--border))'
             }}
           >
             <div className="text-center">
@@ -465,11 +467,11 @@ export default function ProgressPage() {
           </div>
 
           {/* Handout Contributions */}
-          <div 
+          <div
             className="rounded-lg shadow-sm border p-6"
-            style={{ 
-              backgroundColor: 'hsl(var(--card))', 
-              borderColor: 'hsl(var(--border))' 
+            style={{
+              backgroundColor: 'hsl(var(--card))',
+              borderColor: 'hsl(var(--border))'
             }}
           >
             <div className="text-center">
@@ -481,19 +483,19 @@ export default function ProgressPage() {
               <p className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>Approved uploads</p>
               <div className="mt-3">
                 <div className="text-xs mb-1" style={{ color: 'hsl(var(--muted-foreground))' }}>
-                  Next badge: {handoutCount === 0 ? '1 upload' : 
+                  Next badge: {handoutCount === 0 ? '1 upload' :
                     handoutCount < 5 ? `${5 - handoutCount} more uploads` :
-                    handoutCount < 10 ? `${10 - handoutCount} more uploads` :
-                    handoutCount < 20 ? `${20 - handoutCount} more uploads` :
-                    handoutCount < 50 ? `${50 - handoutCount} more uploads` :
-                    'Legend status!'}
+                      handoutCount < 10 ? `${10 - handoutCount} more uploads` :
+                        handoutCount < 20 ? `${20 - handoutCount} more uploads` :
+                          handoutCount < 50 ? `${50 - handoutCount} more uploads` :
+                            'Legend status!'}
                 </div>
                 <div className="w-full rounded-full h-2" style={{ backgroundColor: 'hsl(var(--muted))' }}>
-                  <div 
+                  <div
                     className="h-2 rounded-full transition-all duration-500"
-                    style={{ 
+                    style={{
                       backgroundColor: 'hsl(var(--primary))',
-                      width: `${Math.min(100, handoutCount >= 50 ? 100 : handoutCount >= 20 ? 80 : handoutCount >= 10 ? 60 : handoutCount >= 5 ? 40 : handoutCount >= 1 ? 20 : 0)}%` 
+                      width: `${Math.min(100, handoutCount >= 50 ? 100 : handoutCount >= 20 ? 80 : handoutCount >= 10 ? 60 : handoutCount >= 5 ? 40 : handoutCount >= 1 ? 20 : 0)}%`
                     }}
                   ></div>
                 </div>
@@ -505,18 +507,18 @@ export default function ProgressPage() {
         </div>
 
         {/* Course Progress Cards */}
-        <div 
+        <div
           className="rounded-lg shadow-sm border p-6"
-          style={{ 
-            backgroundColor: 'hsl(var(--card))', 
-            borderColor: 'hsl(var(--border))' 
+          style={{
+            backgroundColor: 'hsl(var(--card))',
+            borderColor: 'hsl(var(--border))'
           }}
         >
           <h2 className="text-xl font-semibold mb-6" style={{ color: 'hsl(var(--card-foreground))' }}>Course Progress</h2>
-          
+
           {enrolledCourses.length === 0 ? (
             <div className="text-center py-12">
-              <div 
+              <div
                 className="p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center"
                 style={{ backgroundColor: 'hsl(var(--muted))' }}
               >
@@ -528,12 +530,12 @@ export default function ProgressPage() {
               <p className="mb-4" style={{ color: 'hsl(var(--muted-foreground))' }}>
                 You haven't enrolled in any courses yet. Start by enrolling in courses to track your progress.
               </p>
-              <a 
-                href="/course-selection" 
+              <a
+                href="/course-selection"
                 className="inline-flex items-center px-4 py-2 rounded-lg transition-colors"
-                style={{ 
-                  backgroundColor: 'hsl(var(--primary))', 
-                  color: 'hsl(var(--primary-foreground))' 
+                style={{
+                  backgroundColor: 'hsl(var(--primary))',
+                  color: 'hsl(var(--primary-foreground))'
                 }}
               >
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
@@ -545,10 +547,10 @@ export default function ProgressPage() {
           ) : (
             <div className="space-y-6">
               {enrolledCourses.map((course) => (
-                <div 
-                  key={course.id} 
+                <div
+                  key={course.id}
                   className="border rounded-lg p-6 transition-shadow"
-                  style={{ 
+                  style={{
                     borderColor: 'hsl(var(--border))',
                     backgroundColor: 'hsl(var(--card))'
                   }}
@@ -566,14 +568,14 @@ export default function ProgressPage() {
                     </div>
                     <div className="flex items-center space-x-4">
                       {course.grade && (
-                        <div 
+                        <div
                           className="px-3 py-1 rounded-full text-sm font-medium"
                           style={getGradeColor(course.grade)}
                         >
                           {course.grade}
                         </div>
                       )}
-                      <div 
+                      <div
                         className="px-3 py-1 rounded-full text-sm font-medium"
                         style={getProgressColor(course.progress || 0)}
                       >
@@ -582,9 +584,9 @@ export default function ProgressPage() {
                       <a
                         href={`/course/${course.course_code}`}
                         className="px-3 py-1 rounded-lg transition-colors text-sm inline-block text-center"
-                        style={{ 
-                          backgroundColor: 'hsl(var(--accent))', 
-                          color: 'hsl(var(--accent-foreground))' 
+                        style={{
+                          backgroundColor: 'hsl(var(--accent))',
+                          color: 'hsl(var(--accent-foreground))'
                         }}
                         onMouseEnter={(e) => {
                           e.target.style.opacity = '0.9';
@@ -597,18 +599,18 @@ export default function ProgressPage() {
                       </a>
                     </div>
                   </div>
-                  
+
                   <div className="mb-4">
                     <div className="flex justify-between text-sm mb-2">
                       <span style={{ color: 'hsl(var(--muted-foreground))' }}>Progress (Handouts Accessed)</span>
                       <span style={{ color: 'hsl(var(--muted-foreground))' }}>{courseStats[course.course_code]?.progress || 0}% ({courseStats[course.course_code]?.handoutsAccessed || 0}/{courseStats[course.course_code]?.totalLectures || 0})</span>
                     </div>
                     <a href={`/course/${course.course_code}`} className="block w-full rounded-full h-3 cursor-pointer" style={{ backgroundColor: 'hsl(var(--muted))' }}>
-                      <div 
+                      <div
                         className="h-3 rounded-full transition-all duration-500"
-                        style={{ 
-                          backgroundColor: (courseStats[course.course_code]?.progress || 0) >= 80 ? 'hsl(var(--primary))' : 
-                                          (courseStats[course.course_code]?.progress || 0) >= 60 ? 'hsl(var(--secondary))' : 'hsl(var(--destructive))',
+                        style={{
+                          backgroundColor: (courseStats[course.course_code]?.progress || 0) >= 80 ? 'hsl(var(--primary))' :
+                            (courseStats[course.course_code]?.progress || 0) >= 60 ? 'hsl(var(--secondary))' : 'hsl(var(--destructive))',
                           width: `${courseStats[course.course_code]?.progress || 0}%`
                         }}
                       ></div>
@@ -674,6 +676,97 @@ export default function ProgressPage() {
     setSelectedCareerPath(path);
     setSelectedTimeline(null);
     setCareerContent(null);
+
+    // For Cyber Security, skip timeline selection and show roadmap directly
+    if (path === 'cyber-security') {
+      setSelectedTimeline('roadmap');
+      setCareerContent(getCyberSecurityRoadmap());
+    }
+  };
+
+  // Get the comprehensive cyber security roadmap
+  const getCyberSecurityRoadmap = () => {
+    return {
+      title: "Complete Cyber Security Roadmap",
+      description: "7-semester journey from web development fundamentals to cybersecurity expertise",
+      semesters: [
+        {
+          semester: 1,
+          title: "Grasp University & Programming Basics",
+          instruction: "Learn how university works and intro to programming/web dev (2-4 hours/day)",
+          actionSteps: [
+            "Study university system: Review schedules, policies, resources to navigate efficiently",
+            "Learn programming basics: Understand code, logic, and problem-solving concepts",
+            "Explore web dev: Research careers, tools, and fundamentals of web development"
+          ]
+        },
+        {
+          semester: 2,
+          title: "Core Web & Programming Skills",
+          instruction: "Master HTML, CSS, GitHub, C++ basics; push 3-4 projects to GitHub",
+          actionSteps: [
+            "Learn HTML/CSS: Build and style basic web pages",
+            "Use GitHub: Set up account, learn version control, host projects",
+            "Study C++ basics: Grasp programming fundamentals via C++",
+            "Build projects: Create 3-4 small web projects, upload to GitHub"
+          ]
+        },
+        {
+          semester: 3,
+          title: "Advanced Web & CS Foundations",
+          instruction: "Learn JS, React, and CS301 (Data Structures), CS304 (OOP); build 3 frontend projects",
+          actionSteps: [
+            "Master JS/React: Create interactive web apps with JavaScript and React",
+            "Study Data Structures/OOP: Learn algorithms, data organization, and object-oriented principles",
+            "Build frontend projects: Develop 3 projects using HTML, CSS, JS/React"
+          ]
+        },
+        {
+          semester: 4,
+          title: "Backend & Cybersecurity Basics",
+          instruction: "Learn Mongoose, Tailwind, CS604 (OS), CS610 (Networks); practice CLI on Linux VM",
+          actionSteps: [
+            "Learn Mongoose: Manage databases for backend development",
+            "Use Tailwind: Style websites efficiently with Tailwind CSS",
+            "Study OS/Networks: Understand operating systems and networking for cybersecurity",
+            "Practice CLI: Install Ubuntu/Kali Linux VM, master command line basics"
+          ]
+        },
+        {
+          semester: 5,
+          title: "Portfolio & Professional Networking",
+          instruction: "Build portfolio, start LinkedIn, study CS401 (Assembly), network",
+          actionSteps: [
+            "Create portfolio: Showcase projects on a personal website",
+            "Set up LinkedIn: Profile as Full Stack Developer, apply for internships",
+            "Study Assembly: Learn low-level programming for cybersecurity edge",
+            "Network: Connect with peers, professionals for opportunities"
+          ]
+        },
+        {
+          semester: 6,
+          title: "Full-Stack & Cybersecurity Tools",
+          instruction: "Learn Next.js, Framer Motion, ShadCN, Linux (Kali), CS205; take certified course",
+          actionSteps: [
+            "Build with Next.js/Framer/ShadCN: Create modern full-stack websites",
+            "Master Linux (Kali): Learn cyber tools, networking for cybersecurity",
+            "Study CS205: Focus on course for technical depth",
+            "Earn certification: Complete a course (e.g., YouTube) for resume boost"
+          ]
+        },
+        {
+          semester: 7,
+          title: "FYP & Cybersecurity Networking",
+          instruction: "Work on FYP, network in cybersecurity, pursue internships",
+          actionSteps: [
+            "Complete FYP: Select and develop a strong Final Year Project",
+            "Network in cybersecurity: Join communities, connect with professionals",
+            "Pursue internships: Apply to gain industry experience, assess market demands"
+          ]
+        }
+      ],
+      outcome: "Strong foundation in web development, cybersecurity, and programming, ready for career opportunities in cybersecurity field"
+    };
   };
 
   // Handle timeline selection
@@ -687,25 +780,30 @@ export default function ProgressPage() {
   const CareerSection = () => {
     const careerPaths = [
       {
+        id: 'cyber-security',
+        name: 'Cyber Security',
+        icon: '🔒',
+        description: 'Complete roadmap from web development to cybersecurity expertise',
+        color: 'from-green-500 to-teal-500',
+        available: true
+      },
+      {
         id: 'ethical-hacking',
         name: 'Ethical Hacking',
         icon: '🛡️',
-        description: 'Learn cybersecurity through ethical hacking techniques and penetration testing',
-        color: 'from-red-500 to-pink-500'
+        description: 'Advanced penetration testing and ethical hacking techniques',
+        color: 'from-red-500 to-pink-500',
+        available: false,
+        comingSoon: true
       },
       {
         id: 'ai-ml',
         name: 'AI/ML',
         icon: '🤖',
-        description: 'Master artificial intelligence and machine learning technologies',
-        color: 'from-blue-500 to-purple-500'
-      },
-      {
-        id: 'cyber-security',
-        name: 'Cyber Security',
-        icon: '🔒',
-        description: 'Protect systems and networks from digital attacks and threats',
-        color: 'from-green-500 to-teal-500'
+        description: 'Artificial intelligence and machine learning specialization',
+        color: 'from-blue-500 to-purple-500',
+        available: false,
+        comingSoon: true
       }
     ];
 
@@ -736,7 +834,7 @@ export default function ProgressPage() {
     return (
       <div>
         {/* Motivational Quote */}
-        <div 
+        <div
           className="rounded-lg p-6 mb-8 border-l-4"
           style={{
             background: 'linear-gradient(to right, hsl(var(--muted)), hsl(var(--accent)))',
@@ -744,7 +842,7 @@ export default function ProgressPage() {
           }}
         >
           <div className="flex items-start">
-            <div 
+            <div
               className="p-2 rounded-lg mr-4"
               style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))' }}
             >
@@ -761,7 +859,7 @@ export default function ProgressPage() {
 
         {!selectedCareerPath ? (
           /* Career Path Selection */
-          <div 
+          <div
             className="rounded-lg shadow-sm border p-8"
             style={{
               backgroundColor: 'hsl(var(--card))',
@@ -772,49 +870,78 @@ export default function ProgressPage() {
               <h2 className="text-2xl font-bold mb-4" style={{ color: 'hsl(var(--card-foreground))' }}>Choose Your Career Path</h2>
               <p style={{ color: 'hsl(var(--muted-foreground))' }}>Select the field you want to specialize in during your university journey</p>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {careerPaths.map((path) => (
                 <div
                   key={path.id}
-                  onClick={() => handleCareerPathSelect(path.id)}
-                  className="cursor-pointer group hover:scale-105 transition-all duration-300"
+                  onClick={() => path.available ? handleCareerPathSelect(path.id) : null}
+                  className={`group transition-all duration-300 ${path.available ? 'cursor-pointer hover:scale-105' : 'cursor-not-allowed'}`}
                 >
-                  <div 
-                    className="border-2 rounded-xl p-6 hover:shadow-lg transition-all"
+                  <div
+                    className={`border-2 rounded-xl p-6 transition-all ${path.available ? 'hover:shadow-lg' : ''}`}
                     style={{
-                      backgroundColor: 'hsl(var(--card))',
-                      borderColor: 'hsl(var(--border))'
+                      backgroundColor: path.available ? 'hsl(var(--card))' : 'hsl(var(--muted))',
+                      borderColor: 'hsl(var(--border))',
+                      opacity: path.available ? 1 : 0.6,
+                      filter: path.available ? 'none' : 'grayscale(100%)'
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = 'hsl(var(--primary))';
+                      if (path.available) {
+                        e.currentTarget.style.borderColor = 'hsl(var(--primary))';
+                      }
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = 'hsl(var(--border))';
+                      if (path.available) {
+                        e.currentTarget.style.borderColor = 'hsl(var(--border))';
+                      }
                     }}
                   >
-                    <div className={`w-16 h-16 bg-gradient-to-r ${path.color} rounded-full flex items-center justify-center text-2xl mb-4 mx-auto group-hover:scale-110 transition-transform`}>
+                    <div className={`w-16 h-16 bg-gradient-to-r ${path.color} rounded-full flex items-center justify-center text-2xl mb-4 mx-auto ${path.available ? 'group-hover:scale-110' : ''} transition-transform`}>
                       {path.icon}
                     </div>
                     <h3 className="text-xl font-semibold text-center mb-2" style={{ color: 'hsl(var(--card-foreground))' }}>{path.name}</h3>
-                    <p className="text-center text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>{path.description}</p>
+                    <p className="text-center text-sm mb-3" style={{ color: 'hsl(var(--muted-foreground))' }}>{path.description}</p>
+
+                    {path.comingSoon && (
+                      <div className="mb-3 text-center">
+                        <div
+                          className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
+                          style={{
+                            backgroundColor: 'hsl(var(--warning) / 0.1)',
+                            color: 'hsl(var(--warning))',
+                            border: '1px solid hsl(var(--warning) / 0.3)'
+                          }}
+                        >
+                          🚧 Coming Soon
+                        </div>
+                        <p className="text-xs mt-2" style={{ color: 'hsl(var(--muted-foreground))' }}>
+                          We're working hard to bring you this specialization track. Stay tuned!
+                        </p>
+                      </div>
+                    )}
+
                     <div className="mt-4 text-center">
-                      <span 
+                      <span
                         className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium transition-colors"
                         style={{
-                          backgroundColor: 'hsl(var(--muted))',
-                          color: 'hsl(var(--muted-foreground))'
+                          backgroundColor: path.available ? 'hsl(var(--muted))' : 'hsl(var(--muted) / 0.5)',
+                          color: path.available ? 'hsl(var(--muted-foreground))' : 'hsl(var(--muted-foreground) / 0.7)'
                         }}
                         onMouseEnter={(e) => {
-                          e.target.style.backgroundColor = 'hsl(var(--accent))';
-                          e.target.style.color = 'hsl(var(--accent-foreground))';
+                          if (path.available) {
+                            e.target.style.backgroundColor = 'hsl(var(--accent))';
+                            e.target.style.color = 'hsl(var(--accent-foreground))';
+                          }
                         }}
                         onMouseLeave={(e) => {
-                          e.target.style.backgroundColor = 'hsl(var(--muted))';
-                          e.target.style.color = 'hsl(var(--muted-foreground))';
+                          if (path.available) {
+                            e.target.style.backgroundColor = 'hsl(var(--muted))';
+                            e.target.style.color = 'hsl(var(--muted-foreground))';
+                          }
                         }}
                       >
-                        Select Path
+                        {path.available ? 'Start Journey' : 'Coming Soon'}
                       </span>
                     </div>
                   </div>
@@ -824,7 +951,7 @@ export default function ProgressPage() {
           </div>
         ) : !selectedTimeline ? (
           /* Timeline Selection */
-          <div 
+          <div
             className="rounded-lg shadow-sm border p-8"
             style={{
               backgroundColor: 'hsl(var(--card))',
@@ -858,7 +985,7 @@ export default function ProgressPage() {
               <p style={{ color: 'hsl(var(--muted-foreground))' }}>Selected: <span className="font-semibold">{careerPaths.find(p => p.id === selectedCareerPath)?.name}</span></p>
               <p className="mt-2" style={{ color: 'hsl(var(--muted-foreground))' }}>How much time do you have left in your university journey?</p>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {timelines.map((timeline) => (
                 <div
@@ -866,7 +993,7 @@ export default function ProgressPage() {
                   onClick={() => handleTimelineSelect(timeline.id)}
                   className="cursor-pointer group hover:scale-105 transition-all duration-300"
                 >
-                  <div 
+                  <div
                     className="border-2 rounded-xl p-6 transition-all"
                     style={{
                       backgroundColor: 'hsl(var(--card))',
@@ -887,7 +1014,7 @@ export default function ProgressPage() {
                     <h3 className="text-xl font-semibold text-center mb-2" style={{ color: 'hsl(var(--card-foreground))' }}>{timeline.name}</h3>
                     <p className="text-center text-sm mb-3" style={{ color: 'hsl(var(--muted-foreground))' }}>{timeline.description}</p>
                     <div className="text-center">
-                      <span 
+                      <span
                         className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
                         style={{
                           backgroundColor: 'hsl(var(--primary) / 0.1)',
@@ -898,7 +1025,7 @@ export default function ProgressPage() {
                       </span>
                     </div>
                     <div className="mt-4 text-center">
-                      <span 
+                      <span
                         className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium transition-colors"
                         style={{
                           backgroundColor: 'hsl(var(--muted))',
@@ -925,7 +1052,7 @@ export default function ProgressPage() {
           /* Career Content Display */
           <div>
             {/* Header with selections */}
-            <div 
+            <div
               className="rounded-lg shadow-sm border p-6 mb-6"
               style={{
                 backgroundColor: 'hsl(var(--card))',
@@ -969,106 +1096,181 @@ export default function ProgressPage() {
             </div>
 
             {loadingCareerContent ? (
-              <div 
+              <div
                 className="rounded-lg shadow-sm border p-12 text-center"
                 style={{
                   backgroundColor: 'hsl(var(--card))',
                   borderColor: 'hsl(var(--border))'
                 }}
               >
-                <div 
+                <div
                   className="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto mb-4"
                   style={{ borderBottomColor: 'hsl(var(--primary))' }}
                 ></div>
                 <p style={{ color: 'hsl(var(--muted-foreground))' }}>Loading career development content...</p>
               </div>
-            ) : careerContent ? (
+            ) : careerContent && selectedCareerPath === 'cyber-security' ? (
               <div className="space-y-6">
-                {/* Instructions Section */}
-                <div 
+                {/* Roadmap Overview */}
+                <div
                   className="rounded-lg shadow-sm border p-6"
                   style={{
                     backgroundColor: 'hsl(var(--card))',
                     borderColor: 'hsl(var(--border))'
                   }}
                 >
-                  <h3 className="text-lg font-semibold mb-4 flex items-center" style={{ color: 'hsl(var(--card-foreground))' }}>
-                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" style={{ color: 'hsl(var(--primary))' }}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    Instructions
-                  </h3>
-                  <div className="prose max-w-none" style={{ color: 'hsl(var(--card-foreground))' }}>
-                    {careerContent.instructions ? (
-                      <div dangerouslySetInnerHTML={{ __html: careerContent.instructions }} />
-                    ) : (
-                      <p className="italic" style={{ color: 'hsl(var(--muted-foreground))' }}>No instructions available. Contact admin to add content.</p>
-                    )}
+                  <div className="text-center mb-6">
+                    <div className="text-4xl mb-3">🛡️</div>
+                    <h2 className="text-2xl font-bold mb-2" style={{ color: 'hsl(var(--card-foreground))' }}>{careerContent.title}</h2>
+                    <p className="text-lg" style={{ color: 'hsl(var(--muted-foreground))' }}>{careerContent.description}</p>
                   </div>
-                </div>
 
-                {/* Steps Section */}
-                <div 
-                  className="rounded-lg shadow-sm border p-6"
-                  style={{
-                    backgroundColor: 'hsl(var(--card))',
-                    borderColor: 'hsl(var(--border))'
-                  }}
-                >
-                  <h3 className="text-lg font-semibold mb-4 flex items-center" style={{ color: 'hsl(var(--card-foreground))' }}>
-                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" style={{ color: 'hsl(var(--primary))' }}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                    </svg>
-                    Action Steps
-                  </h3>
-                  <div className="prose max-w-none" style={{ color: 'hsl(var(--card-foreground))' }}>
-                    {careerContent.steps ? (
-                      <div dangerouslySetInnerHTML={{ __html: careerContent.steps }} />
-                    ) : (
-                      <p className="italic" style={{ color: 'hsl(var(--muted-foreground))' }}>No steps available. Contact admin to add content.</p>
-                    )}
-                  </div>
-                </div>
-
-                {/* Video Section */}
-                <div 
-                  className="rounded-lg shadow-sm border p-6"
-                  style={{
-                    backgroundColor: 'hsl(var(--card))',
-                    borderColor: 'hsl(var(--border))'
-                  }}
-                >
-                  <h3 className="text-lg font-semibold mb-4 flex items-center" style={{ color: 'hsl(var(--card-foreground))' }}>
-                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" style={{ color: 'hsl(var(--primary))' }}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293H15M9 10v4a2 2 0 002 2h2a2 2 0 002-2v-4M9 10V8a2 2 0 012-2h2a2 2 0 012 2v2" />
-                    </svg>
-                    Learning Resources
-                  </h3>
-                  {careerContent.video_url ? (
-                    <div className="aspect-video rounded-lg overflow-hidden" style={{ backgroundColor: 'hsl(var(--muted))' }}>
-                      <iframe
-                        src={careerContent.video_url}
-                        className="w-full h-full"
-                        frameBorder="0"
-                        allowFullScreen
-                        title="Career Development Video"
-                      ></iframe>
+                  <div
+                    className="rounded-lg p-4 mb-4"
+                    style={{ backgroundColor: 'hsl(var(--primary) / 0.1)', border: '1px solid hsl(var(--primary) / 0.3)' }}
+                  >
+                    <div className="flex items-center mb-2">
+                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" style={{ color: 'hsl(var(--primary))' }}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <h3 className="font-semibold" style={{ color: 'hsl(var(--primary))' }}>Expected Outcome</h3>
                     </div>
-                  ) : (
-                    <div className="aspect-video rounded-lg flex items-center justify-center" style={{ backgroundColor: 'hsl(var(--muted))' }}>
-                      <div className="text-center">
-                        <svg className="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" strokeWidth="1" viewBox="0 0 24 24" style={{ color: 'hsl(var(--muted-foreground))' }}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293H15M9 10v4a2 2 0 002 2h2a2 2 0 002-2v-4M9 10V8a2 2 0 012-2h2a2 2 0 012 2v2" />
-                        </svg>
-                        <p style={{ color: 'hsl(var(--muted-foreground))' }}>No video available</p>
-                        <p className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>Contact admin to add learning resources</p>
+                    <p style={{ color: 'hsl(var(--card-foreground))' }}>{careerContent.outcome}</p>
+                  </div>
+                </div>
+
+                {/* Semester Roadmap */}
+                <div className="space-y-4">
+                  {careerContent.semesters.map((semester, index) => (
+                    <div
+                      key={semester.semester}
+                      className="rounded-lg shadow-sm border p-6"
+                      style={{
+                        backgroundColor: 'hsl(var(--card))',
+                        borderColor: 'hsl(var(--border))'
+                      }}
+                    >
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center space-x-3">
+                          <div
+                            className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg"
+                            style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))' }}
+                          >
+                            {semester.semester}
+                          </div>
+                          <div>
+                            <h3 className="text-xl font-semibold" style={{ color: 'hsl(var(--card-foreground))' }}>
+                              Semester {semester.semester}: {semester.title}
+                            </h3>
+                            <p className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>
+                              ⏰ {semester.timeCommitment}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="mb-4">
+                        <h4 className="font-medium mb-2" style={{ color: 'hsl(var(--card-foreground))' }}>Focus Area:</h4>
+                        <p className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>{semester.focus}</p>
+                        {semester.goal && (
+                          <p className="text-sm mt-1" style={{ color: 'hsl(var(--primary))' }}>
+                            🎯 Goal: {semester.goal}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="mb-4">
+                        <h4 className="font-medium mb-3 flex items-center" style={{ color: 'hsl(var(--card-foreground))' }}>
+                          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" style={{ color: 'hsl(var(--primary))' }}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                          </svg>
+                          Action Steps:
+                        </h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                          {semester.actionSteps.map((step, stepIndex) => (
+                            <div
+                              key={stepIndex}
+                              className="flex items-start space-x-2 p-2 rounded"
+                              style={{ backgroundColor: 'hsl(var(--muted) / 0.3)' }}
+                            >
+                              <div
+                                className="w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold mt-0.5 flex-shrink-0"
+                                style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))' }}
+                              >
+                                {stepIndex + 1}
+                              </div>
+                              <span className="text-sm" style={{ color: 'hsl(var(--card-foreground))' }}>{step}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <h4 className="font-medium mb-2" style={{ color: 'hsl(var(--card-foreground))' }}>Key Skills:</h4>
+                          <div className="flex flex-wrap gap-1">
+                            {semester.skills.map((skill, skillIndex) => (
+                              <span
+                                key={skillIndex}
+                                className="px-2 py-1 rounded-full text-xs font-medium"
+                                style={{ backgroundColor: 'hsl(var(--accent))', color: 'hsl(var(--accent-foreground))' }}
+                              >
+                                {skill}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                        <div>
+                          <h4 className="font-medium mb-2" style={{ color: 'hsl(var(--card-foreground))' }}>Deliverables:</h4>
+                          <ul className="text-sm space-y-1">
+                            {semester.deliverables.map((deliverable, delIndex) => (
+                              <li key={delIndex} className="flex items-center" style={{ color: 'hsl(var(--muted-foreground))' }}>
+                                <svg className="w-3 h-3 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" style={{ color: 'hsl(var(--primary))' }}>
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                </svg>
+                                {deliverable}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
                       </div>
                     </div>
-                  )}
+                  ))}
+                </div>
+
+                {/* Call to Action */}
+                <div
+                  className="rounded-lg shadow-sm border p-6 text-center"
+                  style={{
+                    backgroundColor: 'hsl(var(--primary) / 0.05)',
+                    borderColor: 'hsl(var(--primary) / 0.2)'
+                  }}
+                >
+                  <div className="text-3xl mb-3">🚀</div>
+                  <h3 className="text-xl font-semibold mb-2" style={{ color: 'hsl(var(--card-foreground))' }}>Ready to Start Your Journey?</h3>
+                  <p className="mb-4" style={{ color: 'hsl(var(--muted-foreground))' }}>
+                    This roadmap will guide you from web development fundamentals to cybersecurity expertise over 7 semesters.
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                    <button
+                      className="px-6 py-2 rounded-lg font-medium transition-colors"
+                      style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))' }}
+                      onClick={() => window.open('/student-services', '_blank')}
+                    >
+                      💬 Get Support
+                    </button>
+                    <button
+                      className="px-6 py-2 rounded-lg font-medium transition-colors"
+                      style={{ backgroundColor: 'hsl(var(--secondary))', color: 'hsl(var(--secondary-foreground))' }}
+                      onClick={() => window.open('/course-selection', '_blank')}
+                    >
+                      📚 View Courses
+                    </button>
+                  </div>
                 </div>
               </div>
             ) : (
-              <div 
+              <div
                 className="rounded-lg shadow-sm border p-12 text-center"
                 style={{
                   backgroundColor: 'hsl(var(--card))',
@@ -1100,7 +1302,7 @@ export default function ProgressPage() {
         </div>
 
         {/* Section Tabs */}
-        <div 
+        <div
           className="rounded-lg shadow-sm border p-2 mb-8"
           style={{
             backgroundColor: 'hsl(var(--card))',
@@ -1171,7 +1373,7 @@ export default function ProgressPage() {
         {/* Goal Modal */}
         {showGoalModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div 
+            <div
               className="rounded-lg p-6 max-w-md w-full mx-4"
               style={{ backgroundColor: 'hsl(var(--card))' }}
             >
