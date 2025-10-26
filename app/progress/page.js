@@ -24,6 +24,7 @@ export default function ProgressPage() {
   const [loadingCareerContent, setLoadingCareerContent] = useState(false);
   const [currentSemester, setCurrentSemester] = useState(1);
   const [completedSteps, setCompletedSteps] = useState({});
+  const [completedActionSteps, setCompletedActionSteps] = useState({});
 
   const motivationalQuotes = {
     academic: [
@@ -698,7 +699,9 @@ export default function ProgressPage() {
             "Study university system: Review schedules, policies, resources to navigate efficiently",
             "Learn programming basics: Understand code, logic, and problem-solving concepts",
             "Explore web dev: Research careers, tools, and fundamentals of web development"
-          ]
+          ],
+          skills: ["University Navigation", "Basic Programming", "Web Development Basics", "Problem Solving"],
+          deliverables: ["University orientation completion", "First programming exercise", "Basic web research report"]
         },
         {
           semester: 2,
@@ -709,7 +712,9 @@ export default function ProgressPage() {
             "Use GitHub: Set up account, learn version control, host projects",
             "Study C++ basics: Grasp programming fundamentals via C++",
             "Build projects: Create 3-4 small web projects, upload to GitHub"
-          ]
+          ],
+          skills: ["HTML/CSS", "GitHub", "C++ Fundamentals", "Version Control", "Project Management"],
+          deliverables: ["3-4 web projects on GitHub", "C++ programming assignments", "Personal GitHub profile"]
         },
         {
           semester: 3,
@@ -719,7 +724,9 @@ export default function ProgressPage() {
             "Master JS/React: Create interactive web apps with JavaScript and React",
             "Study Data Structures/OOP: Learn algorithms, data organization, and object-oriented principles",
             "Build frontend projects: Develop 3 projects using HTML, CSS, JS/React"
-          ]
+          ],
+          skills: ["JavaScript", "React", "Data Structures", "OOP", "Frontend Development", "Algorithms"],
+          deliverables: ["3 interactive React projects", "Data structures implementations", "OOP project portfolio"]
         },
         {
           semester: 4,
@@ -730,7 +737,9 @@ export default function ProgressPage() {
             "Use Tailwind: Style websites efficiently with Tailwind CSS",
             "Study OS/Networks: Understand operating systems and networking for cybersecurity",
             "Practice CLI: Install Ubuntu/Kali Linux VM, master command line basics"
-          ]
+          ],
+          skills: ["Mongoose", "Tailwind CSS", "Operating Systems", "Networking", "Linux CLI", "Virtual Machines"],
+          deliverables: ["Database-driven web app", "Linux VM setup", "Network configuration project", "CLI automation scripts"]
         },
         {
           semester: 5,
@@ -741,7 +750,9 @@ export default function ProgressPage() {
             "Set up LinkedIn: Profile as Full Stack Developer, apply for internships",
             "Study Assembly: Learn low-level programming for cybersecurity edge",
             "Network: Connect with peers, professionals for opportunities"
-          ]
+          ],
+          skills: ["Portfolio Development", "Professional Networking", "Assembly Language", "LinkedIn Optimization", "Career Planning"],
+          deliverables: ["Professional portfolio website", "Optimized LinkedIn profile", "Assembly programming projects", "5+ professional connections"]
         },
         {
           semester: 6,
@@ -752,7 +763,9 @@ export default function ProgressPage() {
             "Master Linux (Kali): Learn cyber tools, networking for cybersecurity",
             "Study CS205: Focus on course for technical depth",
             "Earn certification: Complete a course (e.g., YouTube) for resume boost"
-          ]
+          ],
+          skills: ["Next.js", "Framer Motion", "ShadCN", "Kali Linux", "Cybersecurity Tools", "Penetration Testing"],
+          deliverables: ["Full-stack Next.js application", "Kali Linux lab setup", "Cybersecurity certification", "Penetration testing report"]
         },
         {
           semester: 7,
@@ -762,7 +775,9 @@ export default function ProgressPage() {
             "Complete FYP: Select and develop a strong Final Year Project",
             "Network in cybersecurity: Join communities, connect with professionals",
             "Pursue internships: Apply to gain industry experience, assess market demands"
-          ]
+          ],
+          skills: ["Project Management", "Research & Development", "Industry Networking", "Internship Applications", "Professional Communication"],
+          deliverables: ["Completed Final Year Project", "Cybersecurity community membership", "Internship applications", "Professional network of 20+ contacts"]
         }
       ],
       outcome: "Strong foundation in web development, cybersecurity, and programming, ready for career opportunities in cybersecurity field"
@@ -1125,6 +1140,50 @@ export default function ProgressPage() {
                     <p className="text-lg" style={{ color: 'hsl(var(--muted-foreground))' }}>{careerContent.description}</p>
                   </div>
 
+                  {/* Introductory Video Section */}
+                  <div
+                    className="rounded-lg shadow-sm border p-6 mb-6"
+                    style={{
+                      backgroundColor: 'hsl(var(--card))',
+                      borderColor: 'hsl(var(--border))'
+                    }}
+                  >
+                    <div className="flex items-center mb-4">
+                      <div
+                        className="p-2 rounded-lg mr-3"
+                        style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))' }}
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                      <h3 className="text-lg font-semibold" style={{ color: 'hsl(var(--card-foreground))' }}>
+                        🎥 Roadmap Overview Video
+                      </h3>
+                    </div>
+                    <div className="aspect-video rounded-lg overflow-hidden mb-4" style={{ backgroundColor: 'hsl(var(--muted))' }}>
+                      <iframe
+                        width="100%"
+                        height="100%"
+                        src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+                        title="Cyber Security Roadmap Overview"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        className="w-full h-full"
+                      ></iframe>
+                    </div>
+                    <div className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>
+                      <p className="mb-2">
+                        📺 <strong>Watch this overview</strong> to understand the complete 7-semester journey from web development to cybersecurity expertise.
+                      </p>
+                      <p>
+                        ⏱️ <strong>Duration:</strong> 15 minutes |
+                        🎯 <strong>Topics:</strong> Career path overview, semester breakdown, key milestones, and success tips
+                      </p>
+                    </div>
+                  </div>
+
                   <div
                     className="rounded-lg p-4 mb-4"
                     style={{ backgroundColor: 'hsl(var(--primary) / 0.1)', border: '1px solid hsl(var(--primary) / 0.3)' }}
@@ -1186,22 +1245,62 @@ export default function ProgressPage() {
                           </svg>
                           Action Steps:
                         </h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                          {semester.actionSteps.map((step, stepIndex) => (
-                            <div
-                              key={stepIndex}
-                              className="flex items-start space-x-2 p-2 rounded"
-                              style={{ backgroundColor: 'hsl(var(--muted) / 0.3)' }}
-                            >
+                        <div className="space-y-2">
+                          {semester.actionSteps.map((step, stepIndex) => {
+                            const stepKey = `${semester.semester}-${stepIndex}`;
+                            const isCompleted = completedActionSteps[stepKey] || false;
+
+                            return (
                               <div
-                                className="w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold mt-0.5 flex-shrink-0"
-                                style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))' }}
+                                key={stepIndex}
+                                className="flex items-start space-x-3 p-3 rounded-lg border transition-all duration-200"
+                                style={{
+                                  backgroundColor: isCompleted ? 'hsl(var(--primary) / 0.1)' : 'hsl(var(--muted) / 0.3)',
+                                  borderColor: isCompleted ? 'hsl(var(--primary) / 0.3)' : 'hsl(var(--border))'
+                                }}
                               >
-                                {stepIndex + 1}
+                                <button
+                                  onClick={() => {
+                                    setCompletedActionSteps(prev => ({
+                                      ...prev,
+                                      [stepKey]: !prev[stepKey]
+                                    }));
+                                  }}
+                                  className="mt-0.5 w-5 h-5 rounded border-2 flex items-center justify-center transition-all duration-200 flex-shrink-0"
+                                  style={{
+                                    backgroundColor: isCompleted ? 'hsl(var(--primary))' : 'transparent',
+                                    borderColor: isCompleted ? 'hsl(var(--primary))' : 'hsl(var(--border))',
+                                    color: isCompleted ? 'hsl(var(--primary-foreground))' : 'transparent'
+                                  }}
+                                >
+                                  {isCompleted && (
+                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                  )}
+                                </button>
+                                <div className="flex items-start space-x-2 flex-1">
+                                  <div
+                                    className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold mt-0.5 flex-shrink-0"
+                                    style={{
+                                      backgroundColor: isCompleted ? 'hsl(var(--primary))' : 'hsl(var(--muted-foreground))',
+                                      color: 'hsl(var(--primary-foreground))'
+                                    }}
+                                  >
+                                    {stepIndex + 1}
+                                  </div>
+                                  <span
+                                    className={`text-sm ${isCompleted ? 'line-through' : ''}`}
+                                    style={{
+                                      color: isCompleted ? 'hsl(var(--muted-foreground))' : 'hsl(var(--card-foreground))'
+                                    }}
+                                  >
+                                    {step}
+                                  </span>
+                                </div>
                               </div>
-                              <span className="text-sm" style={{ color: 'hsl(var(--card-foreground))' }}>{step}</span>
-                            </div>
-                          ))}
+                            );
+                          })}
                         </div>
                       </div>
 
@@ -1253,16 +1352,16 @@ export default function ProgressPage() {
                   </p>
                   <div className="flex flex-col sm:flex-row gap-3 justify-center">
                     <button
-                      className="px-6 py-2 rounded-lg font-medium transition-colors"
+                      className="px-6 py-2 rounded-lg font-medium transition-colors hover:opacity-90"
                       style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))' }}
-                      onClick={() => window.open('/student-services', '_blank')}
+                      onClick={() => window.location.href = '/student-services'}
                     >
                       💬 Get Support
                     </button>
                     <button
-                      className="px-6 py-2 rounded-lg font-medium transition-colors"
+                      className="px-6 py-2 rounded-lg font-medium transition-colors hover:opacity-90"
                       style={{ backgroundColor: 'hsl(var(--secondary))', color: 'hsl(var(--secondary-foreground))' }}
-                      onClick={() => window.open('/course-selection', '_blank')}
+                      onClick={() => window.location.href = '/course-selection'}
                     >
                       📚 View Courses
                     </button>
