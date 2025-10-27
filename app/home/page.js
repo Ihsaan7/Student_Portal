@@ -198,10 +198,10 @@ export default function Dashboard() {
 
   return (
     <DashboardLayout currentPage="/home">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto w-full px-2 sm:px-4">
         {/* Welcome Section */}
-        <div className="rounded-xl shadow-sm p-6 md:p-8 mb-6 md:mb-8 border-2" style={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
-          <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-6">
+        <div className="rounded-xl shadow-sm p-4 sm:p-6 md:p-8 mb-6 md:mb-8 border-2 w-full max-w-full" style={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
+          <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-6 w-full">
             <div className="w-20 h-20 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-sm" style={{ backgroundColor: 'hsl(var(--primary))' }}>
               <span className="text-3xl font-bold" style={{ color: 'hsl(var(--primary-foreground))' }}>
                 {userProfile?.name?.charAt(0) || user?.email?.charAt(0)}
@@ -222,9 +222,9 @@ export default function Dashboard() {
         </div>
 
         {/* Current Semester Overview */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
-          <div className="rounded-xl shadow-sm p-6 border-2" style={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
-            <h3 className="text-xl font-semibold mb-6" style={{ color: 'hsl(var(--card-foreground))' }}>Current Semester</h3>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-10 w-full">
+          <div className="rounded-xl shadow-sm p-4 sm:p-6 border-2 w-full max-w-full" style={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
+            <h3 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6" style={{ color: 'hsl(var(--card-foreground))' }}>Current Semester</h3>
             <div className="space-y-4">
               <div className="flex justify-between items-center py-2">
                 <span className="text-base" style={{ color: 'hsl(var(--muted-foreground))' }}>Programme:</span>
@@ -260,8 +260,8 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="rounded-xl shadow-sm p-6 border-2" style={{ backgroundColor: 'hsl(var(--secondary))', borderColor: 'hsl(var(--border))' }}>
-            <h3 className="text-xl font-semibold mb-6" style={{ color: 'hsl(var(--card-foreground))' }}>Getting Started</h3>
+          <div className="rounded-xl shadow-sm p-4 sm:p-6 border-2 w-full max-w-full" style={{ backgroundColor: 'hsl(var(--secondary))', borderColor: 'hsl(var(--border))' }}>
+            <h3 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6" style={{ color: 'hsl(var(--card-foreground))' }}>Getting Started</h3>
             <div className="space-y-4">
               <div className="flex items-start space-x-4">
                 <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm" style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))' }}>
@@ -296,13 +296,13 @@ export default function Dashboard() {
 
         {/* Enrolled Courses Grid */}
         {enrolledCourses.length > 0 && (
-          <div className="mb-10 p-6 rounded-xl border-2" style={{ backgroundColor: 'hsl(var(--muted) / 0.3)', borderColor: 'hsl(var(--border))' }}>
-            <h3 className="text-xl font-semibold mb-6" style={{ color: 'hsl(var(--foreground))' }}>Your Enrolled Courses</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div className="mb-10 p-4 sm:p-6 rounded-xl border-2 w-full max-w-full" style={{ backgroundColor: 'hsl(var(--muted) / 0.3)', borderColor: 'hsl(var(--border))' }}>
+            <h3 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6" style={{ color: 'hsl(var(--foreground))' }}>Your Enrolled Courses</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 w-full">
               {enrolledCourses.slice(0, 4).map((course, index) => (
                 <div 
                   key={course.id} 
-                  className="rounded-xl shadow-sm p-5 border-2 cursor-pointer hover:shadow-lg transition-all duration-300 group"
+                  className="rounded-xl shadow-sm p-4 sm:p-5 border-2 cursor-pointer hover:shadow-lg transition-all duration-300 group w-full max-w-full"
                   style={{ 
                     backgroundColor: 'hsl(var(--card))', 
                     borderColor: 'hsl(var(--border))',
@@ -315,8 +315,8 @@ export default function Dashboard() {
                     e.target.style.transform = 'translateY(0)';
                   }}
                 >
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex-1 min-w-0">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-4 gap-3">
+                    <div className="flex-1 min-w-0 w-full">
                       <div className="flex items-center gap-3 mb-2">
                         <div className="w-3 h-3 rounded-full" style={{ 
                           backgroundColor: index % 4 === 0 ? 'hsl(220 70% 50%)' :
@@ -333,7 +333,7 @@ export default function Dashboard() {
                         e.stopPropagation();
                         handleUnenrollClick(course);
                       }}
-                      className="ml-3 px-3 py-1.5 text-xs rounded-lg transition-all duration-200 flex-shrink-0 hover:shadow-sm"
+                      className="sm:ml-3 px-3 py-1.5 text-xs rounded-lg transition-all duration-200 flex-shrink-0 hover:shadow-sm w-full sm:w-auto"
                       style={{ 
                         backgroundColor: 'hsl(var(--destructive) / 0.1)', 
                         color: 'hsl(var(--destructive))',

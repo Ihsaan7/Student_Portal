@@ -323,12 +323,12 @@ export default function DashboardLayout({ children, currentPage }) {
 
   return (
     <div
-      className="flex min-h-screen"
+      className="flex min-h-screen w-full max-w-full overflow-x-hidden"
       style={{ backgroundColor: "hsl(var(--background))" }}
     >
       {/* Sidebar */}
       <aside
-        className="fixed top-0 left-0 h-screen w-20 md:w-64 flex flex-col justify-between z-30 transition-all duration-300 border-r"
+        className="fixed top-0 left-0 h-full min-h-screen w-20 md:w-64 flex flex-col justify-between z-30 transition-all duration-300 border-r"
         style={{
           backgroundColor: "hsl(var(--sidebar))",
           borderColor: "hsl(var(--sidebar-border))",
@@ -413,10 +413,10 @@ export default function DashboardLayout({ children, currentPage }) {
       </aside>
 
       {/* Main content area (with top navbar) */}
-      <div className="flex-1 min-h-screen md:ml-64 ml-20 flex flex-col">
+      <div className="flex-1 min-h-screen md:ml-64 ml-20 flex flex-col max-w-full overflow-x-hidden">
         {/* Top Navbar */}
         <header
-          className="flex items-center justify-between h-20 px-4 border-b sticky top-0 z-20 backdrop-blur-sm"
+          className="flex items-center justify-between h-16 sm:h-20 px-2 sm:px-4 border-b sticky top-0 z-20 backdrop-blur-sm w-full max-w-full"
           style={{
             backgroundColor: "hsl(var(--header))",
             borderColor: "hsl(var(--border))",
@@ -424,19 +424,24 @@ export default function DashboardLayout({ children, currentPage }) {
               theme === "dark" ? "none" : "0 1px 3px 0 rgba(0, 0, 0, 0.1)",
           }}
         >
-          <div className="flex items-center">
-            <StudyBuddyLogo size="small" showText={false} className="mr-3" />
+          <div className="flex items-center min-w-0 flex-1">
+            <StudyBuddyLogo size="small" showText={false} className="mr-2 sm:mr-3 flex-shrink-0" />
             <div
-              className="font-bold text-xl tracking-wide"
+              className="font-bold text-sm sm:text-base md:text-lg tracking-wide truncate"
               style={{ color: "hsl(var(--foreground))" }}
             >
-              <span className="hidden sm:inline">
+              <span className="hidden md:inline">
                 StudentNest Learning Portal
               </span>
-              <span className="sm:hidden">StudentNest</span>
+              <span className="hidden sm:inline md:hidden">
+                StudentNest
+              </span>
+              <span className="sm:hidden">
+                SN
+              </span>
             </div>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
@@ -737,7 +742,7 @@ export default function DashboardLayout({ children, currentPage }) {
         )}
 
         {/* Main content area */}
-        <main className="flex-1 p-4 md:p-6">{children}</main>
+        <main className="flex-1 p-2 sm:p-4 md:p-6 w-full max-w-full overflow-x-hidden">{children}</main>
       </div>
       
       {/* Floating Help Button */}
