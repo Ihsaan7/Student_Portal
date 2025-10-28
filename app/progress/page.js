@@ -550,7 +550,7 @@ export default function ProgressPage() {
               {enrolledCourses.map((course) => (
                 <div
                   key={course.id}
-                  className="border rounded-lg p-6 transition-shadow"
+                  className="border rounded-lg p-4 sm:p-6 transition-shadow w-full max-w-full"
                   style={{
                     borderColor: 'hsl(var(--border))',
                     backgroundColor: 'hsl(var(--card))'
@@ -562,29 +562,29 @@ export default function ProgressPage() {
                     e.currentTarget.style.boxShadow = '0 1px 2px 0 rgba(0, 0, 0, 0.05)';
                   }}
                 >
-                  <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
-                    <div className="mb-4 md:mb-0">
-                      <h3 className="text-lg font-semibold mb-1" style={{ color: 'hsl(var(--card-foreground))' }}>{course.course_code} - {course.course_name}</h3>
-                      <p className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>Semester: {course.semester}</p>
+                  <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-4 space-y-3 lg:space-y-0">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-base sm:text-lg font-semibold mb-1 truncate" style={{ color: 'hsl(var(--card-foreground))' }}>{course.course_code} - {course.course_name}</h3>
+                      <p className="text-xs sm:text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>Semester: {course.semester}</p>
                     </div>
-                    <div className="flex items-center space-x-4">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                       {course.grade && (
                         <div
-                          className="px-3 py-1 rounded-full text-sm font-medium"
+                          className="px-2 py-1 rounded-full text-xs font-medium flex-shrink-0"
                           style={getGradeColor(course.grade)}
                         >
                           {course.grade}
                         </div>
                       )}
                       <div
-                        className="px-3 py-1 rounded-full text-sm font-medium"
+                        className="px-2 py-1 rounded-full text-xs font-medium flex-shrink-0"
                         style={getProgressColor(course.progress || 0)}
                       >
-                        {course.progress || 0}% Complete
+                        {course.progress || 0}%
                       </div>
                       <a
                         href={`/course/${course.course_code}`}
-                        className="px-3 py-1 rounded-lg transition-colors text-sm inline-block text-center"
+                        className="px-3 py-1.5 rounded-lg transition-colors text-xs sm:text-sm inline-block text-center flex-shrink-0"
                         style={{
                           backgroundColor: 'hsl(var(--accent))',
                           color: 'hsl(var(--accent-foreground))'
@@ -596,7 +596,7 @@ export default function ProgressPage() {
                           e.target.style.opacity = '1';
                         }}
                       >
-                        View Course
+                        View
                       </a>
                     </div>
                   </div>
@@ -875,18 +875,18 @@ export default function ProgressPage() {
         {!selectedCareerPath ? (
           /* Career Path Selection */
           <div
-            className="rounded-lg shadow-sm border p-8"
+            className="rounded-lg shadow-sm border p-4 sm:p-6 lg:p-8 w-full max-w-full"
             style={{
               backgroundColor: 'hsl(var(--card))',
               borderColor: 'hsl(var(--border))'
             }}
           >
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold mb-4" style={{ color: 'hsl(var(--card-foreground))' }}>Choose Your Career Path</h2>
-              <p style={{ color: 'hsl(var(--muted-foreground))' }}>Select the field you want to specialize in during your university journey</p>
+            <div className="text-center mb-6 sm:mb-8">
+              <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4" style={{ color: 'hsl(var(--card-foreground))' }}>Choose Your Career Path</h2>
+              <p className="text-sm sm:text-base" style={{ color: 'hsl(var(--muted-foreground))' }}>Select the field you want to specialize in during your university journey</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {careerPaths.map((path) => (
                 <div
                   key={path.id}
