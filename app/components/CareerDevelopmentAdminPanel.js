@@ -168,81 +168,82 @@ const CareerDevelopmentAdminPanel = ({ user }) => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-8">
+      <div className="bg-card rounded-lg shadow-sm border border-primary/20 p-8 text-center border-l-4" style={{ borderLeftColor: 'hsl(var(--primary))' }}>
         <LoadingSpinner size="medium" variant="primary" />
-        <span className="ml-2" style={{color: 'hsl(var(--muted-foreground))'}}>Loading career development content...</span>
+        <span className="ml-2 text-muted-foreground">Loading career development content...</span>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
-      {/* Header with Gradient */}
-      <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white rounded-2xl p-8 mb-8 shadow-2xl">
-        <div className="flex justify-between items-center">
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="bg-card rounded-lg shadow-sm border border-primary/20 p-6 border-l-4" style={{ borderLeftColor: 'hsl(var(--primary))' }}>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-3xl font-bold mb-2 flex items-center">
-              <svg className="w-8 h-8 mr-3" fill="currentColor" viewBox="0 0 20 20">
+            <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-2 flex items-center">
+              <svg className="w-6 h-6 sm:w-8 sm:h-8 mr-3 text-primary" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
               </svg>
               Career Development Hub
             </h2>
-            <p className="text-indigo-100 text-lg">Craft personalized learning journeys for every career path</p>
-            <div className="flex space-x-4 mt-4">
-              <div className="bg-white/20 backdrop-blur-sm rounded-lg px-4 py-2">
-                <span className="text-sm font-medium">Total Paths: {content.length}</span>
+            <p className="text-muted-foreground text-sm sm:text-base">Craft personalized learning journeys for every career path</p>
+            <div className="flex flex-wrap gap-2 sm:gap-4 mt-3">
+              <div className="bg-primary/10 border border-primary/20 rounded-lg px-3 py-1">
+                <span className="text-xs sm:text-sm font-medium text-primary">Total Paths: {content.length}</span>
               </div>
-              <div className="bg-white/20 backdrop-blur-sm rounded-lg px-4 py-2">
-                <span className="text-sm font-medium">Active Timelines: 3</span>
+              <div className="bg-primary/10 border border-primary/20 rounded-lg px-3 py-1">
+                <span className="text-xs sm:text-sm font-medium text-primary">Active Timelines: 3</span>
               </div>
             </div>
           </div>
           <button
             onClick={() => setShowAddForm(!showAddForm)}
-            className="bg-white text-indigo-600 px-6 py-3 rounded-xl hover:bg-gray-50 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 font-semibold flex items-center"
+            className="bg-primary text-primary-foreground px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:bg-primary/90 transition-colors font-medium flex items-center cursor-pointer"
           >
-            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
             </svg>
-            {showAddForm ? 'Cancel' : 'Create New Content'}
+            <span className="hidden sm:inline">{showAddForm ? 'Cancel' : 'Create New Content'}</span>
+            <span className="sm:hidden">{showAddForm ? 'Cancel' : 'Create'}</span>
           </button>
         </div>
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+        <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-md">
           {error}
         </div>
       )}
 
       {success && (
-        <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded">
+        <div className="bg-primary/10 border border-primary/20 text-primary px-4 py-3 rounded-md">
           {success}
         </div>
       )}
 
       {/* Add/Edit Form */}
       {showAddForm && (
-        <div className="bg-white/80 backdrop-blur-sm border-0 rounded-2xl p-8 mb-8 shadow-2xl ring-1 ring-gray-200/50">
+        <div className="bg-card rounded-lg shadow-sm border border-primary/20 p-6 border-l-4" style={{ borderLeftColor: 'hsl(var(--primary))' }}>
           <div className="flex items-center mb-6">
-            <div className="bg-gradient-to-r from-indigo-500 to-purple-500 p-3 rounded-xl mr-4">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-primary/10 border border-primary/20 p-3 rounded-lg mr-4">
+              <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
               </svg>
             </div>
             <div>
-              <h3 className="text-2xl font-bold text-gray-900">
+              <h3 className="text-lg sm:text-xl font-bold text-foreground">
                 {editingItem ? 'Edit Career Content' : 'Create New Career Content'}
               </h3>
-              <p className="text-gray-600">Design the perfect learning experience</p>
+              <p className="text-muted-foreground text-sm sm:text-base">Design the perfect learning experience</p>
             </div>
           </div>
           
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="group">
-                <label className="block text-sm font-semibold text-gray-800 mb-2 flex items-center">
-                  <svg className="w-4 h-4 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2 flex items-center">
+                  <svg className="w-4 h-4 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                   </svg>
                   Career Path
@@ -250,7 +251,7 @@ const CareerDevelopmentAdminPanel = ({ user }) => {
                 <select
                   value={formData.career_path}
                   onChange={(e) => setFormData({ ...formData, career_path: e.target.value })}
-                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white group-hover:border-indigo-300"
+                  className="w-full border border-border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary bg-background text-foreground"
                   required
                 >
                   {careerPaths.map(cp => (
@@ -259,9 +260,9 @@ const CareerDevelopmentAdminPanel = ({ user }) => {
                 </select>
               </div>
               
-              <div className="group">
-                <label className="block text-sm font-semibold text-gray-800 mb-2 flex items-center">
-                  <svg className="w-4 h-4 mr-2 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2 flex items-center">
+                  <svg className="w-4 h-4 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                   Timeline
@@ -269,7 +270,7 @@ const CareerDevelopmentAdminPanel = ({ user }) => {
                 <select
                   value={formData.timeline}
                   onChange={(e) => setFormData({ ...formData, timeline: e.target.value })}
-                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white group-hover:border-purple-300"
+                  className="w-full border border-border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary bg-background text-foreground"
                   required
                 >
                   {timelines.map(tl => (
@@ -279,9 +280,9 @@ const CareerDevelopmentAdminPanel = ({ user }) => {
               </div>
             </div>
 
-            <div className="group">
-              <label className="block text-sm font-semibold text-gray-800 mb-2 flex items-center">
-                <svg className="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2 flex items-center">
+                <svg className="w-4 h-4 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
                 Instructions (HTML)
@@ -290,14 +291,14 @@ const CareerDevelopmentAdminPanel = ({ user }) => {
                 value={formData.instructions}
                 onChange={(e) => setFormData({ ...formData, instructions: e.target.value })}
                 rows={6}
-                className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white group-hover:border-green-300 resize-none"
+                className="w-full border border-border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary bg-background text-foreground resize-none"
                 placeholder="Enter HTML content for instructions section..."
               />
             </div>
 
-            <div className="group">
-              <label className="block text-sm font-semibold text-gray-800 mb-2 flex items-center">
-                <svg className="w-4 h-4 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2 flex items-center">
+                <svg className="w-4 h-4 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                 </svg>
                 Action Steps (HTML)
@@ -306,14 +307,14 @@ const CareerDevelopmentAdminPanel = ({ user }) => {
                 value={formData.steps}
                 onChange={(e) => setFormData({ ...formData, steps: e.target.value })}
                 rows={6}
-                className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white group-hover:border-blue-300 resize-none"
+                className="w-full border border-border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary bg-background text-foreground resize-none"
                 placeholder="Enter HTML content for action steps section..."
               />
             </div>
 
-            <div className="group">
-              <label className="block text-sm font-semibold text-gray-800 mb-2 flex items-center">
-                <svg className="w-4 h-4 mr-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2 flex items-center">
+                <svg className="w-4 h-4 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                 </svg>
                 Video URL
@@ -322,15 +323,15 @@ const CareerDevelopmentAdminPanel = ({ user }) => {
                 type="url"
                 value={formData.video_url}
                 onChange={(e) => setFormData({ ...formData, video_url: e.target.value })}
-                className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white group-hover:border-red-300"
+                className="w-full border border-border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary bg-background text-foreground"
                 placeholder="https://www.youtube.com/embed/..."
               />
             </div>
 
-            <div className="flex space-x-4 pt-4">
+            <div className="flex flex-col sm:flex-row gap-3 pt-4">
               <button
                 type="submit"
-                className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 font-semibold flex items-center justify-center"
+                className="flex-1 bg-primary text-primary-foreground px-6 py-3 rounded-lg hover:bg-primary/90 transition-colors font-medium flex items-center justify-center cursor-pointer"
               >
                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -340,7 +341,7 @@ const CareerDevelopmentAdminPanel = ({ user }) => {
               <button
                 type="button"
                 onClick={handleCancel}
-                className="px-6 py-3 rounded-xl border-2 border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-300 font-semibold flex items-center"
+                className="px-6 py-3 rounded-lg border border-border text-foreground hover:bg-muted/50 transition-colors font-medium flex items-center justify-center cursor-pointer"
               >
                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -353,56 +354,52 @@ const CareerDevelopmentAdminPanel = ({ user }) => {
       )}
 
       {/* Content List */}
-      <div className="bg-white/80 backdrop-blur-sm border-0 rounded-2xl shadow-2xl ring-1 ring-gray-200/50">
-        <div className="px-8 py-6 border-b border-gray-100">
+      <div className="bg-card rounded-lg shadow-sm border border-primary/20 border-l-4" style={{ borderLeftColor: 'hsl(var(--primary))' }}>
+        <div className="px-4 sm:px-6 py-4 border-b border-border">
           <div className="flex items-center">
-            <div className="bg-gradient-to-r from-blue-500 to-cyan-500 p-3 rounded-xl mr-4">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-primary/10 border border-primary/20 p-3 rounded-lg mr-4">
+              <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
               </svg>
             </div>
             <div>
-              <h3 className="text-2xl font-bold text-gray-900">Content Library</h3>
-              <p className="text-gray-600">Manage your career development content</p>
+              <h3 className="text-lg sm:text-xl font-bold text-foreground">Content Library</h3>
+              <p className="text-muted-foreground text-sm sm:text-base">Manage your career development content</p>
             </div>
           </div>
         </div>
         
         {content.length === 0 ? (
-          <div className="p-12 text-center">
-            <div className="bg-gradient-to-r from-gray-100 to-gray-200 rounded-full w-24 h-24 mx-auto mb-6 flex items-center justify-center">
-              <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-            </div>
-            <h4 className="text-xl font-semibold text-gray-700 mb-2">No Content Yet</h4>
-            <p className="text-gray-500 mb-6">Start building your career development library by adding your first content piece.</p>
+          <div className="p-8 sm:p-12 text-center">
+            <div className="text-4xl mb-4">📚</div>
+            <h4 className="text-lg sm:text-xl font-semibold text-foreground mb-2">No Content Yet</h4>
+            <p className="text-muted-foreground mb-6 text-sm sm:text-base">Start building your career development library by adding your first content piece.</p>
             <button
               onClick={() => setShowAddForm(true)}
-              className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 font-semibold"
+              className="bg-primary text-primary-foreground px-6 py-3 rounded-lg hover:bg-primary/90 transition-colors font-medium cursor-pointer"
             >
               Create First Content
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 p-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 p-4 sm:p-6">
             {content.map((item) => (
-              <div key={item.id} className="bg-gradient-to-br from-white to-gray-50 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100">
+              <div key={item.id} className="bg-card rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-200 border border-border hover:border-primary/30">
                 <div className="space-y-4">
                   {/* Header with badges */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-indigo-500 to-purple-500 text-white">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-primary/10 text-primary border border-primary/20">
                         {getCareerPathLabel(item.career_path)}
                       </span>
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-green-500 to-emerald-500 text-white">
+                      <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-accent/10 text-accent border border-accent/20">
                         {getTimelineLabel(item.timeline)}
                       </span>
                     </div>
                     <div className="flex space-x-2">
                       <button
                         onClick={() => handleEdit(item)}
-                        className="p-2 text-indigo-600 hover:text-white hover:bg-indigo-600 rounded-lg transition-all duration-200 border border-indigo-200 hover:border-indigo-600"
+                        className="p-2 text-primary hover:text-primary/80 hover:bg-primary/10 rounded-lg transition-colors border border-primary/20 cursor-pointer"
                         title="Edit content"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -411,7 +408,7 @@ const CareerDevelopmentAdminPanel = ({ user }) => {
                       </button>
                       <button
                         onClick={() => handleDelete(item.id)}
-                        className="p-2 text-red-600 hover:text-white hover:bg-red-600 rounded-lg transition-all duration-200 border border-red-200 hover:border-red-600"
+                        className="p-2 text-destructive hover:text-destructive/80 hover:bg-destructive/10 rounded-lg transition-colors border border-destructive/20 cursor-pointer"
                         title="Delete content"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -424,39 +421,39 @@ const CareerDevelopmentAdminPanel = ({ user }) => {
                   {/* Content sections */}
                   <div className="space-y-3">
                     {item.instructions && (
-                      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-3 border-l-4 border-blue-400">
-                        <h4 className="text-sm font-semibold text-blue-800 mb-2 flex items-center">
-                          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="bg-primary/5 rounded-lg p-3 border-l-4 border-primary">
+                        <h4 className="text-sm font-medium text-foreground mb-2 flex items-center">
+                          <svg className="w-4 h-4 mr-1 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
                           Instructions
                         </h4>
                         <div 
-                          className="text-sm text-blue-700 max-h-32 overflow-y-auto"
+                          className="text-sm text-muted-foreground max-h-32 overflow-y-auto"
                           dangerouslySetInnerHTML={{ __html: item.instructions }}
                         />
                       </div>
                     )}
                     
                     {item.steps && (
-                      <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-3 border-l-4 border-green-400">
-                        <h4 className="text-sm font-semibold text-green-800 mb-2 flex items-center">
-                          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="bg-accent/5 rounded-lg p-3 border-l-4 border-accent">
+                        <h4 className="text-sm font-medium text-foreground mb-2 flex items-center">
+                          <svg className="w-4 h-4 mr-1 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                           </svg>
                           Action Steps
                         </h4>
                         <div 
-                          className="text-sm text-green-700 max-h-32 overflow-y-auto"
+                          className="text-sm text-muted-foreground max-h-32 overflow-y-auto"
                           dangerouslySetInnerHTML={{ __html: item.steps }}
                         />
                       </div>
                     )}
                     
                     {item.video_url && (
-                      <div className="bg-gradient-to-r from-red-50 to-pink-50 rounded-lg p-3 border-l-4 border-red-400">
-                        <h4 className="text-sm font-semibold text-red-800 mb-2 flex items-center">
-                          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="bg-destructive/5 rounded-lg p-3 border-l-4 border-destructive">
+                        <h4 className="text-sm font-medium text-foreground mb-2 flex items-center">
+                          <svg className="w-4 h-4 mr-1 text-destructive" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                           </svg>
                           Video Content
@@ -465,7 +462,7 @@ const CareerDevelopmentAdminPanel = ({ user }) => {
                           href={item.video_url} 
                           target="_blank" 
                           rel="noopener noreferrer"
-                          className="text-sm text-red-700 hover:text-red-900 underline break-all"
+                          className="text-sm text-primary hover:text-primary/80 underline break-all transition-colors"
                         >
                           {item.video_url.length > 40 ? item.video_url.substring(0, 40) + '...' : item.video_url}
                         </a>
@@ -474,8 +471,8 @@ const CareerDevelopmentAdminPanel = ({ user }) => {
                   </div>
                   
                   {/* Footer with timestamps */}
-                  <div className="pt-3 border-t border-gray-200">
-                    <div className="flex items-center text-xs text-gray-500">
+                  <div className="pt-3 border-t border-border">
+                    <div className="flex items-center text-xs text-muted-foreground">
                       <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>

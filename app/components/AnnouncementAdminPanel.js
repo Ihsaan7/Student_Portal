@@ -186,79 +186,80 @@ export default function AnnouncementAdminPanel() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500"></div>
+      <div className="bg-card rounded-lg shadow-sm border border-primary/20 p-8 text-center border-l-4" style={{ borderLeftColor: 'hsl(var(--primary))' }}>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+        <p className="mt-2 text-muted-foreground">Loading announcements...</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold text-gray-900">Manage Announcements</h2>
+    <div className="bg-card rounded-lg shadow-sm border border-primary/20 p-6 border-l-4" style={{ borderLeftColor: 'hsl(var(--primary))' }}>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
+        <h2 className="text-lg sm:text-xl font-semibold text-foreground">Manage Announcements</h2>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition"
+          className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors cursor-pointer"
         >
           {showForm ? 'Cancel' : 'Add New Announcement'}
         </button>
       </div>
 
       {showForm && (
-        <div className="bg-gray-50 rounded-lg p-6 mb-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">
+        <div className="bg-muted/30 rounded-lg p-6 mb-6 border border-border">
+          <h3 className="text-lg font-medium text-foreground mb-4">
             {editingAnnouncement ? 'Edit Announcement' : 'Create New Announcement'}
           </h3>
           
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Title *
               </label>
               <input
                 type="text"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-background text-foreground"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Content *
               </label>
               <textarea
                 value={formData.content}
                 onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                 rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-background text-foreground resize-none"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Video URL (optional)
               </label>
               <input
                 type="url"
                 value={formData.video_url}
                 onChange={(e) => setFormData({ ...formData, video_url: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-background text-foreground"
                 placeholder="https://example.com/video.mp4"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Or Upload Video File
               </label>
               <input
                 type="file"
                 accept="video/*"
                 onChange={(e) => setVideoFile(e.target.files[0])}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-background text-foreground"
               />
             </div>
 
@@ -268,25 +269,25 @@ export default function AnnouncementAdminPanel() {
                 id="is_active"
                 checked={formData.is_active}
                 onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-                className="mr-2"
+                className="mr-2 accent-primary"
               />
-              <label htmlFor="is_active" className="text-sm font-medium text-gray-700">
+              <label htmlFor="is_active" className="text-sm font-medium text-foreground">
                 Active (visible to users)
               </label>
             </div>
 
-            <div className="flex space-x-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <button
                 type="submit"
                 disabled={uploading}
-                className="px-6 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 disabled:opacity-50 transition"
+                className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors cursor-pointer"
               >
                 {uploading ? 'Saving...' : (editingAnnouncement ? 'Update' : 'Create')}
               </button>
               <button
                 type="button"
                 onClick={resetForm}
-                className="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition"
+                className="px-6 py-2 bg-muted text-foreground rounded-lg hover:bg-muted/80 transition-colors cursor-pointer border border-border"
               >
                 Cancel
               </button>
@@ -298,53 +299,56 @@ export default function AnnouncementAdminPanel() {
       {/* Announcements List */}
       <div className="space-y-4">
         {announcements.length === 0 ? (
-          <p className="text-gray-500 text-center py-8">No announcements found.</p>
+          <div className="text-center py-8">
+            <div className="text-4xl mb-2">📢</div>
+            <p className="text-muted-foreground">No announcements found.</p>
+          </div>
         ) : (
           announcements.map((announcement) => (
-            <div key={announcement.id} className="border border-gray-200 rounded-lg p-4">
-              <div className="flex justify-between items-start mb-2">
-                <h3 className="text-lg font-medium text-gray-900">{announcement.title}</h3>
+            <div key={announcement.id} className="border border-border rounded-lg p-4 hover:bg-muted/30 transition-colors">
+              <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-2 gap-2">
+                <h3 className="text-base sm:text-lg font-medium text-foreground">{announcement.title}</h3>
                 <div className="flex space-x-2">
-                  <span className={`px-2 py-1 text-xs rounded-full ${
+                  <span className={`px-2 py-1 text-xs rounded-md font-medium border ${
                     announcement.is_active 
-                      ? 'bg-green-100 text-green-800' 
-                      : 'bg-red-100 text-red-800'
+                      ? 'bg-primary/10 text-primary border-primary/20' 
+                      : 'bg-destructive/10 text-destructive border-destructive/20'
                   }`}>
                     {announcement.is_active ? 'Active' : 'Inactive'}
                   </span>
                 </div>
               </div>
               
-              <p className="text-gray-600 mb-3">{announcement.content}</p>
+              <p className="text-muted-foreground mb-3 text-sm sm:text-base">{announcement.content}</p>
               
               {announcement.video_url && (
                 <div className="mb-3">
-                  <p className="text-sm text-gray-500">Video: 
-                    <a href={announcement.video_url} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:text-indigo-800 ml-1">
+                  <p className="text-sm text-muted-foreground">Video: 
+                    <a href={announcement.video_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 ml-1 transition-colors">
                       View Video
                     </a>
                   </p>
                 </div>
               )}
               
-              <div className="flex justify-between items-center text-sm text-gray-500">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between text-sm text-muted-foreground gap-2">
                 <span>Created: {new Date(announcement.created_at).toLocaleDateString()}</span>
-                <div className="flex space-x-2">
+                <div className="flex flex-wrap gap-2">
                   <button
                     onClick={() => handleEdit(announcement)}
-                    className="text-indigo-600 hover:text-indigo-800"
+                    className="text-primary hover:text-primary/80 transition-colors cursor-pointer"
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => toggleActive(announcement.id, announcement.is_active)}
-                    className="text-yellow-600 hover:text-yellow-800"
+                    className="text-accent hover:text-accent/80 transition-colors cursor-pointer"
                   >
                     {announcement.is_active ? 'Deactivate' : 'Activate'}
                   </button>
                   <button
                     onClick={() => handleDelete(announcement.id)}
-                    className="text-red-600 hover:text-red-800"
+                    className="text-destructive hover:text-destructive/80 transition-colors cursor-pointer"
                   >
                     Delete
                   </button>
