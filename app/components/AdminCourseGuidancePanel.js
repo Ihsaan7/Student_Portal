@@ -348,13 +348,13 @@ export default function AdminCourseGuidancePanel({ courseCode: propCourseCode })
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div className="rounded-lg shadow-sm border p-4 sm:p-6 w-full max-w-full" style={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
         <div className="animate-pulse">
-          <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
+          <div className="h-6 rounded w-1/3 mb-4" style={{ backgroundColor: 'hsl(var(--muted))' }}></div>
           <div className="space-y-3">
-            <div className="h-4 bg-gray-200 rounded"></div>
-            <div className="h-4 bg-gray-200 rounded w-5/6"></div>
-            <div className="h-4 bg-gray-200 rounded w-4/6"></div>
+            <div className="h-4 rounded" style={{ backgroundColor: 'hsl(var(--muted))' }}></div>
+            <div className="h-4 rounded w-5/6" style={{ backgroundColor: 'hsl(var(--muted))' }}></div>
+            <div className="h-4 rounded w-4/6" style={{ backgroundColor: 'hsl(var(--muted))' }}></div>
           </div>
         </div>
       </div>
@@ -363,26 +363,32 @@ export default function AdminCourseGuidancePanel({ courseCode: propCourseCode })
 
   return (
     <>
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-semibold text-gray-900">
+      <div className="rounded-lg shadow-sm border p-4 sm:p-6 w-full max-w-full" style={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6 space-y-2 sm:space-y-0">
+          <h3 className="text-base sm:text-lg font-semibold break-words" style={{ color: 'hsl(var(--card-foreground))' }}>
             Course Guidance Management{selectedCourseCode ? ` - ${selectedCourseCode}` : ''}
           </h3>
-          <span className="text-sm text-gray-500">
+          <span className="text-xs sm:text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>
             {guidance ? 'Last updated: ' + new Date(guidance.updated_at).toLocaleDateString() : 'No guidance set'}
           </span>
         </div>
 
         {/* Course Selector */}
         {!propCourseCode && (
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+          <div className="mb-4 sm:mb-6">
+            <label className="block text-xs sm:text-sm font-medium mb-2" style={{ color: 'hsl(var(--card-foreground))' }}>
               Select Course
             </label>
             <select
               value={selectedCourseCode}
               onChange={(e) => setSelectedCourseCode(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 text-sm"
+              style={{
+                backgroundColor: 'hsl(var(--background))',
+                borderColor: 'hsl(var(--border))',
+                color: 'hsl(var(--foreground))',
+                '--tw-ring-color': 'hsl(var(--primary))'
+              }}
             >
               <option value="">Select a course...</option>
               {courses.map((course) => (
@@ -394,56 +400,80 @@ export default function AdminCourseGuidancePanel({ courseCode: propCourseCode })
           </div>
         )}
 
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {/* Main Video Section */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-xs sm:text-sm font-medium mb-2" style={{ color: 'hsl(var(--card-foreground))' }}>
               Main Video Title
             </label>
             <input
               type="text"
               value={formData.main_video_title}
               onChange={(e) => setFormData(prev => ({ ...prev, main_video_title: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 text-sm"
+              style={{
+                backgroundColor: 'hsl(var(--background))',
+                borderColor: 'hsl(var(--border))',
+                color: 'hsl(var(--foreground))',
+                '--tw-ring-color': 'hsl(var(--primary))'
+              }}
               placeholder="How to Attempt this Course"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-xs sm:text-sm font-medium mb-2" style={{ color: 'hsl(var(--card-foreground))' }}>
               Main Video URL (YouTube)
             </label>
             <input
               type="url"
               value={formData.main_video_url}
               onChange={(e) => setFormData(prev => ({ ...prev, main_video_url: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 text-sm"
+              style={{
+                backgroundColor: 'hsl(var(--background))',
+                borderColor: 'hsl(var(--border))',
+                color: 'hsl(var(--foreground))',
+                '--tw-ring-color': 'hsl(var(--primary))'
+              }}
               placeholder="https://www.youtube.com/watch?v=..."
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-xs sm:text-sm font-medium mb-2" style={{ color: 'hsl(var(--card-foreground))' }}>
               Video Duration (MM:SS or HH:MM:SS)
             </label>
             <input
               type="text"
               value={formData.duration}
               onChange={(e) => setFormData(prev => ({ ...prev, duration: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 text-sm"
+              style={{
+                backgroundColor: 'hsl(var(--background))',
+                borderColor: 'hsl(var(--border))',
+                color: 'hsl(var(--foreground))',
+                '--tw-ring-color': 'hsl(var(--primary))'
+              }}
               placeholder="15:30"
             />
           </div>
 
           {/* Guidance Points Section */}
           <div>
-            <div className="flex items-center justify-between mb-3">
-              <label className="block text-sm font-medium text-gray-700">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3 space-y-2 sm:space-y-0">
+              <label className="block text-xs sm:text-sm font-medium" style={{ color: 'hsl(var(--card-foreground))' }}>
                 Guidance Points
               </label>
               <button
                 onClick={addGuidancePoint}
-                className="bg-blue-600 text-white px-3 py-1 rounded-lg hover:bg-blue-700 transition-colors text-sm"
+                className="px-3 py-1.5 rounded-lg transition-colors text-xs sm:text-sm font-medium w-full sm:w-auto"
+                style={{
+                  backgroundColor: 'hsl(var(--primary))',
+                  color: 'hsl(var(--primary-foreground))'
+                }}
+                onMouseEnter={(e) => e.target.style.opacity = '0.9'}
+                onMouseLeave={(e) => e.target.style.opacity = '1'}
               >
                 + Add Point
               </button>
@@ -451,23 +481,32 @@ export default function AdminCourseGuidancePanel({ courseCode: propCourseCode })
             
             <div className="space-y-3">
               {formData.guidance_points.map((point, index) => (
-                <div key={index} className="flex items-center space-x-3">
-                  <span className="text-sm font-medium text-gray-500 min-w-[60px]">
+                <div key={index} className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
+                  <span className="text-xs sm:text-sm font-medium sm:min-w-[80px] flex-shrink-0" style={{ color: 'hsl(var(--muted-foreground))' }}>
                     Point {index + 1}:
                   </span>
                   <input
                     type="text"
                     value={point}
                     onChange={(e) => updateGuidancePoint(index, e.target.value)}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 text-sm"
+                    style={{
+                      backgroundColor: 'hsl(var(--background))',
+                      borderColor: 'hsl(var(--border))',
+                      color: 'hsl(var(--foreground))',
+                      '--tw-ring-color': 'hsl(var(--primary))'
+                    }}
                     placeholder={`Enter guidance point ${index + 1}`}
                   />
                   {formData.guidance_points.length > 1 && (
                     <button
                       onClick={() => removeGuidancePoint(index)}
-                      className="text-red-600 hover:text-red-800 p-1"
+                      className="p-1.5 rounded transition-colors flex-shrink-0 self-end sm:self-center"
+                      style={{ color: 'hsl(var(--destructive))' }}
+                      onMouseEnter={(e) => e.target.style.opacity = '0.8'}
+                      onMouseLeave={(e) => e.target.style.opacity = '1'}
                     >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                       </svg>
                     </button>
@@ -478,11 +517,25 @@ export default function AdminCourseGuidancePanel({ courseCode: propCourseCode })
           </div>
 
           {/* Save Button */}
-          <div className="flex justify-end pt-4 border-t border-gray-200">
+          <div className="flex justify-end pt-4 border-t" style={{ borderColor: 'hsl(var(--border))' }}>
             <button
               onClick={handleSave}
               disabled={saving || !selectedCourseCode}
-              className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 sm:px-6 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium w-full sm:w-auto"
+              style={{
+                backgroundColor: saving || !selectedCourseCode ? 'hsl(var(--muted))' : 'hsl(var(--primary))',
+                color: saving || !selectedCourseCode ? 'hsl(var(--muted-foreground))' : 'hsl(var(--primary-foreground))'
+              }}
+              onMouseEnter={(e) => {
+                if (!saving && selectedCourseCode) {
+                  e.target.style.opacity = '0.9';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!saving && selectedCourseCode) {
+                  e.target.style.opacity = '1';
+                }
+              }}
             >
               {saving ? 'Saving...' : 'Save Guidance'}
             </button>

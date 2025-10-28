@@ -45,13 +45,48 @@ export default function AdminOnlyButton({
     return null;
   }
 
-  const baseClasses = "inline-flex items-center gap-2 px-3 py-2 rounded-md font-medium transition-all duration-200 border";
-  
-  const variantClasses = {
-    primary: "bg-gradient-to-r from-red-500 to-red-600 text-white border-red-600 hover:from-red-600 hover:to-red-700 hover:border-red-700 shadow-md hover:shadow-lg",
-    secondary: "bg-gradient-to-r from-orange-500 to-orange-600 text-white border-orange-600 hover:from-orange-600 hover:to-orange-700 hover:border-orange-700 shadow-md hover:shadow-lg",
-    outline: "bg-white text-red-600 border-red-300 hover:bg-red-50 hover:border-red-400",
-    ghost: "bg-transparent text-red-600 border-transparent hover:bg-red-50"
+  const getVariantStyles = (variant) => {
+    const baseStyle = {
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: '0.5rem',
+      padding: '0.5rem 0.75rem',
+      borderRadius: '0.375rem',
+      fontWeight: '500',
+      fontSize: '0.875rem',
+      transition: 'all 0.2s',
+      border: '1px solid',
+      cursor: 'pointer'
+    };
+
+    const variants = {
+      primary: {
+        ...baseStyle,
+        backgroundColor: 'hsl(var(--destructive))',
+        color: 'hsl(var(--destructive-foreground))',
+        borderColor: 'hsl(var(--destructive))'
+      },
+      secondary: {
+        ...baseStyle,
+        backgroundColor: 'hsl(var(--secondary))',
+        color: 'hsl(var(--secondary-foreground))',
+        borderColor: 'hsl(var(--secondary))'
+      },
+      outline: {
+        ...baseStyle,
+        backgroundColor: 'hsl(var(--background))',
+        color: 'hsl(var(--destructive))',
+        borderColor: 'hsl(var(--destructive))'
+      },
+      ghost: {
+        ...baseStyle,
+        backgroundColor: 'transparent',
+        color: 'hsl(var(--destructive))',
+        borderColor: 'transparent'
+      }
+    };
+
+    return variants[variant] || variants.primary;
   };
 
   const handleClick = (e) => {
@@ -64,8 +99,23 @@ export default function AdminOnlyButton({
   return (
     <button
       onClick={handleClick}
-      className={`${baseClasses} ${variantClasses[variant]} ${className}`}
+      style={getVariantStyles(variant)}
+      className={className}
       title={`${title} (Admin Only)`}
+      onMouseEnter={(e) => {
+        e.target.style.opacity = '0.9';
+        if (variant === 'outline' || variant === 'ghost') {
+          e.target.style.backgroundColor = 'hsl(var(--destructive) / 0.1)';
+        }
+      }}
+      onMouseLeave={(e) => {
+        e.target.style.opacity = '1';
+        if (variant === 'outline') {
+          e.target.style.backgroundColor = 'hsl(var(--background))';
+        } else if (variant === 'ghost') {
+          e.target.style.backgroundColor = 'transparent';
+        }
+      }}
       {...props}
     >
       <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
