@@ -250,18 +250,18 @@ export default function CalendarPage() {
   return (
     <AuthGuard>
       <DashboardLayout currentPage="/calendar">
-      <div className="max-w-6xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2" style={{ color: 'hsl(var(--card-foreground))' }}>Academic Calendar</h1>
-          <p style={{ color: 'hsl(var(--muted-foreground))' }}>View your schedule, deadlines, and important academic events.</p>
+      <div className="max-w-6xl mx-auto w-full px-2 sm:px-4">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold mb-2" style={{ color: 'hsl(var(--card-foreground))' }}>Academic Calendar</h1>
+          <p className="text-sm sm:text-base" style={{ color: 'hsl(var(--muted-foreground))' }}>View your schedule, deadlines, and important academic events.</p>
         </div>
 
         {/* Calendar Navigation */}
-        <div className="rounded-lg shadow-sm border p-6 mb-6" style={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
-          <div className="flex items-center justify-between mb-6">
+        <div className="rounded-lg shadow-sm border p-3 sm:p-4 md:p-6 mb-6 w-full max-w-full overflow-x-auto" style={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
+          <div className="flex items-center justify-between mb-4 sm:mb-6">
             <button
               onClick={prevMonth}
-              className="p-2 rounded-lg transition"
+              className="p-1.5 sm:p-2 rounded-lg transition flex-shrink-0"
               style={{ 
                 color: 'hsl(var(--card-foreground))',
                 ':hover': { backgroundColor: 'hsl(var(--muted))' }
@@ -269,16 +269,17 @@ export default function CalendarPage() {
               onMouseEnter={(e) => e.target.style.backgroundColor = 'hsl(var(--muted))'}
               onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
               </svg>
             </button>
-            <h2 className="text-xl font-semibold" style={{ color: 'hsl(var(--card-foreground))' }}>
-              {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
+            <h2 className="text-lg sm:text-xl font-semibold text-center flex-1 px-2" style={{ color: 'hsl(var(--card-foreground))' }}>
+              <span className="hidden sm:inline">{monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}</span>
+              <span className="sm:hidden">{monthNames[currentDate.getMonth()].slice(0, 3)} {currentDate.getFullYear()}</span>
             </h2>
             <button
               onClick={nextMonth}
-              className="p-2 rounded-lg transition"
+              className="p-1.5 sm:p-2 rounded-lg transition flex-shrink-0"
               style={{ 
                 color: 'hsl(var(--card-foreground))',
                 ':hover': { backgroundColor: 'hsl(var(--muted))' }
@@ -286,18 +287,19 @@ export default function CalendarPage() {
               onMouseEnter={(e) => e.target.style.backgroundColor = 'hsl(var(--muted))'}
               onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
               </svg>
             </button>
           </div>
 
           {/* Calendar Grid */}
-          <div className="grid grid-cols-7 gap-1">
+          <div className="grid grid-cols-7 gap-1 sm:gap-2">
             {/* Day Headers */}
             {dayNames.map(day => (
-              <div key={day} className="p-3 text-center text-sm font-medium rounded" style={{ color: 'hsl(var(--muted-foreground))', backgroundColor: 'hsl(var(--muted))' }}>
-                {day}
+              <div key={day} className="p-1 sm:p-2 md:p-3 text-center text-xs sm:text-sm font-medium rounded" style={{ color: 'hsl(var(--muted-foreground))', backgroundColor: 'hsl(var(--muted))' }}>
+                <span className="hidden sm:inline">{day}</span>
+                <span className="sm:hidden">{day.slice(0, 1)}</span>
               </div>
             ))}
             
@@ -308,9 +310,9 @@ export default function CalendarPage() {
                 <div
                   key={index}
                   onClick={() => handleDateClick(day)}
-                  className={`p-3 min-h-[80px] border relative ${
+                  className={`p-1 sm:p-2 md:p-3 min-h-[60px] sm:min-h-[80px] md:min-h-[100px] border relative ${
                     day ? 'cursor-pointer' : ''
-                  }`}
+                  } flex flex-col`}
                   style={{
                     borderColor: 'hsl(var(--border))',
                     backgroundColor: day 
@@ -333,12 +335,13 @@ export default function CalendarPage() {
                 >
                   {day && (
                     <>
-                      <div className="text-sm font-medium mb-1" style={{ color: 'hsl(var(--card-foreground))' }}>
+                      <div className="text-xs sm:text-sm font-medium mb-1 flex-shrink-0" style={{ color: 'hsl(var(--card-foreground))' }}>
                         {day.getDate()}
                       </div>
                       {note && (
-                        <div className="text-xs p-1 rounded truncate" style={{ color: 'hsl(var(--primary-foreground))', backgroundColor: 'hsl(var(--primary))' }}>
-                          📝 {note}
+                        <div className="text-xs p-1 rounded truncate flex-1 min-w-0" style={{ color: 'hsl(var(--primary-foreground))', backgroundColor: 'hsl(var(--primary))' }}>
+                          <span className="hidden sm:inline">📝 </span>
+                          <span className="truncate">{note}</span>
                         </div>
                       )}
                     </>
@@ -350,9 +353,9 @@ export default function CalendarPage() {
         </div>
 
         {/* Announcements Section */}
-        <div id="announcements-section" className="rounded-lg shadow-sm border p-6 mb-6" style={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold" style={{ color: 'hsl(var(--card-foreground))' }}>Recent Announcements</h2>
+        <div id="announcements-section" className="rounded-lg shadow-sm border p-3 sm:p-4 md:p-6 mb-6 w-full max-w-full" style={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
+          <div className="flex items-center justify-between mb-4 sm:mb-6">
+            <h2 className="text-lg sm:text-xl font-semibold" style={{ color: 'hsl(var(--card-foreground))' }}>Recent Announcements</h2>
             {unreadCount > 0 && (
               <span className="text-xs px-2 py-1 rounded-full" style={{ backgroundColor: 'hsl(var(--destructive))', color: 'hsl(var(--destructive-foreground))' }}>
                 {unreadCount} new
