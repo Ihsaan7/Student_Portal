@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import AdminMiddleware from '../../../components/AdminMiddleware';
 import { getUsers, updateUserRole, deleteUser, logAdminAction } from '../../../lib/adminAuth';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import { useTheme } from '../../components/ThemeProvider';
 
 const UsersManagement = ({ adminData }) => {
   const [users, setUsers] = useState([]);
@@ -18,6 +19,7 @@ const UsersManagement = ({ adminData }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
   const router = useRouter();
+  const { theme, toggleTheme } = useTheme();
   
   const usersPerPage = 20;
 
@@ -92,10 +94,10 @@ const UsersManagement = ({ adminData }) => {
 
   const getRoleBadgeColor = (role) => {
     switch (role) {
-      case 'super_admin': return 'bg-red-100 text-red-800';
-      case 'admin': return 'bg-blue-100 text-blue-800';
-      case 'student': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'super_admin': return 'bg-destructive/10 text-destructive border border-destructive/20';
+      case 'admin': return 'bg-primary/10 text-primary border border-primary/20';
+      case 'student': return 'bg-accent/10 text-accent border border-accent/20';
+      default: return 'bg-muted/50 text-muted-foreground border border-border';
     }
   };
 
@@ -106,19 +108,37 @@ const UsersManagement = ({ adminData }) => {
   const totalPages = Math.ceil(totalUsers / usersPerPage);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="bg-card shadow-sm border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center">
               <button
                 onClick={() => router.push('/admin')}
-                className="text-blue-600 hover:text-blue-800 mr-4"
+                className="text-primary hover:text-primary/80 mr-4 transition-colors cursor-pointer"
               >
                 ← Back to Dashboard
               </button>
-              <h1 className="text-2xl font-bold text-gray-900">User Management</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-foreground">
+                <span className="hidden sm:inline">User Management</span>
+                <span className="sm:hidden">Users</span>
+              </h1>
+            </div>
+            
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              {/* Theme Toggle */}
+              <button
+                onClick={toggleTheme}
+                className="p-2 rounded-md transition-all duration-200 hover:bg-muted/50 cursor-pointer border border-border hover:border-primary/30"
+                style={{ 
+                  backgroundColor: 'hsl(var(--muted))', 
+                  color: 'hsl(var(--muted-foreground))' 
+                }}
+                title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+              >
+                {theme === 'dark' ? '☀️' : '🌙'}
+              </button>
             </div>
           </div>
         </div>
@@ -127,18 +147,18 @@ const UsersManagement = ({ adminData }) => {
       {/* Error/Success Messages */}
       {error && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+          <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-md">
             {error}
-            <button onClick={() => setError('')} className="float-right font-bold">×</button>
+            <button onClick={() => setError('')} className="float-right font-bold hover:text-destructive/80 cursor-pointer">×</button>
           </div>
         </div>
       )}
       
       {success && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-          <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded">
+          <div className="bg-primary/10 border border-primary/20 text-primary px-4 py-3 rounded-md">
             {success}
-            <button onClick={() => setSuccess('')} className="float-right font-bold">×</button>
+            <button onClick={() => setSuccess('')} className="float-right font-bold hover:text-primary/80 cursor-pointer">×</button>
           </div>
         </div>
       )}
@@ -146,8 +166,8 @@ const UsersManagement = ({ adminData }) => {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Search and Filters */}
-        <div className="bg-white rounded-lg shadow mb-6">
-          <div className="p-6">
+        <div className="bg-card rounded-lg shadow-sm border border-primary/20 mb-6 border-l-4" style={{ borderLeftColor: 'hsl(var(--primary))' }}>
+          <div className="p-4 sm:p-6">
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1">
                 <input
@@ -155,81 +175,84 @@ const UsersManagement = ({ adminData }) => {
                   placeholder="Search users by name or email..."
                   value={searchTerm}
                   onChange={handleSearch}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-background text-foreground"
+                  style={{ backgroundColor: 'hsl(var(--background))', color: 'hsl(var(--foreground))' }}
                 />
               </div>
-              <div className="text-sm text-gray-600 flex items-center">
-                Total: {totalUsers} users
+              <div className="text-sm text-muted-foreground flex items-center whitespace-nowrap">
+                <span className="font-medium text-primary">{totalUsers}</span> users total
               </div>
             </div>
           </div>
         </div>
 
         {/* Users Table */}
-        <div className="bg-white rounded-lg shadow">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-900">Users</h2>
+        <div className="bg-card rounded-lg shadow-sm border border-primary/20 border-l-4" style={{ borderLeftColor: 'hsl(var(--primary))' }}>
+          <div className="px-4 sm:px-6 py-4 border-b border-border">
+            <h2 className="text-lg sm:text-xl font-semibold text-foreground">Users</h2>
           </div>
           
           {loading ? (
             <div className="p-8 text-center">
               <LoadingSpinner size="medium" variant="primary" />
-              <p className="mt-2" style={{color: 'hsl(var(--muted-foreground))'}}>Loading users...</p>
+              <p className="mt-2 text-muted-foreground">Loading users...</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+              <table className="min-w-full divide-y divide-border">
+                <thead style={{ backgroundColor: 'hsl(var(--muted))' }}>
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       User
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Role
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="hidden sm:table-cell px-4 sm:px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Programme
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="hidden md:table-cell px-4 sm:px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Joined
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-card divide-y divide-border">
                   {users.map((user) => (
-                    <tr key={user.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
+                    <tr key={user.id} className="hover:bg-muted/30 transition-colors">
+                      <td className="px-4 sm:px-6 py-4">
                         <div>
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-sm font-medium text-foreground">
                             {user.name || 'No name'}
                           </div>
-                          <div className="text-sm text-gray-500">{user.email}</div>
+                          <div className="text-sm text-muted-foreground truncate max-w-[200px]">{user.email}</div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                      <td className="px-4 sm:px-6 py-4">
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-md ${
                           getRoleBadgeColor(user.role)
                         }`}>
                           {user.role || 'student'}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {user.programme || 'Not set'}
+                      <td className="hidden sm:table-cell px-4 sm:px-6 py-4 text-sm text-foreground">
+                        <div className="max-w-[150px] truncate" title={user.programme || 'Not set'}>
+                          {user.programme || 'Not set'}
+                        </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="hidden md:table-cell px-4 sm:px-6 py-4 text-sm text-muted-foreground">
                         {formatDate(user.created_at)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <div className="flex space-x-2">
+                      <td className="px-4 sm:px-6 py-4 text-sm font-medium">
+                        <div className="flex flex-col sm:flex-row space-y-1 sm:space-y-0 sm:space-x-2">
                           <button
                             onClick={() => {
                               setSelectedUser(user);
                               setShowRoleModal(true);
                             }}
-                            className="text-blue-600 hover:text-blue-900"
+                            className="text-primary hover:text-primary/80 transition-colors cursor-pointer text-xs sm:text-sm"
                           >
                             Edit Role
                           </button>
@@ -239,7 +262,7 @@ const UsersManagement = ({ adminData }) => {
                                 setSelectedUser(user);
                                 setShowDeleteModal(true);
                               }}
-                              className="text-red-600 hover:text-red-900"
+                              className="text-destructive hover:text-destructive/80 transition-colors cursor-pointer text-xs sm:text-sm"
                             >
                               Delete
                             </button>
@@ -255,26 +278,28 @@ const UsersManagement = ({ adminData }) => {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="px-6 py-4 border-t border-gray-200">
-              <div className="flex items-center justify-between">
-                <div className="text-sm text-gray-700">
+            <div className="px-4 sm:px-6 py-4 border-t border-border">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="text-sm text-muted-foreground">
                   Showing {currentPage * usersPerPage + 1} to {Math.min((currentPage + 1) * usersPerPage, totalUsers)} of {totalUsers} results
                 </div>
-                <div className="flex space-x-2">
+                <div className="flex items-center space-x-2">
                   <button
                     onClick={() => setCurrentPage(Math.max(0, currentPage - 1))}
                     disabled={currentPage === 0}
-                    className="px-3 py-1 border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                    className="px-3 py-2 border border-border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-muted/50 transition-colors cursor-pointer text-sm"
+                    style={{ backgroundColor: 'hsl(var(--background))', color: 'hsl(var(--foreground))' }}
                   >
                     Previous
                   </button>
-                  <span className="px-3 py-1 text-sm text-gray-700">
+                  <span className="px-3 py-2 text-sm text-muted-foreground">
                     Page {currentPage + 1} of {totalPages}
                   </span>
                   <button
                     onClick={() => setCurrentPage(Math.min(totalPages - 1, currentPage + 1))}
                     disabled={currentPage >= totalPages - 1}
-                    className="px-3 py-1 border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                    className="px-3 py-2 border border-border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-muted/50 transition-colors cursor-pointer text-sm"
+                    style={{ backgroundColor: 'hsl(var(--background))', color: 'hsl(var(--foreground))' }}
                   >
                     Next
                   </button>
@@ -287,9 +312,9 @@ const UsersManagement = ({ adminData }) => {
 
       {/* Role Change Modal */}
       {showRoleModal && selectedUser && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-card rounded-lg p-6 w-full max-w-md border border-border shadow-lg">
+            <h3 className="text-lg font-medium text-foreground mb-4">
               Change Role for {selectedUser.name || selectedUser.email}
             </h3>
             <div className="space-y-3">
@@ -298,20 +323,23 @@ const UsersManagement = ({ adminData }) => {
                   key={role}
                   onClick={() => handleRoleChange(role)}
                   disabled={actionLoading || selectedUser.role === role}
-                  className={`w-full text-left px-4 py-2 rounded border ${
+                  className={`w-full text-left px-4 py-3 rounded-md border transition-colors cursor-pointer ${
                     selectedUser.role === role
-                      ? 'bg-gray-100 text-gray-500 cursor-not-allowed'
-                      : 'hover:bg-gray-50 border-gray-300'
+                      ? 'bg-muted/50 text-muted-foreground cursor-not-allowed border-border'
+                      : 'hover:bg-muted/30 border-border hover:border-primary/30'
                   }`}
+                  style={{ backgroundColor: selectedUser.role === role ? 'hsl(var(--muted))' : 'hsl(var(--background))' }}
                 >
-                  <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full mr-2 ${
+                  <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-md mr-2 ${
                     getRoleBadgeColor(role)
                   }`}>
                     {role}
                   </span>
-                  {role === 'student' && 'Regular student access'}
-                  {role === 'admin' && 'Admin panel access'}
-                  {role === 'super_admin' && 'Full system access'}
+                  <span className="text-foreground">
+                    {role === 'student' && 'Regular student access'}
+                    {role === 'admin' && 'Admin panel access'}
+                    {role === 'super_admin' && 'Full system access'}
+                  </span>
                 </button>
               ))}
             </div>
@@ -322,7 +350,8 @@ const UsersManagement = ({ adminData }) => {
                   setSelectedUser(null);
                 }}
                 disabled={actionLoading}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50"
+                className="flex-1 px-4 py-2 border border-border rounded-md text-foreground hover:bg-muted/50 transition-colors cursor-pointer"
+                style={{ backgroundColor: 'hsl(var(--background))' }}
               >
                 Cancel
               </button>
@@ -333,13 +362,13 @@ const UsersManagement = ({ adminData }) => {
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && selectedUser && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-card rounded-lg p-6 w-full max-w-md border border-border shadow-lg">
+            <h3 className="text-lg font-medium text-foreground mb-4">
               Delete User
             </h3>
-            <p className="text-gray-600 mb-6">
-              Are you sure you want to delete <strong>{selectedUser.name || selectedUser.email}</strong>? 
+            <p className="text-muted-foreground mb-6">
+              Are you sure you want to delete <strong className="text-foreground">{selectedUser.name || selectedUser.email}</strong>? 
               This action cannot be undone and will remove all user data.
             </p>
             <div className="flex space-x-3">
@@ -349,14 +378,15 @@ const UsersManagement = ({ adminData }) => {
                   setSelectedUser(null);
                 }}
                 disabled={actionLoading}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50"
+                className="flex-1 px-4 py-2 border border-border rounded-md text-foreground hover:bg-muted/50 transition-colors cursor-pointer"
+                style={{ backgroundColor: 'hsl(var(--background))' }}
               >
                 Cancel
               </button>
               <button
                 onClick={handleDeleteUser}
                 disabled={actionLoading}
-                className="flex-1 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50"
+                className="flex-1 px-4 py-2 bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90 disabled:opacity-50 transition-colors cursor-pointer"
               >
                 {actionLoading ? 'Deleting...' : 'Delete'}
               </button>
