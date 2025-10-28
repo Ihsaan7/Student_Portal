@@ -9,6 +9,7 @@ import AnnouncementAdminPanel from '../components/AnnouncementAdminPanel';
 import { getAdminStats, updateSystemStats, logAdminAction } from '../../lib/adminAuth';
 import { supabase } from '../../lib/supabase';
 import LoadingSpinner from '../components/LoadingSpinner';
+import { useTheme } from '../components/ThemeProvider';
 
 const AdminDashboard = ({ adminData }) => {
   const [stats, setStats] = useState(null);
@@ -19,6 +20,7 @@ const AdminDashboard = ({ adminData }) => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     // Check for error messages from URL params
@@ -110,30 +112,48 @@ const AdminDashboard = ({ adminData }) => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="bg-card shadow-sm border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
-              <span className="ml-3 px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
+              <h1 className="text-xl sm:text-2xl font-bold text-foreground">
+                <span className="hidden sm:inline">Admin Dashboard</span>
+                <span className="sm:hidden">Admin</span>
+              </h1>
+              <span className="ml-2 sm:ml-3 px-2 sm:px-3 py-1 text-xs font-medium bg-primary/10 text-primary rounded-full border border-primary/20">
                 {adminData?.role === 'super_admin' ? 'Super Admin' : 'Admin'}
               </span>
             </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-600">
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              <span className="text-sm text-muted-foreground hidden lg:block">
                 Welcome, {adminData?.user?.profile?.name || adminData?.user?.email}
               </span>
+              
+              {/* Theme Toggle */}
+              <button
+                onClick={toggleTheme}
+                className="p-2 rounded-md transition-all duration-200 hover:bg-muted/50 cursor-pointer border border-border hover:border-primary/30"
+                style={{ 
+                  backgroundColor: 'hsl(var(--muted))', 
+                  color: 'hsl(var(--muted-foreground))' 
+                }}
+                title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+              >
+                {theme === 'dark' ? '☀️' : '🌙'}
+              </button>
+              
               <button
                 onClick={handleTestAsUser}
-                className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors"
+                className="bg-primary text-primary-foreground px-3 sm:px-4 py-2 rounded-md hover:bg-primary/90 transition-colors text-xs sm:text-sm font-medium cursor-pointer border border-primary/20 hover:border-primary/40"
               >
-                Test as User
+                <span className="hidden sm:inline">Test as User</span>
+                <span className="sm:hidden">Test</span>
               </button>
               <button
                 onClick={handleLogout}
-                className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-colors"
+                className="bg-destructive text-destructive-foreground px-3 sm:px-4 py-2 rounded-md hover:bg-destructive/90 transition-colors text-xs sm:text-sm font-medium cursor-pointer border border-destructive/20 hover:border-destructive/40"
               >
                 Logout
               </button>
@@ -145,7 +165,7 @@ const AdminDashboard = ({ adminData }) => {
       {/* Error/Success Messages */}
       {error && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+          <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-md">
             {error}
           </div>
         </div>
@@ -153,7 +173,7 @@ const AdminDashboard = ({ adminData }) => {
       
       {success && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-          <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded">
+          <div className="bg-primary/10 border border-primary/20 text-primary px-4 py-3 rounded-md">
             {success}
           </div>
         </div>
@@ -162,18 +182,19 @@ const AdminDashboard = ({ adminData }) => {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Navigation Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 mb-8">
           <div 
             onClick={() => router.push('/admin/users')}
-            className="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer border-l-4 border-blue-500"
+            className="bg-card p-6 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer border border-primary/20 hover:border-primary/40 group border-l-4"
+            style={{ borderLeftColor: 'hsl(var(--primary))' }}
           >
             <div className="flex items-center">
-              <div className="text-3xl mr-4">👥</div>
+              <div className="text-3xl mr-4 group-hover:scale-110 transition-transform duration-200">👥</div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">Users</h3>
-                <p className="text-sm text-gray-600">Manage user accounts</p>
+                <h3 className="text-lg font-semibold text-foreground">Users</h3>
+                <p className="text-sm text-muted-foreground">Manage user accounts</p>
                 {stats && (
-                  <p className="text-2xl font-bold text-blue-600 mt-2">
+                  <p className="text-2xl font-bold text-primary mt-2">
                     {stats.stats?.total_users || 0}
                   </p>
                 )}
@@ -183,15 +204,16 @@ const AdminDashboard = ({ adminData }) => {
 
           <div 
             onClick={() => router.push('/admin/support')}
-            className="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer border-l-4 border-green-500"
+            className="bg-card p-6 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer border border-primary/20 hover:border-primary/40 group border-l-4"
+            style={{ borderLeftColor: 'hsl(var(--primary))' }}
           >
             <div className="flex items-center">
-              <div className="text-3xl mr-4">💬</div>
+              <div className="text-3xl mr-4 group-hover:scale-110 transition-transform duration-200">💬</div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">Support</h3>
-                <p className="text-sm text-gray-600">Handle support queries</p>
+                <h3 className="text-lg font-semibold text-foreground">Support</h3>
+                <p className="text-sm text-muted-foreground">Handle support queries</p>
                 {stats && (
-                  <p className="text-2xl font-bold text-green-600 mt-2">
+                  <p className="text-2xl font-bold text-primary mt-2">
                     {stats.stats?.support_queries_pending || 0}
                   </p>
                 )}
@@ -201,15 +223,16 @@ const AdminDashboard = ({ adminData }) => {
 
           <div 
             onClick={() => router.push('/admin/courses')}
-            className="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer border-l-4 border-purple-500"
+            className="bg-card p-6 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer border border-primary/20 hover:border-primary/40 group border-l-4"
+            style={{ borderLeftColor: 'hsl(var(--primary))' }}
           >
             <div className="flex items-center">
-              <div className="text-3xl mr-4">📚</div>
+              <div className="text-3xl mr-4 group-hover:scale-110 transition-transform duration-200">📚</div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">Courses</h3>
-                <p className="text-sm text-gray-600">Manage courses</p>
+                <h3 className="text-lg font-semibold text-foreground">Courses</h3>
+                <p className="text-sm text-muted-foreground">Manage courses</p>
                 {stats && (
-                  <p className="text-2xl font-bold text-purple-600 mt-2">
+                  <p className="text-2xl font-bold text-primary mt-2">
                     {stats.stats?.total_courses || 0}
                   </p>
                 )}
@@ -219,60 +242,72 @@ const AdminDashboard = ({ adminData }) => {
 
           <div 
             onClick={() => setActiveTab('handouts')}
-            className={`bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer border-l-4 ${
-              activeTab === 'handouts' ? 'border-red-500 bg-red-50' : 'border-red-500'
+            className={`bg-card p-6 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer border group border-l-4 ${
+              activeTab === 'handouts' 
+                ? 'border-primary bg-primary/5' 
+                : 'border-primary/20 hover:border-primary/40'
             }`}
+            style={{ borderLeftColor: 'hsl(var(--primary))' }}
           >
             <div className="flex items-center">
-              <div className="text-3xl mr-4">📄</div>
+              <div className="text-3xl mr-4 group-hover:scale-110 transition-transform duration-200">📄</div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">Handouts</h3>
-                <p className="text-sm text-gray-600">Approve handout uploads</p>
+                <h3 className="text-lg font-semibold text-foreground">Handouts</h3>
+                <p className="text-sm text-muted-foreground">Approve handout uploads</p>
               </div>
             </div>
           </div>
 
           <div 
             onClick={() => setActiveTab('course-guidance')}
-            className={`bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer border-l-4 ${
-              activeTab === 'course-guidance' ? 'border-indigo-500 bg-indigo-50' : 'border-indigo-500'
+            className={`bg-card p-6 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer border group border-l-4 ${
+              activeTab === 'course-guidance' 
+                ? 'border-primary bg-primary/5' 
+                : 'border-primary/20 hover:border-primary/40'
             }`}
+            style={{ borderLeftColor: 'hsl(var(--primary))' }}
           >
             <div className="flex items-center">
-              <div className="text-3xl mr-4">🎯</div>
+              <div className="text-3xl mr-4 group-hover:scale-110 transition-transform duration-200">🎯</div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">Course Guidance</h3>
-                <p className="text-sm text-gray-600">Manage course guidance content</p>
+                <h3 className="text-lg font-semibold text-foreground">Course Guidance</h3>
+                <p className="text-sm text-muted-foreground">Manage course guidance content</p>
               </div>
             </div>
           </div>
 
           <div 
             onClick={() => setActiveTab('career-development')}
-            className={`bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer border-l-4 ${
-              activeTab === 'career-development' ? 'border-emerald-500 bg-emerald-50' : 'border-emerald-500'
+            className={`bg-card p-6 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer border group border-l-4 ${
+              activeTab === 'career-development' 
+                ? 'border-primary bg-primary/5' 
+                : 'border-primary/20 hover:border-primary/40'
             }`}
+            style={{ borderLeftColor: 'hsl(var(--primary))' }}
           >
             <div className="flex items-center">
-              <div className="text-3xl mr-4">🚀</div>
+              <div className="text-3xl mr-4 group-hover:scale-110 transition-transform duration-200">🚀</div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">Career Development</h3>
-                <p className="text-sm text-gray-600">Manage career path content</p>
+                <h3 className="text-lg font-semibold text-foreground">Career Development</h3>
+                <p className="text-sm text-muted-foreground">Manage career path content</p>
               </div>
             </div>
           </div>
 
           <div 
             onClick={() => setActiveTab('announcements')}
-            className={`bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer border-l-4 ${
-              activeTab === 'announcements' ? 'border-yellow-500 bg-yellow-50' : 'border-yellow-500'
+            className={`bg-card p-6 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer border group border-l-4 ${
+              activeTab === 'announcements' 
+                ? 'border-primary bg-primary/5' 
+                : 'border-primary/20 hover:border-primary/40'
             }`}
+            style={{ borderLeftColor: 'hsl(var(--primary))' }}
           >
             <div className="flex items-center">
-              <div className="text-3xl mr-4">📢</div>
+              <div className="text-3xl mr-4 group-hover:scale-110 transition-transform duration-200">📢</div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">Announcements</h3>
-                <p className="text-sm text-gray-600">Manage system announcements</p>
+                <h3 className="text-lg font-semibold text-foreground">Announcements</h3>
+                <p className="text-sm text-muted-foreground">Manage system announcements</p>
               </div>
             </div>
           </div>
@@ -280,13 +315,14 @@ const AdminDashboard = ({ adminData }) => {
           {adminData?.role === 'super_admin' && (
             <div 
               onClick={() => router.push('/admin/settings')}
-              className="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer border-l-4 border-orange-500"
+              className="bg-card p-6 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer border border-primary/20 hover:border-primary/40 group border-l-4"
+              style={{ borderLeftColor: 'hsl(var(--primary))' }}
             >
               <div className="flex items-center">
-                <div className="text-3xl mr-4">⚙️</div>
+                <div className="text-3xl mr-4 group-hover:scale-110 transition-transform duration-200">⚙️</div>
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900">Settings</h3>
-                  <p className="text-sm text-gray-600">System configuration</p>
+                  <h3 className="text-lg font-semibold text-foreground">Settings</h3>
+                  <p className="text-sm text-muted-foreground">System configuration</p>
                 </div>
               </div>
             </div>
@@ -295,54 +331,54 @@ const AdminDashboard = ({ adminData }) => {
 
         {/* Tab Navigation */}
         <div className="mb-6">
-          <div className="border-b border-gray-200">
-            <nav className="-mb-px flex space-x-8">
+          <div className="border-b border-border">
+            <nav className="-mb-px flex space-x-8 overflow-x-auto">
               <button
                 onClick={() => setActiveTab('dashboard')}
-                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                className={`py-3 px-1 border-b-2 font-medium text-sm whitespace-nowrap transition-colors ${
                   activeTab === 'dashboard'
-                    ? 'border-indigo-500 text-indigo-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
                 }`}
               >
                 Dashboard
               </button>
               <button
                 onClick={() => setActiveTab('handouts')}
-                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                className={`py-3 px-1 border-b-2 font-medium text-sm whitespace-nowrap transition-colors ${
                   activeTab === 'handouts'
-                    ? 'border-indigo-500 text-indigo-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
                 }`}
               >
                 Handout Approvals
               </button>
               <button
                 onClick={() => setActiveTab('course-guidance')}
-                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                className={`py-3 px-1 border-b-2 font-medium text-sm whitespace-nowrap transition-colors ${
                   activeTab === 'course-guidance'
-                    ? 'border-indigo-500 text-indigo-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
                 }`}
               >
                 Course Guidance
               </button>
               <button
                 onClick={() => setActiveTab('career-development')}
-                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                className={`py-3 px-1 border-b-2 font-medium text-sm whitespace-nowrap transition-colors ${
                   activeTab === 'career-development'
-                    ? 'border-indigo-500 text-indigo-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
                 }`}
               >
                 Career Development
               </button>
               <button
                 onClick={() => setActiveTab('announcements')}
-                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                className={`py-3 px-1 border-b-2 font-medium text-sm whitespace-nowrap transition-colors ${
                   activeTab === 'announcements'
-                    ? 'border-indigo-500 text-indigo-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
                 }`}
               >
                 Announcements
@@ -356,27 +392,27 @@ const AdminDashboard = ({ adminData }) => {
           <>
             {/* Statistics Overview */}
             {stats && (
-              <div className="bg-white rounded-lg shadow mb-8">
-                <div className="px-6 py-4 border-b border-gray-200">
-                  <h2 className="text-xl font-semibold text-gray-900">System Overview</h2>
+              <div className="bg-card rounded-lg shadow-sm border border-border mb-8">
+                <div className="px-6 py-4 border-b border-border">
+                  <h2 className="text-xl font-semibold text-foreground">System Overview</h2>
                 </div>
                 <div className="p-6">
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="text-center">
-                      <p className="text-2xl font-bold text-blue-600">{stats.stats?.total_users || 0}</p>
-                      <p className="text-sm text-gray-600">Total Users</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                    <div className="text-center p-4 bg-primary/5 rounded-lg border border-primary/10">
+                      <p className="text-3xl font-bold text-primary mb-1">{stats.stats?.total_users || 0}</p>
+                      <p className="text-sm text-muted-foreground">Total Users</p>
                     </div>
-                    <div className="text-center">
-                      <p className="text-2xl font-bold text-green-600">{stats.stats?.total_courses || 0}</p>
-                      <p className="text-sm text-gray-600">Total Courses</p>
+                    <div className="text-center p-4 bg-primary/5 rounded-lg border border-primary/10">
+                      <p className="text-3xl font-bold text-primary mb-1">{stats.stats?.total_courses || 0}</p>
+                      <p className="text-sm text-muted-foreground">Total Courses</p>
                     </div>
-                    <div className="text-center">
-                      <p className="text-2xl font-bold text-yellow-600">{stats.stats?.support_queries_pending || 0}</p>
-                      <p className="text-sm text-gray-600">Pending Support</p>
+                    <div className="text-center p-4 bg-accent/5 rounded-lg border border-accent/10">
+                      <p className="text-3xl font-bold text-accent mb-1">{stats.stats?.support_queries_pending || 0}</p>
+                      <p className="text-sm text-muted-foreground">Pending Support</p>
                     </div>
-                    <div className="text-center">
-                      <p className="text-2xl font-bold text-purple-600">{stats.stats?.total_enrollments || 0}</p>
-                      <p className="text-sm text-gray-600">Total Enrollments</p>
+                    <div className="text-center p-4 bg-primary/5 rounded-lg border border-primary/10">
+                      <p className="text-3xl font-bold text-primary mb-1">{stats.stats?.total_enrollments || 0}</p>
+                      <p className="text-sm text-muted-foreground">Total Enrollments</p>
                     </div>
                   </div>
                 </div>
@@ -387,25 +423,25 @@ const AdminDashboard = ({ adminData }) => {
 
         {activeTab === 'dashboard' && (
           /* Recent Activity */
-          <div className="bg-white rounded-lg shadow">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h2 className="text-xl font-semibold text-gray-900">Recent Admin Activity</h2>
+          <div className="bg-card rounded-lg shadow-sm border border-border">
+            <div className="px-6 py-4 border-b border-border">
+              <h2 className="text-xl font-semibold text-foreground">Recent Admin Activity</h2>
             </div>
             <div className="p-6">
               {recentActivity.length > 0 ? (
-                <div className="space-y-4">
+                <div className="space-y-3">
                   {recentActivity.map((activity, index) => (
-                    <div key={index} className="flex items-center space-x-3 p-3 bg-gray-50 rounded">
+                    <div key={index} className="flex items-center space-x-3 p-4 bg-muted/30 rounded-lg border border-border/50 hover:bg-muted/50 transition-colors">
                       <span className="text-2xl">{getActionIcon(activity.action)}</span>
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-gray-900">
+                        <p className="text-sm font-medium text-foreground">
                           {activity.admin?.name || 'Unknown Admin'} - {activity.action.replace('_', ' ')}
                         </p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-muted-foreground">
                           {formatDate(activity.created_at)}
                         </p>
                         {activity.details && (
-                          <p className="text-xs text-gray-600 mt-1">
+                          <p className="text-xs text-muted-foreground mt-1 font-mono bg-muted/50 px-2 py-1 rounded">
                             {JSON.stringify(activity.details)}
                           </p>
                         )}
@@ -414,7 +450,10 @@ const AdminDashboard = ({ adminData }) => {
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-500 text-center py-4">No recent activity</p>
+                <div className="text-center py-8">
+                  <div className="text-4xl mb-2">📊</div>
+                  <p className="text-muted-foreground">No recent activity</p>
+                </div>
               )}
             </div>
           </div>
