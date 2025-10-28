@@ -19,6 +19,9 @@ export default function AdminCourseGuidancePanel({ courseCode: propCourseCode })
   });
 
   useEffect(() => {
+    // Test database connection on component mount
+    testDatabaseConnection();
+    
     if (!propCourseCode) {
       fetchCourses();
     }
@@ -30,6 +33,41 @@ export default function AdminCourseGuidancePanel({ courseCode: propCourseCode })
     }
   }, [selectedCourseCode]);
 
+  const testDatabaseConnection = async () => {
+    try {
+      console.log('Testing database connection...');
+      
+      // Test 1: Check if we can connect to Supabase
+      const { data: { user } } = await supabase.auth.getUser();
+      console.log('Auth test - User:', user ? 'authenticated' : 'not authenticated');
+      
+      // Test 2: Check if the course_guidance table exists
+      const { data: tableTest, error: tableError } = await supabase
+        .from('course_guidance')
+        .select('count')
+        .limit(1);
+      
+      console.log('Table test - course_guidance exists:', !tableError);
+      if (tableError) {
+        console.log('Table error:', tableError);
+      }
+      
+      // Test 3: Check if the enrolled_courses table exists
+      const { data: coursesTableTest, error: coursesTableError } = await supabase
+        .from('enrolled_courses')
+        .select('count')
+        .limit(1);
+      
+      console.log('Table test - enrolled_courses exists:', !coursesTableError);
+      if (coursesTableError) {
+        console.log('Courses table error:', coursesTableError);
+      }
+      
+    } catch (error) {
+      console.error('Database connection test failed:', error);
+    }
+  };
+
   const fetchCourses = async () => {
     try {
       // Check if user is authenticated
@@ -39,28 +77,52 @@ export default function AdminCourseGuidancePanel({ courseCode: propCourseCode })
         return;
       }
       
+      console.log('Fetching courses...');
+      
       const { data, error } = await supabase
         .from('enrolled_courses')
         .select('course_code, course_name')
         .order('course_code');
 
-      if (error) throw error;
+      console.log('Courses fetch result:', { data, error });
+
+      if (error) {
+        if (error.code === '42P01') {
+          console.error('Table enrolled_courses does not exist. Please run the database setup script.');
+          showToast('Database table not found. Please contact admin to set up the database.', 'error');
+          return;
+        }
+        throw error;
+      }
       
       // Remove duplicates
-      const uniqueCourses = data.reduce((acc, course) => {
+      const uniqueCourses = data?.reduce((acc, course) => {
         if (!acc.find(c => c.course_code === course.course_code)) {
           acc.push(course);
         }
         return acc;
-      }, []);
+      }, []) || [];
       
+      console.log('Unique courses found:', uniqueCourses.length);
       setCourses(uniqueCourses);
+      
       if (uniqueCourses.length > 0 && !selectedCourseCode) {
         setSelectedCourseCode(uniqueCourses[0].course_code);
       }
     } catch (error) {
-      console.error('Error fetching courses:', error);
-      showToast('Failed to load courses', 'error');
+      console.error('Error fetching courses:', {
+        message: error.message,
+        code: error.code,
+        details: error.details,
+        hint: error.hint,
+        fullError: error
+      });
+      
+      if (error.message?.includes('relation') && error.message?.includes('does not exist')) {
+        showToast('Database table not found. Please contact admin to set up the database.', 'error');
+      } else {
+        showToast(`Failed to load courses: ${error.message || 'Unknown error'}`, 'error');
+      }
     }
   };
 
@@ -81,18 +143,42 @@ export default function AdminCourseGuidancePanel({ courseCode: propCourseCode })
         return;
       }
       
+      console.log('Fetching guidance for course:', selectedCourseCode);
+      
+      // First check if the table exists by trying to select from it
       const { data, error } = await supabase
         .from('course_guidance')
         .select('*')
         .eq('course_code', selectedCourseCode)
         .eq('is_active', true)
-        .single();
+        .maybeSingle(); // Use maybeSingle instead of single to handle no results gracefully
 
-      if (error && error.code !== 'PGRST116') {
-        throw error;
+      console.log('Guidance fetch result:', { data, error });
+
+      if (error) {
+        // Handle specific error cases
+        if (error.code === '42P01') {
+          console.error('Table course_guidance does not exist. Please run the database setup script.');
+          showToast('Database table not found. Please contact admin to set up the database.', 'error');
+          return;
+        } else if (error.code === 'PGRST116') {
+          // No rows found - this is fine, just means no guidance exists yet
+          console.log('No guidance found for course:', selectedCourseCode);
+          setGuidance(null);
+          setFormData({
+            guidance_points: [''],
+            main_video_url: '',
+            main_video_title: 'How to Attempt this Course',
+            duration: ''
+          });
+          return;
+        } else {
+          throw error;
+        }
       }
 
       if (data) {
+        console.log('Guidance data loaded:', data);
         setGuidance(data);
         setFormData({
           guidance_points: data.guidance_points || [''],
@@ -100,10 +186,34 @@ export default function AdminCourseGuidancePanel({ courseCode: propCourseCode })
           main_video_title: data.main_video_title || 'How to Attempt this Course',
           duration: data.duration || ''
         });
+      } else {
+        // No guidance found, reset to defaults
+        console.log('No guidance data found, using defaults');
+        setGuidance(null);
+        setFormData({
+          guidance_points: [''],
+          main_video_url: '',
+          main_video_title: 'How to Attempt this Course',
+          duration: ''
+        });
       }
     } catch (error) {
-      console.error('Error fetching guidance:', error);
-      showToast('Failed to load course guidance', 'error');
+      console.error('Error fetching guidance:', {
+        message: error.message,
+        code: error.code,
+        details: error.details,
+        hint: error.hint,
+        fullError: error
+      });
+      
+      // More specific error messages
+      if (error.message?.includes('relation') && error.message?.includes('does not exist')) {
+        showToast('Database table not found. Please contact admin to set up the database.', 'error');
+      } else if (error.message?.includes('permission') || error.message?.includes('not authorized')) {
+        showToast('Permission denied. Please check your authentication.', 'error');
+      } else {
+        showToast(`Failed to load course guidance: ${error.message || 'Unknown error'}`, 'error');
+      }
     } finally {
       setLoading(false);
     }
@@ -145,6 +255,12 @@ export default function AdminCourseGuidancePanel({ courseCode: propCourseCode })
     try {
       setSaving(true);
       
+      // Validate required fields
+      if (!selectedCourseCode) {
+        showToast('Please select a course', 'error');
+        return;
+      }
+      
       // Filter out empty guidance points
       const filteredPoints = formData.guidance_points.filter(point => point.trim() !== '');
       
@@ -166,9 +282,12 @@ export default function AdminCourseGuidancePanel({ courseCode: propCourseCode })
         updated_at: new Date().toISOString()
       };
 
+      console.log('Saving guidance data:', guidanceData);
+
       let result;
       if (guidance) {
         // Update existing guidance
+        console.log('Updating existing guidance with ID:', guidance.id);
         result = await supabase
           .from('course_guidance')
           .update(guidanceData)
@@ -177,8 +296,10 @@ export default function AdminCourseGuidancePanel({ courseCode: propCourseCode })
           .single();
       } else {
         // Create new guidance
+        console.log('Creating new guidance');
         const { data: { user } } = await supabase.auth.getUser();
         guidanceData.created_by = user?.id;
+        guidanceData.created_at = new Date().toISOString();
         
         result = await supabase
           .from('course_guidance')
@@ -186,6 +307,8 @@ export default function AdminCourseGuidancePanel({ courseCode: propCourseCode })
           .select()
           .single();
       }
+
+      console.log('Save result:', result);
 
       if (result.error) {
         throw result.error;
@@ -195,8 +318,24 @@ export default function AdminCourseGuidancePanel({ courseCode: propCourseCode })
       showToast('Course guidance saved successfully!', 'success');
       
     } catch (error) {
-      console.error('Error saving guidance:', error);
-      showToast('Failed to save course guidance', 'error');
+      console.error('Error saving guidance:', {
+        message: error.message,
+        code: error.code,
+        details: error.details,
+        hint: error.hint,
+        fullError: error
+      });
+      
+      // More specific error messages
+      if (error.code === '42P01') {
+        showToast('Database table not found. Please contact admin to set up the database.', 'error');
+      } else if (error.code === '23505') {
+        showToast('A guidance entry already exists for this course. Please refresh the page.', 'error');
+      } else if (error.message?.includes('permission') || error.message?.includes('not authorized')) {
+        showToast('Permission denied. Please check your authentication.', 'error');
+      } else {
+        showToast(`Failed to save course guidance: ${error.message || 'Unknown error'}`, 'error');
+      }
     } finally {
       setSaving(false);
     }
