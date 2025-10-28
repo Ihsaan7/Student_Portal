@@ -10,6 +10,8 @@ const CareerDevelopmentAdminPanel = ({ user }) => {
   const [success, setSuccess] = useState('');
   const [editingItem, setEditingItem] = useState(null);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [careerPathSettings, setCareerPathSettings] = useState({});
+  const [showPathSettings, setShowPathSettings] = useState(false);
   const [formData, setFormData] = useState({
     career_path: 'ethical-hacking',
     timeline: 'start',
@@ -19,9 +21,9 @@ const CareerDevelopmentAdminPanel = ({ user }) => {
   });
 
   const careerPaths = [
-    { value: 'ethical-hacking', label: 'Ethical Hacking' },
-    { value: 'ai-ml', label: 'AI/ML' },
-    { value: 'cyber-security', label: 'Cyber Security' }
+    { value: 'ethical-hacking', label: 'Ethical Hacking', icon: '🛡️', description: 'Advanced penetration testing and ethical hacking techniques' },
+    { value: 'ai-ml', label: 'AI/ML', icon: '🤖', description: 'Artificial intelligence and machine learning specialization' },
+    { value: 'cyber-security', label: 'Cyber Security', icon: '🔒', description: 'Complete roadmap from web development to cybersecurity expertise' }
   ];
 
   const timelines = [
@@ -32,6 +34,7 @@ const CareerDevelopmentAdminPanel = ({ user }) => {
 
   useEffect(() => {
     loadContent();
+    loadCareerPathSettings();
   }, []);
 
   const loadContent = async () => {
@@ -59,6 +62,55 @@ const CareerDevelopmentAdminPanel = ({ user }) => {
       setError('Failed to load career development content');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadCareerPathSettings = async () => {
+    try {
+      // Try to load career path settings from a settings table or use localStorage as fallback
+      const savedSettings = localStorage.getItem('career_path_settings');
+      if (savedSettings) {
+        setCareerPathSettings(JSON.parse(savedSettings));
+      } else {
+        // Default settings - only cyber-security is active by default
+        const defaultSettings = {
+          'cyber-security': { active: true, order: 1 },
+          'ethical-hacking': { active: false, order: 2 },
+          'ai-ml': { active: false, order: 3 }
+        };
+        setCareerPathSettings(defaultSettings);
+        localStorage.setItem('career_path_settings', JSON.stringify(defaultSettings));
+      }
+    } catch (err) {
+      console.error('Error loading career path settings:', err);
+      // Fallback to default settings
+      const defaultSettings = {
+        'cyber-security': { active: true, order: 1 },
+        'ethical-hacking': { active: false, order: 2 },
+        'ai-ml': { active: false, order: 3 }
+      };
+      setCareerPathSettings(defaultSettings);
+    }
+  };
+
+  const updateCareerPathStatus = async (pathValue, isActive) => {
+    try {
+      const updatedSettings = {
+        ...careerPathSettings,
+        [pathValue]: {
+          ...careerPathSettings[pathValue],
+          active: isActive
+        }
+      };
+      
+      setCareerPathSettings(updatedSettings);
+      localStorage.setItem('career_path_settings', JSON.stringify(updatedSettings));
+      
+      setSuccess(`${careerPaths.find(p => p.value === pathValue)?.label} ${isActive ? 'activated' : 'deactivated'} successfully!`);
+      setTimeout(() => setSuccess(''), 3000);
+    } catch (err) {
+      console.error('Error updating career path status:', err);
+      setError('Failed to update career path status');
     }
   };
 
@@ -197,16 +249,29 @@ const CareerDevelopmentAdminPanel = ({ user }) => {
               </div>
             </div>
           </div>
-          <button
-            onClick={() => setShowAddForm(!showAddForm)}
-            className="bg-primary text-primary-foreground px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:bg-primary/90 transition-colors font-medium flex items-center cursor-pointer"
-          >
-            <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
-            <span className="hidden sm:inline">{showAddForm ? 'Cancel' : 'Create New Content'}</span>
-            <span className="sm:hidden">{showAddForm ? 'Cancel' : 'Create'}</span>
-          </button>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <button
+              onClick={() => setShowPathSettings(!showPathSettings)}
+              className="bg-accent text-accent-foreground px-4 py-2 rounded-lg hover:bg-accent/90 transition-colors font-medium flex items-center cursor-pointer"
+            >
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              <span className="hidden sm:inline">Manage Paths</span>
+              <span className="sm:hidden">Paths</span>
+            </button>
+            <button
+              onClick={() => setShowAddForm(!showAddForm)}
+              className="bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors font-medium flex items-center cursor-pointer"
+            >
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              <span className="hidden sm:inline">{showAddForm ? 'Cancel' : 'Create Content'}</span>
+              <span className="sm:hidden">{showAddForm ? 'Cancel' : 'Create'}</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -219,6 +284,83 @@ const CareerDevelopmentAdminPanel = ({ user }) => {
       {success && (
         <div className="bg-primary/10 border border-primary/20 text-primary px-4 py-3 rounded-md">
           {success}
+        </div>
+      )}
+
+      {/* Career Path Settings Panel */}
+      {showPathSettings && (
+        <div className="bg-card rounded-lg shadow-sm border border-primary/20 p-6 border-l-4" style={{ borderLeftColor: 'hsl(var(--primary))' }}>
+          <div className="flex items-center mb-6">
+            <div className="bg-accent/10 border border-accent/20 p-3 rounded-lg mr-4">
+              <svg className="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </div>
+            <div>
+              <h3 className="text-lg sm:text-xl font-bold text-foreground">Career Path Settings</h3>
+              <p className="text-muted-foreground text-sm sm:text-base">Control which career paths are available to students</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {careerPaths.map((path) => (
+              <div key={path.value} className="bg-muted/30 rounded-lg p-4 border border-border">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center">
+                    <span className="text-2xl mr-3">{path.icon}</span>
+                    <div>
+                      <h4 className="font-medium text-foreground">{path.label}</h4>
+                      <p className="text-xs text-muted-foreground">{path.description}</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">
+                    Status: <span className={`font-medium ${careerPathSettings[path.value]?.active ? 'text-primary' : 'text-destructive'}`}>
+                      {careerPathSettings[path.value]?.active ? 'Active' : 'Inactive'}
+                    </span>
+                  </span>
+                  
+                  <button
+                    onClick={() => updateCareerPathStatus(path.value, !careerPathSettings[path.value]?.active)}
+                    className={`px-3 py-1 rounded-md text-sm font-medium transition-colors cursor-pointer ${
+                      careerPathSettings[path.value]?.active 
+                        ? 'bg-destructive/10 text-destructive border border-destructive/20 hover:bg-destructive/20' 
+                        : 'bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20'
+                    }`}
+                  >
+                    {careerPathSettings[path.value]?.active ? 'Deactivate' : 'Activate'}
+                  </button>
+                </div>
+                
+                {/* Content count for this path */}
+                <div className="mt-3 pt-3 border-t border-border">
+                  <p className="text-xs text-muted-foreground">
+                    Content pieces: <span className="font-medium text-foreground">
+                      {content.filter(c => c.career_path === path.value).length}
+                    </span>
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          <div className="mt-6 p-4 bg-primary/5 rounded-lg border border-primary/20">
+            <div className="flex items-start">
+              <svg className="w-5 h-5 text-primary mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <div>
+                <p className="text-sm text-foreground font-medium mb-1">Frontend Integration</p>
+                <p className="text-xs text-muted-foreground">
+                  These settings control which career paths appear on the Progress page. 
+                  Inactive paths will show "Coming Soon" messages to students.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 

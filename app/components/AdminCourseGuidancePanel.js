@@ -136,9 +136,17 @@ export default function AdminCourseGuidancePanel({ courseCode: propCourseCode })
   };
 
   const fetchGuidance = async () => {
-    if (!selectedCourseCode) {
+    if (!selectedCourseCode || selectedCourseCode.trim() === '') {
       console.log('No course selected, skipping guidance fetch');
       setLoading(false);
+      // Reset form data when no course is selected
+      setGuidance(null);
+      setFormData({
+        guidance_points: [''],
+        main_video_url: '',
+        main_video_title: 'How to Attempt this Course',
+        duration: ''
+      });
       return;
     }
     
@@ -164,14 +172,25 @@ export default function AdminCourseGuidancePanel({ courseCode: propCourseCode })
       console.log('Fetching guidance for course:', selectedCourseCode);
       
       // First check if the table exists by trying to select from it
-      const { data, error } = await supabase
-        .from('course_guidance')
-        .select('*')
-        .eq('course_code', selectedCourseCode)
-        .eq('is_active', true)
-        .maybeSingle(); // Use maybeSingle instead of single to handle no results gracefully
+      let data = null;
+      let error = null;
+      
+      try {
+        const result = await supabase
+          .from('course_guidance')
+          .select('*')
+          .eq('course_code', selectedCourseCode)
+          .eq('is_active', true)
+          .maybeSingle(); // Use maybeSingle instead of single to handle no results gracefully
+        
+        data = result.data;
+        error = result.error;
+      } catch (queryError) {
+        console.error('Database query error:', queryError);
+        error = queryError;
+      }
 
-      console.log('Guidance fetch result:', { data, error });
+      console.log('Guidance fetch result:', { data, error, selectedCourse: selectedCourseCode });
 
       if (error) {
         // Handle specific error cases
@@ -216,21 +235,40 @@ export default function AdminCourseGuidancePanel({ courseCode: propCourseCode })
         });
       }
     } catch (error) {
+      // Handle different types of errors
+      let errorMessage = 'Unknown error';
+      let errorCode = 'NO_CODE';
+      let errorDetails = 'No details available';
+      
+      if (error && typeof error === 'object') {
+        errorMessage = error.message || error.msg || 'Unknown error';
+        errorCode = error.code || error.status || 'NO_CODE';
+        errorDetails = error.details || error.detail || 'No details available';
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      }
+      
       console.error('Error fetching guidance:', {
-        message: error?.message || 'Unknown error',
-        code: error?.code || 'NO_CODE',
-        details: error?.details || 'No details available',
+        message: errorMessage,
+        code: errorCode,
+        details: errorDetails,
         hint: error?.hint || 'No hint available',
-        fullError: error
+        fullError: error,
+        errorType: typeof error,
+        errorKeys: error ? Object.keys(error) : []
       });
       
       // More specific error messages
-      if (error.message?.includes('relation') && error.message?.includes('does not exist')) {
+      if (errorMessage.includes('relation') && errorMessage.includes('does not exist')) {
         showToast('Database table not found. Please contact admin to set up the database.', 'error');
-      } else if (error.message?.includes('permission') || error.message?.includes('not authorized')) {
+      } else if (errorMessage.includes('permission') || errorMessage.includes('not authorized')) {
         showToast('Permission denied. Please check your authentication.', 'error');
+      } else if (errorMessage.includes('network') || errorMessage.includes('fetch')) {
+        showToast('Network error. Please check your connection and try again.', 'error');
+      } else if (!errorMessage || errorMessage === 'Unknown error') {
+        showToast('An unexpected error occurred. Please try again or contact support.', 'error');
       } else {
-        showToast(`Failed to load course guidance: ${error.message || 'Unknown error'}`, 'error');
+        showToast(`Failed to load course guidance: ${errorMessage}`, 'error');
       }
     } finally {
       setLoading(false);
