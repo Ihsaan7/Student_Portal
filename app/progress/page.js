@@ -850,24 +850,24 @@ export default function ProgressPage() {
       <div>
         {/* Motivational Quote */}
         <div
-          className="rounded-lg p-6 mb-8 border-l-4"
+          className="rounded-lg p-4 sm:p-6 mb-6 sm:mb-8 border-l-4 w-full max-w-full"
           style={{
             background: 'linear-gradient(to right, hsl(var(--muted)), hsl(var(--accent)))',
             borderLeftColor: 'hsl(var(--primary))'
           }}
         >
-          <div className="flex items-start">
+          <div className="flex flex-col sm:flex-row sm:items-start space-y-3 sm:space-y-0">
             <div
-              className="p-2 rounded-lg mr-4"
+              className="p-2 rounded-lg sm:mr-4 flex-shrink-0 self-start"
               style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))' }}
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H8a2 2 0 01-2-2V8a2 2 0 012-2V6" />
               </svg>
             </div>
-            <div>
-              <p className="text-lg font-medium mb-2" style={{ color: 'hsl(var(--card-foreground))' }}>Career Development Journey</p>
-              <p className="italic" style={{ color: 'hsl(var(--muted-foreground))' }}>"{selectedQuotes.career || 'Choose your path and timeline to begin your career development journey.'}"</p>
+            <div className="flex-1 min-w-0">
+              <p className="text-base sm:text-lg font-medium mb-2" style={{ color: 'hsl(var(--card-foreground))' }}>Career Development Journey</p>
+              <p className="italic text-sm sm:text-base break-words" style={{ color: 'hsl(var(--muted-foreground))' }}>"{selectedQuotes.career || 'Choose your path and timeline to begin your career development journey.'}"</p>
             </div>
           </div>
         </div>
@@ -1394,24 +1394,24 @@ export default function ProgressPage() {
 
   return (
     <DashboardLayout currentPage="/progress">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2" style={{ color: 'hsl(var(--foreground))' }}>Progress Tracking</h1>
-          <p style={{ color: 'hsl(var(--muted-foreground))' }}>Monitor your academic and career development journey.</p>
+      <div className="max-w-7xl mx-auto w-full px-2 sm:px-4">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold mb-2" style={{ color: 'hsl(var(--foreground))' }}>Progress Tracking</h1>
+          <p className="text-sm sm:text-base" style={{ color: 'hsl(var(--muted-foreground))' }}>Monitor your academic and career development journey.</p>
         </div>
 
         {/* Section Tabs */}
         <div
-          className="rounded-lg shadow-sm border p-2 mb-8"
+          className="rounded-lg shadow-sm border p-2 mb-6 sm:mb-8 w-full max-w-full"
           style={{
             backgroundColor: 'hsl(var(--card))',
             borderColor: 'hsl(var(--border))'
           }}
         >
-          <div className="flex space-x-2">
+          <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
             <button
               onClick={() => setActiveSection('academic')}
-              className="flex-1 py-3 px-4 rounded-lg font-medium transition-colors"
+              className="flex-1 py-2 sm:py-3 px-3 sm:px-4 rounded-lg font-medium transition-colors"
               style={{
                 backgroundColor: activeSection === 'academic' ? 'hsl(var(--primary) / 0.1)' : 'transparent',
                 color: activeSection === 'academic' ? 'hsl(var(--primary))' : 'hsl(var(--muted-foreground))'
@@ -1430,15 +1430,15 @@ export default function ProgressPage() {
               }}
             >
               <div className="flex items-center justify-center space-x-2">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                 </svg>
-                <span>Academic Progress</span>
+                <span className="text-sm sm:text-base">Academic Progress</span>
               </div>
             </button>
             <button
               onClick={() => setActiveSection('career')}
-              className="flex-1 py-3 px-4 rounded-lg font-medium transition-colors"
+              className="flex-1 py-2 sm:py-3 px-3 sm:px-4 rounded-lg font-medium transition-colors"
               style={{
                 backgroundColor: activeSection === 'career' ? 'hsl(var(--primary) / 0.1)' : 'transparent',
                 color: activeSection === 'career' ? 'hsl(var(--primary))' : 'hsl(var(--muted-foreground))'
@@ -1457,10 +1457,13 @@ export default function ProgressPage() {
               }}
             >
               <div className="flex items-center justify-center space-x-2">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H8a2 2 0 01-2-2V8a2 2 0 012-2V6" />
                 </svg>
-                <span>Career Development (4Y)</span>
+                <span className="text-sm sm:text-base">
+                  <span className="hidden sm:inline">Career Development (4Y)</span>
+                  <span className="sm:hidden">Career (4Y)</span>
+                </span>
               </div>
             </button>
           </div>
