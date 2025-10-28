@@ -80,33 +80,33 @@ export default function AIChatPage() {
     <div className="min-h-screen font-inter" style={{ backgroundColor: 'hsl(var(--background))' }}>
       {/* Header */}
       <div className="shadow-sm border-b" style={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
-        <div className="w-full px-6">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center space-x-4">
+        <div className="w-full px-3 sm:px-4 md:px-6">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 sm:py-4 space-y-3 sm:space-y-0">
+            <div className="flex items-center space-x-3 sm:space-x-4 min-w-0 flex-1">
               <button
                 onClick={() => window.history.back()}
-                className="px-4 py-2 rounded-lg transition-colors font-medium"
+                className="px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg transition-colors font-medium text-sm flex-shrink-0"
                 style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))' }}
                 onMouseEnter={(e) => e.target.style.opacity = '0.9'}
                 onMouseLeave={(e) => e.target.style.opacity = '1'}
               >
                 ← Back
               </button>
-              <div>
-                <h1 className="text-2xl font-bold" style={{ color: 'hsl(var(--card-foreground))' }}>
+              <div className="min-w-0 flex-1">
+                <h1 className="text-lg sm:text-xl md:text-2xl font-bold truncate" style={{ color: 'hsl(var(--card-foreground))' }}>
                   StudyBuddy AI
                 </h1>
-                <p className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>
+                <p className="text-xs sm:text-sm truncate" style={{ color: 'hsl(var(--muted-foreground))' }}>
                   Your AI-powered study companion
                 </p>
               </div>
             </div>
             
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 sm:space-x-4 flex-shrink-0">
               {/* Theme Toggle */}
               <button
                 onClick={toggleTheme}
-                className="p-2 rounded-lg transition-all duration-200 hover:shadow-sm"
+                className="p-1.5 sm:p-2 rounded-lg transition-all duration-200 hover:shadow-sm"
                 style={{ 
                   backgroundColor: 'hsl(var(--muted))',
                   color: 'hsl(var(--muted-foreground))'
@@ -119,27 +119,28 @@ export default function AIChatPage() {
                 }}
               >
                 {theme === 'dark' ? (
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
                   </svg>
                 ) : (
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
                   </svg>
                 )}
               </button>
               
-              <div className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>
-                Welcome, {user.email}
+              <div className="text-xs sm:text-sm truncate max-w-32 sm:max-w-none" style={{ color: 'hsl(var(--muted-foreground))' }}>
+                <span className="hidden sm:inline">Welcome, </span>{user.email}
               </div>
               <button
                 onClick={() => supabase.auth.signOut()}
-                className="px-4 py-2 rounded-lg transition-colors font-medium"
+                className="px-2 py-1.5 sm:px-4 sm:py-2 rounded-lg transition-colors font-medium text-xs sm:text-sm"
                 style={{ backgroundColor: 'hsl(var(--destructive))', color: 'hsl(var(--destructive-foreground))' }}
                 onMouseEnter={(e) => e.target.style.opacity = '0.9'}
                 onMouseLeave={(e) => e.target.style.opacity = '1'}
               >
-                Sign Out
+                <span className="hidden sm:inline">Sign Out</span>
+                <span className="sm:hidden">Out</span>
               </button>
             </div>
           </div>

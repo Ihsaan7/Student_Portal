@@ -479,18 +479,21 @@ export default function AIChatInterface({ user }) {
   return (
     <div className="flex flex-col h-full font-inter" style={{ backgroundColor: 'hsl(var(--background))' }}>
       {/* Chat Header */}
-      <div className="border-b p-6" style={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <StudyBuddyLogo size="medium" showText={false} />
-            <div>
-              <h2 className="text-xl font-semibold" style={{ color: 'hsl(var(--card-foreground))' }}>StudentNest AI Assistant</h2>
-              <p className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>Hello! I'm here to help you with your studies. What topic are you interested in today?</p>
+      <div className="border-b p-3 sm:p-4 md:p-6" style={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
+          <div className="flex items-center space-x-3 sm:space-x-4 min-w-0 flex-1">
+            <StudyBuddyLogo size="medium" showText={false} className="flex-shrink-0" />
+            <div className="min-w-0 flex-1">
+              <h2 className="text-base sm:text-lg md:text-xl font-semibold truncate" style={{ color: 'hsl(var(--card-foreground))' }}>StudentNest AI Assistant</h2>
+              <p className="text-xs sm:text-sm break-words" style={{ color: 'hsl(var(--muted-foreground))' }}>
+                <span className="hidden sm:inline">Hello! I'm here to help you with your studies. What topic are you interested in today?</span>
+                <span className="sm:hidden">Ready to help with your studies!</span>
+              </p>
             </div>
           </div>
           <button
             onClick={toggleTheme}
-            className="p-2 rounded-lg transition-colors hover:bg-opacity-80"
+            className="p-1.5 sm:p-2 rounded-lg transition-colors hover:bg-opacity-80 flex-shrink-0 self-start sm:self-center"
             style={{ backgroundColor: 'hsl(var(--muted))', color: 'hsl(var(--muted-foreground))' }}
             title="Toggle theme"
           >
@@ -502,16 +505,16 @@ export default function AIChatInterface({ user }) {
       {/* Beta Notice Banner */}
       {showBetaBanner && (
         <div 
-          className="border-b px-6 py-4"
+          className="border-b px-3 sm:px-4 md:px-6 py-3 sm:py-4"
           style={{ 
             backgroundColor: 'hsl(var(--muted) / 0.3)', 
             borderColor: 'hsl(var(--border))'
           }}
         >
-        <div className="flex items-start space-x-3">
+        <div className="flex items-start space-x-2 sm:space-x-3">
           <div className="flex-shrink-0 mt-0.5">
             <div 
-              className="w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold"
+              className="w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold"
               style={{ 
                 backgroundColor: 'hsl(var(--warning))', 
                 color: 'hsl(var(--warning-foreground))' 
@@ -521,32 +524,32 @@ export default function AIChatInterface({ user }) {
             </div>
           </div>
           <div className="flex-1 min-w-0">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-              <div>
+            <div className="flex flex-col space-y-2 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
+              <div className="min-w-0 flex-1">
                 <p 
-                  className="text-sm font-medium mb-1"
+                  className="text-xs sm:text-sm font-medium mb-1"
                   style={{ color: 'hsl(var(--card-foreground))' }}
                 >
                   🚧 AI Assistant - Beta Version
                 </p>
                 <p 
-                  className="text-xs leading-relaxed"
+                  className="text-xs leading-relaxed break-words"
                   style={{ color: 'hsl(var(--muted-foreground))' }}
                 >
-                  Our AI assistant is currently in development and may not always provide perfect responses. 
-                  We're continuously working to improve it!
+                  <span className="hidden sm:inline">Our AI assistant is currently in development and may not always provide perfect responses. We're continuously working to improve it!</span>
+                  <span className="sm:hidden">AI in development - responses may vary. We're improving it!</span>
                 </p>
               </div>
-              <div className="mt-2 sm:mt-0 sm:ml-4 flex-shrink-0">
+              <div className="flex-shrink-0">
                 <a
                   href="/student-services"
-                  className="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-md transition-colors hover:opacity-90"
+                  className="inline-flex items-center px-2 py-1 sm:px-3 sm:py-1.5 text-xs font-medium rounded-md transition-colors hover:opacity-90"
                   style={{ 
                     backgroundColor: 'hsl(var(--primary))', 
                     color: 'hsl(var(--primary-foreground))' 
                   }}
                 >
-                  💬 Send Feedback
+                  💬 <span className="hidden sm:inline ml-1">Send Feedback</span>
                 </a>
               </div>
             </div>
@@ -560,7 +563,7 @@ export default function AIChatInterface({ user }) {
             style={{ color: 'hsl(var(--muted-foreground))' }}
             title="Dismiss notice"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
@@ -570,7 +573,7 @@ export default function AIChatInterface({ user }) {
 
       {/* Messages Container */}
       <div 
-        className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar"
+        className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6 custom-scrollbar"
         style={{ maxHeight: 'calc(100% - 200px)', backgroundColor: 'hsl(var(--muted) / 0.3)' }}
       >
         {messages.length === 0 ? (
@@ -586,7 +589,7 @@ export default function AIChatInterface({ user }) {
               className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               <div
-                className="max-w-2xl px-6 py-4 rounded-2xl shadow-sm"
+                className="max-w-full sm:max-w-2xl px-3 sm:px-4 md:px-6 py-3 sm:py-4 rounded-2xl shadow-sm"
                 style={{
                   backgroundColor: message.sender === 'user' ? 'hsl(var(--primary))' : 'hsl(var(--card))',
                   color: message.sender === 'user' ? 'hsl(var(--primary-foreground))' : 'hsl(var(--card-foreground))',
@@ -594,7 +597,7 @@ export default function AIChatInterface({ user }) {
                 }}
               >
 
-                <div className="whitespace-pre-wrap text-base leading-relaxed">
+                <div className="whitespace-pre-wrap text-sm sm:text-base leading-relaxed break-words">
                   {formatMessage(message.text)}
                 </div>
                 <div className="text-xs mt-2" style={{
@@ -613,33 +616,33 @@ export default function AIChatInterface({ user }) {
 
       {/* File Upload Area */}
       {showFileActions && (
-        <div className="p-4 border-t" style={{ borderColor: 'hsl(var(--border))', backgroundColor: 'hsl(var(--muted) / 0.5)' }}>
+        <div className="p-3 sm:p-4 border-t" style={{ borderColor: 'hsl(var(--border))', backgroundColor: 'hsl(var(--muted) / 0.5)' }}>
           <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ backgroundColor: 'hsl(var(--primary) / 0.1)' }}>
-                <svg className="w-4 h-4" style={{ color: 'hsl(var(--primary))' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="flex items-center space-x-2 min-w-0 flex-1">
+              <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'hsl(var(--primary) / 0.1)' }}>
+                <svg className="w-3 h-3 sm:w-4 sm:h-4" style={{ color: 'hsl(var(--primary))' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
-              <span className="text-sm font-medium" style={{ color: 'hsl(var(--card-foreground))' }}>{uploadedFile?.name}</span>
+              <span className="text-xs sm:text-sm font-medium truncate" style={{ color: 'hsl(var(--card-foreground))' }}>{uploadedFile?.name}</span>
             </div>
             <button
               onClick={resetFileState}
-              className="transition-colors"
+              className="transition-colors flex-shrink-0"
               style={{ color: 'hsl(var(--muted-foreground))' }}
               onMouseEnter={(e) => e.target.style.color = 'hsl(var(--card-foreground))'}
               onMouseLeave={(e) => e.target.style.color = 'hsl(var(--muted-foreground))'}
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           </div>
-          <div className="flex space-x-3">
+          <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
             <button
               onClick={handleSummarize}
               disabled={isLoading}
-              className="flex-1 px-4 py-2 rounded-lg border-2 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+              className="flex-1 px-3 sm:px-4 py-2 rounded-lg border-2 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-xs sm:text-sm font-medium"
               style={{ 
                 backgroundColor: 'hsl(var(--success))', 
                 color: 'hsl(var(--success-foreground))',
@@ -664,7 +667,7 @@ export default function AIChatInterface({ user }) {
             <button
               onClick={handleMCQs}
               disabled={isLoading}
-              className="flex-1 px-4 py-2 rounded-lg border-2 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+              className="flex-1 px-3 sm:px-4 py-2 rounded-lg border-2 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-xs sm:text-sm font-medium"
               style={{ 
                 backgroundColor: 'hsl(var(--secondary))', 
                 color: 'hsl(var(--secondary-foreground))',
@@ -691,8 +694,8 @@ export default function AIChatInterface({ user }) {
       )}
 
       {/* Input Area */}
-      <div className="border-t p-6" style={{ borderColor: 'hsl(var(--border))', backgroundColor: 'hsl(var(--card))' }}>
-        <div className="flex space-x-4 items-end mb-3">
+      <div className="border-t p-3 sm:p-4 md:p-6" style={{ borderColor: 'hsl(var(--border))', backgroundColor: 'hsl(var(--card))' }}>
+        <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 items-stretch sm:items-end mb-3">
           <input
             ref={fileInputRef}
             type="file"
@@ -703,7 +706,7 @@ export default function AIChatInterface({ user }) {
           />
           <label
             htmlFor="file-upload"
-            className={`px-4 py-2 border-2 border-dashed rounded-lg cursor-pointer transition-colors flex items-center space-x-2 text-sm ${isProcessingFile ? 'opacity-50 cursor-not-allowed' : ''}`}
+            className={`px-3 sm:px-4 py-2 border-2 border-dashed rounded-lg cursor-pointer transition-colors flex items-center justify-center space-x-2 text-xs sm:text-sm ${isProcessingFile ? 'opacity-50 cursor-not-allowed' : ''}`}
             style={{ 
               borderColor: 'hsl(var(--border))', 
               color: 'hsl(var(--muted-foreground))',
@@ -724,15 +727,17 @@ export default function AIChatInterface({ user }) {
           >
             {isProcessingFile ? (
               <>
-                <div className="w-4 h-4 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: 'hsl(var(--primary))' }}></div>
-                <span>Processing...</span>
+                <div className="w-3 h-3 sm:w-4 sm:h-4 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: 'hsl(var(--primary))' }}></div>
+                <span className="hidden sm:inline">Processing...</span>
+                <span className="sm:hidden">...</span>
               </>
             ) : (
               <>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                 </svg>
-                <span>Upload PDF or TXT</span>
+                <span className="hidden sm:inline">Upload PDF or TXT</span>
+                <span className="sm:hidden">Upload</span>
               </>
             )}
           </label>
@@ -746,7 +751,7 @@ export default function AIChatInterface({ user }) {
                 setShowFileActions(true);
               }
             }}
-            className="px-4 py-2 border-2 rounded-lg transition-colors flex items-center space-x-2 text-sm"
+            className="px-3 sm:px-4 py-2 border-2 rounded-lg transition-colors flex items-center justify-center space-x-2 text-xs sm:text-sm"
             style={{ 
               borderColor: 'hsl(var(--primary))', 
               color: 'hsl(var(--primary))',
@@ -759,19 +764,20 @@ export default function AIChatInterface({ user }) {
               e.target.style.backgroundColor = 'hsl(var(--background))';
             }}
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
             </svg>
-            <span>Paste Text</span>
+            <span className="hidden sm:inline">Paste Text</span>
+            <span className="sm:hidden">Paste</span>
           </button>
         </div>
-        <div className="flex space-x-4 items-end">
+        <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 items-stretch sm:items-end">
           <textarea
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="Ask me anything..."
-            className="flex-1 px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 resize-none text-base leading-relaxed"
+            className="flex-1 px-3 sm:px-4 py-2.5 sm:py-3 border rounded-xl focus:outline-none focus:ring-2 resize-none text-sm sm:text-base leading-relaxed"
             style={{
               backgroundColor: 'hsl(var(--background))',
               borderColor: 'hsl(var(--border))',
@@ -786,7 +792,7 @@ export default function AIChatInterface({ user }) {
           <button
             onClick={handleSendMessage}
             disabled={isLoading || !inputMessage.trim()}
-            className="px-6 py-3 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium shadow-sm"
+            className="px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium shadow-sm"
             style={{
               backgroundColor: 'hsl(var(--primary))',
               color: 'hsl(var(--primary-foreground))'
@@ -804,12 +810,12 @@ export default function AIChatInterface({ user }) {
           >
             {isLoading ? (
               <div className="flex items-center space-x-2">
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2" style={{ borderColor: 'hsl(var(--primary-foreground))' }}></div>
-                <span>Sending...</span>
+                <div className="animate-spin rounded-full h-3 w-3 sm:h-4 sm:w-4 border-b-2" style={{ borderColor: 'hsl(var(--primary-foreground))' }}></div>
+                <span className="text-xs sm:text-sm">Sending...</span>
               </div>
             ) : (
               <div className="flex items-center space-x-2">
-                <span>Send</span>
+                <span className="text-xs sm:text-sm">Send</span>
                 <span>📤</span>
               </div>
             )}

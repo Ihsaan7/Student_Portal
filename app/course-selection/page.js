@@ -427,64 +427,66 @@ export default function CourseSelectionPage() {
       {/* Toast Container */}
       <ToastContainer toasts={toasts} removeToast={removeToast} />
       
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2" style={{ color: 'hsl(var(--foreground))' }}>Course Selection</h1>
-          <p style={{ color: 'hsl(var(--muted-foreground))' }}>Browse and enroll in courses for your selected programme and semester.</p>
+      <div className="max-w-7xl mx-auto w-full px-2 sm:px-4">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold mb-2" style={{ color: 'hsl(var(--foreground))' }}>Course Selection</h1>
+          <p className="text-sm sm:text-base" style={{ color: 'hsl(var(--muted-foreground))' }}>Browse and enroll in courses for your selected programme and semester.</p>
         </div>
 
         {/* Programme and Semester Selection */}
-        <div className="rounded-lg shadow-sm p-6 mb-6" style={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))' }}>
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div className="flex items-center space-x-4">
-              <div>
-                <label className="text-sm font-medium" style={{ color: 'hsl(var(--card-foreground))' }}>Programme:</label>
-                <div className="text-lg font-semibold" style={{ color: 'hsl(var(--primary))' }}>{userProgramme}</div>
+        <div className="rounded-lg shadow-sm p-4 sm:p-6 mb-6 w-full max-w-full" style={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))' }}>
+          <div className="flex flex-col space-y-4 lg:space-y-0 lg:flex-row lg:items-center lg:justify-between lg:gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-2 sm:space-y-0">
+              <div className="min-w-0 flex-1">
+                <label className="text-xs sm:text-sm font-medium block mb-1" style={{ color: 'hsl(var(--card-foreground))' }}>Programme:</label>
+                <div className="text-sm sm:text-base lg:text-lg font-semibold truncate" style={{ color: 'hsl(var(--primary))' }}>{userProgramme}</div>
               </div>
             </div>
-            <div className="flex items-center space-x-4">
-              <label className="text-sm font-medium" style={{ color: 'hsl(var(--card-foreground))' }}>Semester:</label>
-              <select
-                value={selectedSemester}
-                onChange={(e) => setSelectedSemester(e.target.value)}
-                className="px-3 py-2 rounded-lg focus:outline-none focus:ring-2"
-                style={{
-                  backgroundColor: 'hsl(var(--background))',
-                  border: '1px solid hsl(var(--border))',
-                  color: 'hsl(var(--foreground))',
-                  '--tw-ring-color': 'hsl(var(--primary))'
-                }}
-              >
-                <option value="">Select Semester</option>
-                {semesters.map((semester) => (
-                  <option key={semester} value={semester}>{semester}</option>
-                ))}
-              </select>
-            </div>
-            <div className="flex-1 max-w-md">
-              <input
-                type="text"
-                placeholder="Search courses by name, code, or department..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg focus:outline-none focus:ring-2"
-                style={{
-                  backgroundColor: 'hsl(var(--background))',
-                  border: '1px solid hsl(var(--border))',
-                  color: 'hsl(var(--foreground))',
-                  '--tw-ring-color': 'hsl(var(--primary))'
-                }}
-                suppressHydrationWarning={true}
-              />
+            <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-2">
+                <label className="text-xs sm:text-sm font-medium whitespace-nowrap" style={{ color: 'hsl(var(--card-foreground))' }}>Semester:</label>
+                <select
+                  value={selectedSemester}
+                  onChange={(e) => setSelectedSemester(e.target.value)}
+                  className="w-full sm:w-auto px-3 py-2 rounded-lg focus:outline-none focus:ring-2 text-sm"
+                  style={{
+                    backgroundColor: 'hsl(var(--background))',
+                    border: '1px solid hsl(var(--border))',
+                    color: 'hsl(var(--foreground))',
+                    '--tw-ring-color': 'hsl(var(--primary))'
+                  }}
+                >
+                  <option value="">Select Semester</option>
+                  {semesters.map((semester) => (
+                    <option key={semester} value={semester}>{semester}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="w-full sm:max-w-xs lg:max-w-md">
+                <input
+                  type="text"
+                  placeholder="Search courses..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg focus:outline-none focus:ring-2 text-sm"
+                  style={{
+                    backgroundColor: 'hsl(var(--background))',
+                    border: '1px solid hsl(var(--border))',
+                    color: 'hsl(var(--foreground))',
+                    '--tw-ring-color': 'hsl(var(--primary))'
+                  }}
+                  suppressHydrationWarning={true}
+                />
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="flex flex-col lg:grid lg:grid-cols-3 gap-6">
           {/* Course List */}
-          <div className="lg:col-span-2">
-            <div className="rounded-lg shadow-sm p-6" style={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))' }}>
-              <h2 className="text-lg font-semibold mb-4" style={{ color: 'hsl(var(--card-foreground))' }}>
+          <div className="lg:col-span-2 order-2 lg:order-1">
+            <div className="rounded-lg shadow-sm p-4 sm:p-6 w-full max-w-full" style={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))' }}>
+              <h2 className="text-base sm:text-lg font-semibold mb-4" style={{ color: 'hsl(var(--card-foreground))' }}>
                 Available Courses {selectedSemester && `- ${selectedSemester}`}
               </h2>
               
@@ -508,7 +510,7 @@ export default function CourseSelectionPage() {
                     const enrollmentStatus = getEnrollmentStatus(course);
                     const alreadyEnrolled = isAlreadyEnrolled(course);
                     return (
-                      <div key={course.id} className="rounded-lg p-4 transition-all" style={{
+                      <div key={course.id} className="rounded-lg p-3 sm:p-4 transition-all w-full max-w-full" style={{
                         border: alreadyEnrolled 
                           ? '1px solid hsl(var(--primary))' 
                           : '1px solid hsl(var(--border))',
@@ -516,12 +518,12 @@ export default function CourseSelectionPage() {
                           ? 'hsl(var(--primary) / 0.1)' 
                           : 'transparent'
                       }}>
-                        <div className="flex items-start justify-between mb-3">
-                          <div className="flex-1">
-                            <div className="flex items-center space-x-2 mb-1">
-                              <h3 className="font-semibold" style={{ color: 'hsl(var(--card-foreground))' }}>{course.code}</h3>
-                              <span className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>•</span>
-                              <span className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>{course.credits} credits</span>
+                        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between mb-3 space-y-3 lg:space-y-0">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex flex-wrap items-center gap-2 mb-2">
+                              <h3 className="font-semibold text-sm sm:text-base" style={{ color: 'hsl(var(--card-foreground))' }}>{course.code}</h3>
+                              <span className="text-xs sm:text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>•</span>
+                              <span className="text-xs sm:text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>{course.credits} credits</span>
                               {alreadyEnrolled && (
                                 <span className="px-2 py-1 text-xs rounded-full font-medium" style={{
                                   backgroundColor: 'hsl(var(--primary) / 0.1)',
@@ -531,38 +533,38 @@ export default function CourseSelectionPage() {
                                 </span>
                               )}
                             </div>
-                            <h4 className="text-lg font-medium mb-1" style={{ color: 'hsl(var(--card-foreground))' }}>{course.name}</h4>
-                            <p className="text-sm mb-2" style={{ color: 'hsl(var(--muted-foreground))' }}>{course.instructor}</p>
-                            <p className="text-sm mb-3" style={{ color: 'hsl(var(--card-foreground))' }}>{course.description}</p>
+                            <h4 className="text-base sm:text-lg font-medium mb-1 break-words" style={{ color: 'hsl(var(--card-foreground))' }}>{course.name}</h4>
+                            <p className="text-xs sm:text-sm mb-2" style={{ color: 'hsl(var(--muted-foreground))' }}>{course.instructor}</p>
+                            <p className="text-xs sm:text-sm mb-3 break-words" style={{ color: 'hsl(var(--card-foreground))' }}>{course.description}</p>
                             
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4 text-xs sm:text-sm">
                               <div>
                                 <span className="font-medium" style={{ color: 'hsl(var(--card-foreground))' }}>Schedule:</span>
-                                <p style={{ color: 'hsl(var(--muted-foreground))' }}>{course.schedule}</p>
+                                <p className="break-words" style={{ color: 'hsl(var(--muted-foreground))' }}>{course.schedule}</p>
                               </div>
                               <div>
                                 <span className="font-medium" style={{ color: 'hsl(var(--card-foreground))' }}>Prerequisites:</span>
-                                <p style={{ color: 'hsl(var(--muted-foreground))' }}>{course.prerequisites}</p>
+                                <p className="break-words" style={{ color: 'hsl(var(--muted-foreground))' }}>{course.prerequisites}</p>
                               </div>
                             </div>
                           </div>
                           
-                          <div className="flex flex-col items-end space-y-2">
+                          <div className="flex flex-row lg:flex-col items-center lg:items-end justify-between lg:justify-start space-x-2 lg:space-x-0 lg:space-y-2 flex-shrink-0">
                             <span className={`px-2 py-1 rounded-full text-xs font-medium ${enrollmentStatus.color}`}>
                               {enrollmentStatus.status}
                             </span>
-                            <span className="text-sm text-gray-600">
+                            <span className="text-xs text-gray-600 whitespace-nowrap">
                               {enrollmentStatus.count}/{course.capacity} enrolled
                             </span>
                           </div>
                         </div>
                         
-                        <div className="flex items-center justify-between pt-3" style={{ borderTop: '1px solid hsl(var(--border))' }}>
-                          <span className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>{course.department}</span>
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-3 space-y-2 sm:space-y-0" style={{ borderTop: '1px solid hsl(var(--border))' }}>
+                          <span className="text-xs sm:text-sm truncate" style={{ color: 'hsl(var(--muted-foreground))' }}>{course.department}</span>
                           <button
                             onClick={() => handleCourseSelection(course.id)}
                             disabled={enrollmentStatus.status === "Full" || alreadyEnrolled}
-                            className="px-4 py-2 rounded-lg text-sm font-medium transition"
+                            className="px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition w-full sm:w-auto"
                             style={{
                               backgroundColor: alreadyEnrolled
                                 ? 'hsl(var(--primary))'
@@ -598,37 +600,37 @@ export default function CourseSelectionPage() {
           </div>
 
           {/* Selected Courses */}
-          <div className="lg:col-span-1">
-            <div className="rounded-lg shadow-sm p-6 sticky top-6" style={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))' }}>
-              <h2 className="text-lg font-semibold mb-4" style={{ color: 'hsl(var(--card-foreground))' }}>Selected Courses</h2>
+          <div className="lg:col-span-1 order-1 lg:order-2">
+            <div className="rounded-lg shadow-sm p-4 sm:p-6 lg:sticky lg:top-6 w-full max-w-full" style={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))' }}>
+              <h2 className="text-base sm:text-lg font-semibold mb-4" style={{ color: 'hsl(var(--card-foreground))' }}>Selected Courses</h2>
               
               {selectedCoursesData.length === 0 ? (
-                <p className="text-center py-8" style={{ color: 'hsl(var(--muted-foreground))' }}>No courses selected</p>
+                <p className="text-center py-6 sm:py-8 text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>No courses selected</p>
               ) : (
                 <>
-                  <div className="space-y-3 mb-4">
+                  <div className="space-y-3 mb-4 max-h-64 lg:max-h-96 overflow-y-auto">
                     {selectedCoursesData.map((course) => (
-                      <div key={course.id} className="flex items-center justify-between p-3 rounded-lg" style={{ backgroundColor: 'hsl(var(--muted) / 0.1)' }}>
-                        <div>
-                          <p className="font-medium" style={{ color: 'hsl(var(--card-foreground))' }}>{course.code}</p>
-                          <p className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>{course.name}</p>
+                      <div key={course.id} className="flex items-center justify-between p-2 sm:p-3 rounded-lg" style={{ backgroundColor: 'hsl(var(--muted) / 0.1)' }}>
+                        <div className="min-w-0 flex-1">
+                          <p className="font-medium text-sm truncate" style={{ color: 'hsl(var(--card-foreground))' }}>{course.code}</p>
+                          <p className="text-xs sm:text-sm truncate" style={{ color: 'hsl(var(--muted-foreground))' }}>{course.name}</p>
                         </div>
-                        <span className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>{course.credits} cr</span>
+                        <span className="text-xs sm:text-sm flex-shrink-0 ml-2" style={{ color: 'hsl(var(--muted-foreground))' }}>{course.credits} cr</span>
                       </div>
                     ))}
                   </div>
                   
-                  <div className="pt-4 mb-4" style={{ borderTop: '1px solid hsl(var(--border))' }}>
+                  <div className="pt-3 sm:pt-4 mb-4" style={{ borderTop: '1px solid hsl(var(--border))' }}>
                     <div className="flex justify-between items-center">
-                      <span className="font-medium" style={{ color: 'hsl(var(--card-foreground))' }}>Total Credits:</span>
-                      <span className="font-semibold" style={{ color: 'hsl(var(--card-foreground))' }}>{totalCredits}</span>
+                      <span className="font-medium text-sm sm:text-base" style={{ color: 'hsl(var(--card-foreground))' }}>Total Credits:</span>
+                      <span className="font-semibold text-sm sm:text-base" style={{ color: 'hsl(var(--card-foreground))' }}>{totalCredits}</span>
                     </div>
                   </div>
                   
                   <button
                     onClick={handleEnrollment}
                     disabled={isEnrolling || selectedCoursesData.length === 0}
-                    className={`w-full px-4 py-2 rounded-lg transition font-medium ${
+                    className={`w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg transition font-medium text-sm sm:text-base ${
                       isEnrolling || selectedCoursesData.length === 0
                         ? 'cursor-not-allowed'
                         : 'hover:opacity-90'
@@ -644,14 +646,16 @@ export default function CourseSelectionPage() {
                   >
                     {isEnrolling ? (
                       <div className="flex items-center justify-center">
-                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <svg className="animate-spin -ml-1 mr-3 h-4 w-4 sm:h-5 sm:w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" style={{ color: 'currentColor' }}>
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        Enrolling...
+                        <span className="text-xs sm:text-sm">Enrolling...</span>
                       </div>
                     ) : (
-                      `Enroll in ${selectedCoursesData.length} Course${selectedCoursesData.length !== 1 ? 's' : ''}`
+                      <span className="text-xs sm:text-sm">
+                        Enroll in {selectedCoursesData.length} Course{selectedCoursesData.length !== 1 ? 's' : ''}
+                      </span>
                     )}
                   </button>
                 </>
