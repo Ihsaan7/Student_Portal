@@ -42,7 +42,7 @@ export default function AdminCourseGuidancePanel({ courseCode: propCourseCode })
       console.log('Auth test - User:', user ? 'authenticated' : 'not authenticated');
       
       // Test 2: Check if the course_guidance table exists
-      const { data: tableTest, error: tableError } = await supabase
+      const { error: tableError } = await supabase
         .from('course_guidance')
         .select('count')
         .limit(1);
@@ -50,10 +50,11 @@ export default function AdminCourseGuidancePanel({ courseCode: propCourseCode })
       console.log('Table test - course_guidance exists:', !tableError);
       if (tableError) {
         console.log('Table error:', tableError);
+        showToast('Course guidance table not found. Please contact admin to set up the database.', 'error');
       }
       
       // Test 3: Check if the enrolled_courses table exists
-      const { data: coursesTableTest, error: coursesTableError } = await supabase
+      const { error: coursesTableError } = await supabase
         .from('enrolled_courses')
         .select('count')
         .limit(1);
@@ -61,6 +62,7 @@ export default function AdminCourseGuidancePanel({ courseCode: propCourseCode })
       console.log('Table test - enrolled_courses exists:', !coursesTableError);
       if (coursesTableError) {
         console.log('Courses table error:', coursesTableError);
+        showToast('Enrolled courses table not found. Please contact admin to set up the database.', 'error');
       }
       
     } catch (error) {
@@ -71,9 +73,16 @@ export default function AdminCourseGuidancePanel({ courseCode: propCourseCode })
   const fetchCourses = async () => {
     try {
       // Check if user is authenticated
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      if (authError) {
+        console.error('Authentication error:', authError);
+        showToast('Authentication error. Please log in again.', 'error');
+        return;
+      }
+      
       if (!user) {
         console.log('User not authenticated, skipping courses fetch');
+        showToast('Please log in to access course guidance.', 'error');
         return;
       }
       
@@ -129,6 +138,7 @@ export default function AdminCourseGuidancePanel({ courseCode: propCourseCode })
   const fetchGuidance = async () => {
     if (!selectedCourseCode) {
       console.log('No course selected, skipping guidance fetch');
+      setLoading(false);
       return;
     }
     
@@ -136,9 +146,17 @@ export default function AdminCourseGuidancePanel({ courseCode: propCourseCode })
       setLoading(true);
       
       // Check if user is authenticated
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      if (authError) {
+        console.error('Authentication error:', authError);
+        showToast('Authentication error. Please log in again.', 'error');
+        setLoading(false);
+        return;
+      }
+      
       if (!user) {
         console.log('User not authenticated, skipping guidance fetch');
+        showToast('Please log in to access course guidance.', 'error');
         setLoading(false);
         return;
       }
