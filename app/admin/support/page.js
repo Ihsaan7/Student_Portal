@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import AdminMiddleware from '../../../components/AdminMiddleware';
 import { getSupportQueries, updateSupportQuery, logAdminAction } from '../../../lib/adminAuth';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import { useTheme } from '../../components/ThemeProvider';
 
 const SupportManagement = ({ adminData }) => {
   const [queries, setQueries] = useState([]);
@@ -19,6 +20,7 @@ const SupportManagement = ({ adminData }) => {
   const [responseStatus, setResponseStatus] = useState('solved');
   const [actionLoading, setActionLoading] = useState(false);
   const router = useRouter();
+  const { theme, toggleTheme } = useTheme();
   
   const queriesPerPage = 20;
 
@@ -72,19 +74,19 @@ const SupportManagement = ({ adminData }) => {
 
   const getStatusBadgeColor = (status) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'solved': return 'bg-green-100 text-green-800';
-      case 'unsolved': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'pending': return 'bg-accent/10 text-accent border border-accent/20';
+      case 'solved': return 'bg-primary/10 text-primary border border-primary/20';
+      case 'unsolved': return 'bg-destructive/10 text-destructive border border-destructive/20';
+      default: return 'bg-muted/50 text-muted-foreground border border-border';
     }
   };
 
   const getPriorityColor = (priority) => {
     switch (priority) {
-      case 'high': return 'text-red-600';
-      case 'medium': return 'text-yellow-600';
-      case 'low': return 'text-green-600';
-      default: return 'text-gray-600';
+      case 'high': return 'text-destructive';
+      case 'medium': return 'text-accent';
+      case 'low': return 'text-primary';
+      default: return 'text-muted-foreground';
     }
   };
 
@@ -95,19 +97,37 @@ const SupportManagement = ({ adminData }) => {
   const totalPages = Math.ceil(totalQueries / queriesPerPage);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="bg-card shadow-sm border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center">
               <button
                 onClick={() => router.push('/admin')}
-                className="text-blue-600 hover:text-blue-800 mr-4"
+                className="text-primary hover:text-primary/80 mr-4 transition-colors cursor-pointer"
               >
                 ← Back to Dashboard
               </button>
-              <h1 className="text-2xl font-bold text-gray-900">Support Management</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-foreground">
+                <span className="hidden sm:inline">Support Management</span>
+                <span className="sm:hidden">Support</span>
+              </h1>
+            </div>
+            
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              {/* Theme Toggle */}
+              <button
+                onClick={toggleTheme}
+                className="p-2 rounded-md transition-all duration-200 hover:bg-muted/50 cursor-pointer border border-border hover:border-primary/30"
+                style={{ 
+                  backgroundColor: 'hsl(var(--muted))', 
+                  color: 'hsl(var(--muted-foreground))' 
+                }}
+                title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+              >
+                {theme === 'dark' ? '☀️' : '🌙'}
+              </button>
             </div>
           </div>
         </div>
@@ -116,18 +136,18 @@ const SupportManagement = ({ adminData }) => {
       {/* Error/Success Messages */}
       {error && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+          <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-md">
             {error}
-            <button onClick={() => setError('')} className="float-right font-bold">×</button>
+            <button onClick={() => setError('')} className="float-right font-bold hover:text-destructive/80 cursor-pointer">×</button>
           </div>
         </div>
       )}
       
       {success && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-          <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded">
+          <div className="bg-primary/10 border border-primary/20 text-primary px-4 py-3 rounded-md">
             {success}
-            <button onClick={() => setSuccess('')} className="float-right font-bold">×</button>
+            <button onClick={() => setSuccess('')} className="float-right font-bold hover:text-primary/80 cursor-pointer">×</button>
           </div>
         </div>
       )}
@@ -135,46 +155,46 @@ const SupportManagement = ({ adminData }) => {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Filters */}
-        <div className="bg-white rounded-lg shadow mb-6">
-          <div className="p-6">
+        <div className="bg-card rounded-lg shadow-sm border border-primary/20 mb-6 border-l-4" style={{ borderLeftColor: 'hsl(var(--primary))' }}>
+          <div className="p-4 sm:p-6">
             <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex space-x-2">
+              <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => handleStatusFilter('')}
-                  className={`px-4 py-2 rounded text-sm font-medium ${
+                  className={`px-3 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-medium transition-colors cursor-pointer ${
                     statusFilter === '' 
-                      ? 'bg-blue-600 text-white' 
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      ? 'bg-primary text-primary-foreground' 
+                      : 'bg-muted text-muted-foreground hover:bg-muted/80'
                   }`}
                 >
                   All ({totalQueries})
                 </button>
                 <button
                   onClick={() => handleStatusFilter('pending')}
-                  className={`px-4 py-2 rounded text-sm font-medium ${
+                  className={`px-3 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-medium transition-colors cursor-pointer ${
                     statusFilter === 'pending' 
-                      ? 'bg-yellow-600 text-white' 
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      ? 'bg-accent text-accent-foreground' 
+                      : 'bg-muted text-muted-foreground hover:bg-muted/80'
                   }`}
                 >
                   Pending
                 </button>
                 <button
                   onClick={() => handleStatusFilter('solved')}
-                  className={`px-4 py-2 rounded text-sm font-medium ${
+                  className={`px-3 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-medium transition-colors cursor-pointer ${
                     statusFilter === 'solved' 
-                      ? 'bg-green-600 text-white' 
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      ? 'bg-primary text-primary-foreground' 
+                      : 'bg-muted text-muted-foreground hover:bg-muted/80'
                   }`}
                 >
                   Solved
                 </button>
                 <button
                   onClick={() => handleStatusFilter('unsolved')}
-                  className={`px-4 py-2 rounded text-sm font-medium ${
+                  className={`px-3 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-medium transition-colors cursor-pointer ${
                     statusFilter === 'unsolved' 
-                      ? 'bg-red-600 text-white' 
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      ? 'bg-destructive text-destructive-foreground' 
+                      : 'bg-muted text-muted-foreground hover:bg-muted/80'
                   }`}
                 >
                   Unsolved
@@ -185,63 +205,66 @@ const SupportManagement = ({ adminData }) => {
         </div>
 
         {/* Support Queries */}
-        <div className="bg-white rounded-lg shadow">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-900">Support Queries</h2>
+        <div className="bg-card rounded-lg shadow-sm border border-primary/20 border-l-4" style={{ borderLeftColor: 'hsl(var(--primary))' }}>
+          <div className="px-4 sm:px-6 py-4 border-b border-border">
+            <h2 className="text-lg sm:text-xl font-semibold text-foreground">Support Queries</h2>
           </div>
           
           {loading ? (
             <div className="p-8 text-center">
               <LoadingSpinner size="medium" variant="primary" />
-              <p className="mt-2" style={{color: 'hsl(var(--muted-foreground))'}}>Loading support queries...</p>
+              <p className="mt-2 text-muted-foreground">Loading support queries...</p>
             </div>
           ) : queries.length === 0 ? (
-            <div className="p-8 text-center text-gray-500">
-              No support queries found.
+            <div className="p-8 text-center">
+              <div className="text-4xl mb-2">📧</div>
+              <p className="text-muted-foreground">No support queries found.</p>
             </div>
           ) : (
-            <div className="divide-y divide-gray-200">
+            <div className="divide-y divide-border">
               {queries.map((query) => (
-                <div key={query.id} className="p-6 hover:bg-gray-50">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-3 mb-2">
-                        <h3 className="text-lg font-medium text-gray-900">
+                <div key={query.id} className="p-4 sm:p-6 hover:bg-muted/30 transition-colors">
+                  <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-3">
+                        <h3 className="text-base sm:text-lg font-medium text-foreground truncate">
                           {query.subject || 'No Subject'}
                         </h3>
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                          getStatusBadgeColor(query.status)
-                        }`}>
-                          {query.status || 'pending'}
-                        </span>
-                        {query.priority && (
-                          <span className={`text-sm font-medium ${getPriorityColor(query.priority)}`}>
-                            {query.priority} priority
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-md ${
+                            getStatusBadgeColor(query.status)
+                          }`}>
+                            {query.status || 'pending'}
                           </span>
-                        )}
+                          {query.priority && (
+                            <span className={`text-xs sm:text-sm font-medium ${getPriorityColor(query.priority)}`}>
+                              {query.priority} priority
+                            </span>
+                          )}
+                        </div>
                       </div>
                       
-                      <div className="text-sm text-gray-600 mb-3">
-                        <p><strong>From:</strong> {query.user_name || 'Unknown'} ({query.user_email || 'No email'})</p>
-                        <p><strong>Submitted:</strong> {formatDate(query.created_at)}</p>
+                      <div className="text-sm text-muted-foreground mb-3 space-y-1">
+                        <p><strong className="text-foreground">From:</strong> {query.user_name || 'Unknown'} ({query.user_email || 'No email'})</p>
+                        <p><strong className="text-foreground">Submitted:</strong> {formatDate(query.created_at)}</p>
                         {query.admin_response_at && (
-                          <p><strong>Responded:</strong> {formatDate(query.admin_response_at)}</p>
+                          <p><strong className="text-foreground">Responded:</strong> {formatDate(query.admin_response_at)}</p>
                         )}
                       </div>
                       
                       <div className="mb-4">
-                        <p className="text-gray-800 whitespace-pre-wrap">{query.message}</p>
+                        <p className="text-foreground whitespace-pre-wrap text-sm sm:text-base">{query.message}</p>
                       </div>
                       
                       {query.admin_response && (
-                        <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4">
-                          <p className="text-sm font-medium text-blue-800 mb-1">Admin Response:</p>
-                          <p className="text-blue-700 whitespace-pre-wrap">{query.admin_response}</p>
+                        <div className="bg-primary/5 border-l-4 border-primary p-4 mb-4 rounded-r-md">
+                          <p className="text-sm font-medium text-primary mb-1">Admin Response:</p>
+                          <p className="text-foreground whitespace-pre-wrap text-sm">{query.admin_response}</p>
                         </div>
                       )}
                     </div>
                     
-                    <div className="ml-4 flex-shrink-0">
+                    <div className="flex-shrink-0">
                       <button
                         onClick={() => {
                           setSelectedQuery(query);
@@ -249,7 +272,7 @@ const SupportManagement = ({ adminData }) => {
                           setResponseStatus(query.status === 'pending' ? 'solved' : query.status);
                           setShowResponseModal(true);
                         }}
-                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm"
+                        className="w-full lg:w-auto bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 text-sm transition-colors cursor-pointer"
                       >
                         {query.admin_response ? 'Update Response' : 'Respond'}
                       </button>
@@ -262,26 +285,28 @@ const SupportManagement = ({ adminData }) => {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="px-6 py-4 border-t border-gray-200">
-              <div className="flex items-center justify-between">
-                <div className="text-sm text-gray-700">
+            <div className="px-4 sm:px-6 py-4 border-t border-border">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="text-sm text-muted-foreground">
                   Showing {currentPage * queriesPerPage + 1} to {Math.min((currentPage + 1) * queriesPerPage, totalQueries)} of {totalQueries} results
                 </div>
-                <div className="flex space-x-2">
+                <div className="flex items-center space-x-2">
                   <button
                     onClick={() => setCurrentPage(Math.max(0, currentPage - 1))}
                     disabled={currentPage === 0}
-                    className="px-3 py-1 border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                    className="px-3 py-2 border border-border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-muted/50 transition-colors cursor-pointer text-sm"
+                    style={{ backgroundColor: 'hsl(var(--background))', color: 'hsl(var(--foreground))' }}
                   >
                     Previous
                   </button>
-                  <span className="px-3 py-1 text-sm text-gray-700">
+                  <span className="px-3 py-2 text-sm text-muted-foreground">
                     Page {currentPage + 1} of {totalPages}
                   </span>
                   <button
                     onClick={() => setCurrentPage(Math.min(totalPages - 1, currentPage + 1))}
                     disabled={currentPage >= totalPages - 1}
-                    className="px-3 py-1 border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                    className="px-3 py-2 border border-border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-muted/50 transition-colors cursor-pointer text-sm"
+                    style={{ backgroundColor: 'hsl(var(--background))', color: 'hsl(var(--foreground))' }}
                   >
                     Next
                   </button>
@@ -294,26 +319,27 @@ const SupportManagement = ({ adminData }) => {
 
       {/* Response Modal */}
       {showResponseModal && selectedQuery && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-card rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-border shadow-lg">
+            <h3 className="text-lg font-medium text-foreground mb-4">
               Respond to Support Query
             </h3>
             
-            <div className="mb-4 p-4 bg-gray-50 rounded">
-              <p className="text-sm font-medium text-gray-700 mb-1">Original Query:</p>
-              <p className="text-sm text-gray-600">{selectedQuery.subject}</p>
-              <p className="text-sm text-gray-800 mt-2 whitespace-pre-wrap">{selectedQuery.message}</p>
+            <div className="mb-4 p-4 bg-muted/30 rounded-md border border-border">
+              <p className="text-sm font-medium text-foreground mb-1">Original Query:</p>
+              <p className="text-sm text-primary font-medium">{selectedQuery.subject}</p>
+              <p className="text-sm text-foreground mt-2 whitespace-pre-wrap">{selectedQuery.message}</p>
             </div>
             
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Status
               </label>
               <select
                 value={responseStatus}
                 onChange={(e) => setResponseStatus(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-background text-foreground"
+                style={{ backgroundColor: 'hsl(var(--background))', color: 'hsl(var(--foreground))' }}
               >
                 <option value="solved">Solved</option>
                 <option value="unsolved">Unsolved</option>
@@ -322,19 +348,20 @@ const SupportManagement = ({ adminData }) => {
             </div>
             
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Response
               </label>
               <textarea
                 value={responseText}
                 onChange={(e) => setResponseText(e.target.value)}
                 rows={6}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-background text-foreground"
+                style={{ backgroundColor: 'hsl(var(--background))', color: 'hsl(var(--foreground))' }}
                 placeholder="Enter your response to the user..."
               />
             </div>
             
-            <div className="flex space-x-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <button
                 onClick={() => {
                   setShowResponseModal(false);
@@ -343,14 +370,15 @@ const SupportManagement = ({ adminData }) => {
                   setResponseStatus('solved');
                 }}
                 disabled={actionLoading}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50"
+                className="flex-1 px-4 py-2 border border-border rounded-md text-foreground hover:bg-muted/50 transition-colors cursor-pointer"
+                style={{ backgroundColor: 'hsl(var(--background))' }}
               >
                 Cancel
               </button>
               <button
                 onClick={handleRespond}
                 disabled={actionLoading || !responseText.trim()}
-                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+                className="flex-1 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 disabled:opacity-50 transition-colors cursor-pointer"
               >
                 {actionLoading ? 'Updating...' : 'Update Query'}
               </button>

@@ -5,6 +5,7 @@ import AdminMiddleware from '../../../components/AdminMiddleware';
 import { logAdminAction } from '../../../lib/adminAuth';
 import { supabase } from '../../../lib/supabase';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import { useTheme } from '../../components/ThemeProvider';
 
 const CoursesManagement = ({ adminData }) => {
   const [courses, setCourses] = useState([]);
@@ -14,6 +15,7 @@ const CoursesManagement = ({ adminData }) => {
   const [success, setSuccess] = useState('');
   const [activeTab, setActiveTab] = useState('overview');
   const router = useRouter();
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     loadCoursesData();
@@ -130,19 +132,37 @@ const CoursesManagement = ({ adminData }) => {
   const stats = getEnrollmentStats();
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="bg-card shadow-sm border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center">
               <button
                 onClick={() => router.push('/admin')}
-                className="text-blue-600 hover:text-blue-800 mr-4"
+                className="text-primary hover:text-primary/80 mr-4 transition-colors cursor-pointer"
               >
                 ← Back to Dashboard
               </button>
-              <h1 className="text-2xl font-bold text-gray-900">Courses Management</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-foreground">
+                <span className="hidden sm:inline">Courses Management</span>
+                <span className="sm:hidden">Courses</span>
+              </h1>
+            </div>
+            
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              {/* Theme Toggle */}
+              <button
+                onClick={toggleTheme}
+                className="p-2 rounded-md transition-all duration-200 hover:bg-muted/50 cursor-pointer border border-border hover:border-primary/30"
+                style={{ 
+                  backgroundColor: 'hsl(var(--muted))', 
+                  color: 'hsl(var(--muted-foreground))' 
+                }}
+                title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+              >
+                {theme === 'dark' ? '☀️' : '🌙'}
+              </button>
             </div>
           </div>
         </div>
@@ -151,18 +171,18 @@ const CoursesManagement = ({ adminData }) => {
       {/* Error/Success Messages */}
       {error && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+          <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-md">
             {error}
-            <button onClick={() => setError('')} className="float-right font-bold">×</button>
+            <button onClick={() => setError('')} className="float-right font-bold hover:text-destructive/80 cursor-pointer">×</button>
           </div>
         </div>
       )}
       
       {success && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-          <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded">
+          <div className="bg-primary/10 border border-primary/20 text-primary px-4 py-3 rounded-md">
             {success}
-            <button onClick={() => setSuccess('')} className="float-right font-bold">×</button>
+            <button onClick={() => setSuccess('')} className="float-right font-bold hover:text-primary/80 cursor-pointer">×</button>
           </div>
         </div>
       )}
@@ -170,123 +190,126 @@ const CoursesManagement = ({ adminData }) => {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Statistics Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white p-6 rounded-lg shadow">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
+          <div className="bg-card p-6 rounded-lg shadow-sm border border-primary/20 border-l-4 hover:shadow-md transition-shadow" style={{ borderLeftColor: 'hsl(var(--primary))' }}>
             <div className="flex items-center">
-              <div className="text-3xl mr-4">📚</div>
+              <div className="text-3xl mr-4 group-hover:scale-110 transition-transform duration-200">📚</div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">Total Courses</h3>
-                <p className="text-2xl font-bold text-blue-600">{stats.uniqueCourses}</p>
+                <h3 className="text-base sm:text-lg font-semibold text-foreground">Total Courses</h3>
+                <p className="text-2xl font-bold text-primary">{stats.uniqueCourses}</p>
               </div>
             </div>
           </div>
           
-          <div className="bg-white p-6 rounded-lg shadow">
+          <div className="bg-card p-6 rounded-lg shadow-sm border border-primary/20 border-l-4 hover:shadow-md transition-shadow" style={{ borderLeftColor: 'hsl(var(--primary))' }}>
             <div className="flex items-center">
-              <div className="text-3xl mr-4">👥</div>
+              <div className="text-3xl mr-4 group-hover:scale-110 transition-transform duration-200">👥</div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">Total Enrollments</h3>
-                <p className="text-2xl font-bold text-green-600">{stats.totalEnrollments}</p>
+                <h3 className="text-base sm:text-lg font-semibold text-foreground">Total Enrollments</h3>
+                <p className="text-2xl font-bold text-primary">{stats.totalEnrollments}</p>
               </div>
             </div>
           </div>
           
-          <div className="bg-white p-6 rounded-lg shadow">
+          <div className="bg-card p-6 rounded-lg shadow-sm border border-primary/20 border-l-4 hover:shadow-md transition-shadow sm:col-span-2 lg:col-span-1" style={{ borderLeftColor: 'hsl(var(--primary))' }}>
             <div className="flex items-center">
-              <div className="text-3xl mr-4">📊</div>
+              <div className="text-3xl mr-4 group-hover:scale-110 transition-transform duration-200">📊</div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">Avg. Enrollments</h3>
-                <p className="text-2xl font-bold text-purple-600">{stats.avgEnrollmentsPerCourse}</p>
+                <h3 className="text-base sm:text-lg font-semibold text-foreground">Avg. Enrollments</h3>
+                <p className="text-2xl font-bold text-primary">{stats.avgEnrollmentsPerCourse}</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Tabs */}
-        <div className="bg-white rounded-lg shadow mb-6">
-          <div className="border-b border-gray-200">
-            <nav className="-mb-px flex">
+        <div className="bg-card rounded-lg shadow-sm border border-primary/20 mb-6 border-l-4" style={{ borderLeftColor: 'hsl(var(--primary))' }}>
+          <div className="border-b border-border">
+            <nav className="-mb-px flex overflow-x-auto">
               <button
                 onClick={() => setActiveTab('overview')}
-                className={`py-4 px-6 text-sm font-medium border-b-2 ${
+                className={`py-3 sm:py-4 px-4 sm:px-6 text-sm font-medium border-b-2 whitespace-nowrap transition-colors ${
                   activeTab === 'overview'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
                 }`}
               >
-                Courses Overview
+                <span className="hidden sm:inline">Courses Overview</span>
+                <span className="sm:hidden">Courses</span>
               </button>
               <button
                 onClick={() => setActiveTab('enrollments')}
-                className={`py-4 px-6 text-sm font-medium border-b-2 ${
+                className={`py-3 sm:py-4 px-4 sm:px-6 text-sm font-medium border-b-2 whitespace-nowrap transition-colors ${
                   activeTab === 'enrollments'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
                 }`}
               >
-                All Enrollments
+                <span className="hidden sm:inline">All Enrollments</span>
+                <span className="sm:hidden">Enrollments</span>
               </button>
             </nav>
           </div>
         </div>
 
         {loading ? (
-          <div className="bg-white rounded-lg shadow p-8 text-center">
+          <div className="bg-card rounded-lg shadow-sm border border-primary/20 p-8 text-center border-l-4" style={{ borderLeftColor: 'hsl(var(--primary))' }}>
             <LoadingSpinner size="medium" variant="primary" />
-            <p className="mt-2" style={{color: 'hsl(var(--muted-foreground))'}}>Loading courses data...</p>
+            <p className="mt-2 text-muted-foreground">Loading courses data...</p>
           </div>
         ) : (
-          <div className="bg-white rounded-lg shadow">
+          <div className="bg-card rounded-lg shadow-sm border border-primary/20 border-l-4" style={{ borderLeftColor: 'hsl(var(--primary))' }}>
             {activeTab === 'overview' ? (
               <div>
-                <div className="px-6 py-4 border-b border-gray-200">
-                  <h2 className="text-xl font-semibold text-gray-900">Courses Overview</h2>
+                <div className="px-4 sm:px-6 py-4 border-b border-border">
+                  <h2 className="text-lg sm:text-xl font-semibold text-foreground">Courses Overview</h2>
                 </div>
                 {courses.length === 0 ? (
-                  <div className="p-8 text-center text-gray-500">
-                    No courses found.
+                  <div className="p-8 text-center">
+                    <div className="text-4xl mb-2">📚</div>
+                    <p className="text-muted-foreground">No courses found.</p>
                   </div>
                 ) : (
                   <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
-                      <thead className="bg-gray-50">
+                    <table className="min-w-full divide-y divide-border">
+                      <thead style={{ backgroundColor: 'hsl(var(--muted))' }}>
                         <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                             Course
                           </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                             Code
                           </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="hidden sm:table-cell px-4 sm:px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                             Semester
                           </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="hidden md:table-cell px-4 sm:px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                             Credit Hours
                           </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                             Enrollments
                           </th>
                         </tr>
                       </thead>
-                      <tbody className="bg-white divide-y divide-gray-200">
+                      <tbody className="bg-card divide-y divide-border">
                         {courses.map((course) => (
-                          <tr key={course.id} className="hover:bg-gray-50">
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm font-medium text-gray-900">
+                          <tr key={course.id} className="hover:bg-muted/30 transition-colors">
+                            <td className="px-4 sm:px-6 py-4">
+                              <div className="text-sm font-medium text-foreground">
                                 {course.course_name}
                               </div>
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <td className="px-4 sm:px-6 py-4 text-sm text-muted-foreground">
                               {course.course_code}
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <td className="hidden sm:table-cell px-4 sm:px-6 py-4 text-sm text-muted-foreground">
                               {course.semester}
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <td className="hidden md:table-cell px-4 sm:px-6 py-4 text-sm text-muted-foreground">
                               {course.credits}
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                            <td className="px-4 sm:px-6 py-4">
+                              <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-md bg-primary/10 text-primary border border-primary/20">
                                 {course.enrollments} students
                               </span>
                             </td>
@@ -299,61 +322,62 @@ const CoursesManagement = ({ adminData }) => {
               </div>
             ) : (
               <div>
-                <div className="px-6 py-4 border-b border-gray-200">
-                  <h2 className="text-xl font-semibold text-gray-900">All Enrollments</h2>
+                <div className="px-4 sm:px-6 py-4 border-b border-border">
+                  <h2 className="text-lg sm:text-xl font-semibold text-foreground">All Enrollments</h2>
                 </div>
                 {enrollments.length === 0 ? (
-                  <div className="p-8 text-center text-gray-500">
-                    No enrollments found.
+                  <div className="p-8 text-center">
+                    <div className="text-4xl mb-2">👥</div>
+                    <p className="text-muted-foreground">No enrollments found.</p>
                   </div>
                 ) : (
                   <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
-                      <thead className="bg-gray-50">
+                    <table className="min-w-full divide-y divide-border">
+                      <thead style={{ backgroundColor: 'hsl(var(--muted))' }}>
                         <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                             Student
                           </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                             Course
                           </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="hidden sm:table-cell px-4 sm:px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                             Code
                           </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="hidden md:table-cell px-4 sm:px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                             Semester
                           </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="hidden lg:table-cell px-4 sm:px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                             Enrolled Date
                           </th>
                         </tr>
                       </thead>
-                      <tbody className="bg-white divide-y divide-gray-200">
+                      <tbody className="bg-card divide-y divide-border">
                         {enrollments.map((enrollment, index) => (
-                          <tr key={index} className="hover:bg-gray-50">
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm font-medium text-gray-900">
+                          <tr key={index} className="hover:bg-muted/30 transition-colors">
+                            <td className="px-4 sm:px-6 py-4">
+                              <div className="text-sm font-medium text-foreground">
                                 {enrollment.student_name}
                               </div>
-                              <div className="text-sm text-gray-500">
+                              <div className="text-sm text-muted-foreground truncate max-w-[200px]">
                                 {enrollment.student_email}
                               </div>
-                              <div className="text-xs text-gray-400">
+                              <div className="text-xs text-muted-foreground/70">
                                 ID: {enrollment.user_id}
                               </div>
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm font-medium text-gray-900">
+                            <td className="px-4 sm:px-6 py-4">
+                              <div className="text-sm font-medium text-foreground">
                                 {enrollment.course_name}
                               </div>
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <td className="hidden sm:table-cell px-4 sm:px-6 py-4 text-sm text-muted-foreground">
                               {enrollment.course_code}
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <td className="hidden md:table-cell px-4 sm:px-6 py-4 text-sm text-muted-foreground">
                               {enrollment.semester}
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <td className="hidden lg:table-cell px-4 sm:px-6 py-4 text-sm text-muted-foreground">
                               {formatDate(enrollment.created_at)}
                             </td>
                           </tr>
