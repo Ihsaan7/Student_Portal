@@ -56,6 +56,7 @@ export default function Dashboard() {
   const [enrolledCourses, setEnrolledCourses] = useState([]);
   const [showUnenrollModal, setShowUnenrollModal] = useState(false);
   const [courseToUnenroll, setCourseToUnenroll] = useState(null);
+
   const router = useRouter();
 
   useEffect(() => {
@@ -260,37 +261,75 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="rounded-xl shadow-sm p-4 sm:p-6 border-2 w-full max-w-full" style={{ backgroundColor: 'hsl(var(--secondary))', borderColor: 'hsl(var(--border))' }}>
-            <h3 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6" style={{ color: 'hsl(var(--card-foreground))' }}>Getting Started</h3>
-            <div className="space-y-4">
-              <div className="flex items-start space-x-4">
-                <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm" style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))' }}>
-                  <span className="text-sm font-bold">1</span>
-                </div>
-                <div>
-                  <p className="text-base font-medium mb-1" style={{ color: 'hsl(var(--card-foreground))' }}>Complete Course Enrollment</p>
-                  <p className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>Select and enroll in your courses for this semester</p>
-                </div>
+          <div className="rounded-xl shadow-sm p-4 sm:p-6 border-2 w-full max-w-full" style={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
+            <div className="flex items-center mb-4 sm:mb-6">
+              <div className="w-10 h-10 rounded-lg flex items-center justify-center mr-3" style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))' }}>
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h8m2-10v18a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2h8l4 4z" />
+                </svg>
               </div>
-              <div className="flex items-start space-x-4">
-                <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm" style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))' }}>
-                  <span className="text-sm font-bold">2</span>
-                </div>
-                <div>
-                  <p className="text-base font-medium mb-1" style={{ color: 'hsl(var(--card-foreground))' }}>Check Your Schedule</p>
-                  <p className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>View your class timetable and important dates</p>
-                </div>
+              <div>
+                <h3 className="text-lg sm:text-xl font-semibold" style={{ color: 'hsl(var(--card-foreground))' }}>How to Use This Portal</h3>
+                <p className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>Watch this quick guide to get started</p>
               </div>
-              <div className="flex items-start space-x-4">
-                <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm" style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))' }}>
-                  <span className="text-sm font-bold">3</span>
-                </div>
-                <div>
-                  <p className="text-base font-medium mb-1" style={{ color: 'hsl(var(--card-foreground))' }}>Explore Student Services</p>
-                  <p className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>Access academic support and resources</p>
+            </div>
+            
+            <div className="relative w-full">
+              {/* Video Player Container - Click to Watch */}
+              <div 
+                className="relative w-full h-0 pb-[56.25%] rounded-lg overflow-hidden shadow-lg cursor-pointer group transition-all duration-200 hover:shadow-xl"
+                style={{ backgroundColor: 'hsl(var(--muted))' }}
+                onClick={() => {
+                  window.open(
+                    'https://drive.google.com/file/d/15Ll8MOjQ3GmQ-QdN1QIvI_XizcSbCF1O/view',
+                    'StudentNestTutorial',
+                    'width=1200,height=800,left=' + ((window.screen.width - 1200) / 2) + ',top=' + ((window.screen.height - 800) / 2) + ',resizable=yes,scrollbars=yes,toolbar=no,menubar=no,location=no'
+                  );
+                }}
+              >
+                {/* Video Thumbnail/Preview */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6">
+                  {/* Play Button Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 group-hover:from-primary/30 group-hover:to-secondary/30 transition-all duration-200" style={{ borderRadius: '8px' }}></div>
+                  
+                  {/* Large Play Button */}
+                  <div className="relative z-10 w-20 h-20 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-200" style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))' }}>
+                    <svg className="w-8 h-8 ml-1" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M8 5v14l11-7z"/>
+                    </svg>
+                  </div>
+                  
+                  {/* Video Info */}
+                  <div className="relative z-10">
+                    <h4 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors" style={{ color: 'hsl(var(--card-foreground))' }}>
+                      🎥 Tutorial Video
+                    </h4>
+                    <p className="text-sm mb-4" style={{ color: 'hsl(var(--muted-foreground))' }}>
+                      Complete guide to using StudentNest Portal
+                    </p>
+                    <div className="inline-flex items-center px-4 py-2 rounded-lg font-medium text-sm group-hover:shadow-md transition-all duration-200" style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))' }}>
+                      <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z"/>
+                      </svg>
+                      Watch Now
+                    </div>
+                    <p className="text-xs mt-2 opacity-75" style={{ color: 'hsl(var(--muted-foreground))' }}>
+                      Opens in new window • ~5 minutes
+                    </p>
+                  </div>
+                  
+                  {/* Corner indicators */}
+                  <div className="absolute top-3 left-3 px-2 py-1 rounded text-xs font-medium" style={{ backgroundColor: 'hsl(var(--accent))', color: 'hsl(var(--accent-foreground))' }}>
+                    HD Quality
+                  </div>
+                  <div className="absolute top-3 right-3 px-2 py-1 rounded text-xs font-medium" style={{ backgroundColor: 'hsl(var(--secondary))', color: 'hsl(var(--secondary-foreground))' }}>
+                    Tutorial
+                  </div>
                 </div>
               </div>
             </div>
+            
+
           </div>
         </div>
 
