@@ -23,7 +23,7 @@ function LoginPageComponent() {
   const [isResending, setIsResending] = useState(false);
   const [networkStatus, setNetworkStatus] = useState("online");
   const [connectivityIssue, setConnectivityIssue] = useState(false);
-  const [sessionDebug, setSessionDebug] = useState("");
+
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("redirect") || "/home";
@@ -68,24 +68,7 @@ function LoginPageComponent() {
     };
   }, [redirectTo, router]);
 
-  // Debug function to check current session
-  const checkCurrentSession = async () => {
-    try {
-      const {
-        data: { session },
-        error,
-      } = await supabase.auth.getSession();
-      if (error) {
-        setSessionDebug(`Error: ${error.message}`);
-      } else if (session) {
-        setSessionDebug(`Logged in as: ${session.user.email}`);
-      } else {
-        setSessionDebug("No active session");
-      }
-    } catch (err) {
-      setSessionDebug(`Exception: ${err.message}`);
-    }
-  };
+
 
   const checkConnectivity = async () => {
     // Simplified check - only verify browser online status
@@ -617,34 +600,7 @@ function LoginPageComponent() {
           </button>
         </form>
 
-        {/* Debug section */}
-        <div
-          className="mt-4 p-3 rounded-lg border"
-          style={{
-            backgroundColor: "hsl(var(--muted) / 0.1)",
-            borderColor: "hsl(var(--border))",
-          }}
-        >
-          <button
-            type="button"
-            onClick={checkCurrentSession}
-            className="text-xs px-2 py-1 rounded"
-            style={{
-              backgroundColor: "hsl(var(--secondary))",
-              color: "hsl(var(--secondary-foreground))",
-            }}
-          >
-            Check Session
-          </button>
-          {sessionDebug && (
-            <div
-              className="mt-2 text-xs"
-              style={{ color: "hsl(var(--muted-foreground))" }}
-            >
-              {sessionDebug}
-            </div>
-          )}
-        </div>
+
 
         {/* Resend Confirmation Button */}
         {!success && (
