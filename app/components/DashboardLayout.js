@@ -186,6 +186,25 @@ const navItems = [
     ),
     route: "/student-services",
   },
+  {
+    name: "VU Tips",
+    icon: (
+      <svg
+        className="w-6 h-6"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+        />
+      </svg>
+    ),
+    route: "/vu-tips",
+  },
 ];
 
 export default function DashboardLayout({ children, currentPage }) {
@@ -214,18 +233,62 @@ export default function DashboardLayout({ children, currentPage }) {
           .single();
         setUserProfile(profile);
 
-        // Check if admin is in user mode
+        // SECURITY: Verify admin mode is valid for current user
         const isAdmin = isAdminMode();
-        setAdminMode(isAdmin);
         if (isAdmin) {
-          setAdminData(getAdminData());
+          const adminData = getAdminData();
+          // Check if admin mode belongs to current user
+          if (adminData && adminData.userId !== user.id) {
+            // Admin mode is for different user - clear it immediately
+            console.warn('Admin mode detected for different user - clearing for security');
+            clearAdminMode();
+            setAdminMode(false);
+            setAdminData(null);
+          } else {
+            setAdminMode(isAdmin);
+            setAdminData(adminData);
+          }
         }
 
         // Load unread announcement count
         await loadUnreadAnnouncementCount(user.id);
+      } else {
+        // No user logged in - clear any admin mode data
+        clearAdminMode();
+        setAdminMode(false);
+        setAdminData(null);
       }
     };
     getUser();
+
+    // SECURITY: Listen for auth state changes and clear admin mode on user change
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_OUT') {
+        // User signed out - clear all admin data
+        clearAdminMode();
+        setAdminMode(false);
+        setAdminData(null);
+        setUser(null);
+        setUserProfile(null);
+      } else if (event === 'SIGNED_IN' && session?.user) {
+        // New user signed in - verify admin mode is valid
+        const isAdmin = isAdminMode();
+        if (isAdmin) {
+          const adminData = getAdminData();
+          if (adminData && adminData.userId !== session.user.id) {
+            // Admin mode is for different user - clear it
+            console.warn('Clearing admin mode - different user signed in');
+            clearAdminMode();
+            setAdminMode(false);
+            setAdminData(null);
+          }
+        }
+      }
+    });
+
+    return () => {
+      subscription?.unsubscribe();
+    };
   }, []);
 
   // Handle click outside to close profile dropdown
@@ -303,6 +366,19 @@ export default function DashboardLayout({ children, currentPage }) {
   const studentName = userProfile?.name || user?.email || "Student Name";
 
   const handleSignOut = async () => {
+    // CRITICAL: Clear all admin mode data on logout to prevent security issues
+    localStorage.removeItem("admin_mode");
+    localStorage.removeItem("admin_user_id");
+    localStorage.removeItem("admin_role");
+    localStorage.removeItem("admin_name");
+    
+    // Clear any other admin-related localStorage items
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith('admin_') || key.includes('admin')) {
+        localStorage.removeItem(key);
+      }
+    });
+    
     await supabase.auth.signOut();
     router.push("/login");
   };

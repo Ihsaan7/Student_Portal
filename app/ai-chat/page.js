@@ -133,7 +133,22 @@ export default function AIChatPage() {
                 <span className="hidden sm:inline">Welcome, </span>{user.email}
               </div>
               <button
-                onClick={() => supabase.auth.signOut()}
+                onClick={() => {
+                  // CRITICAL: Clear all admin mode data on logout
+                  localStorage.removeItem("admin_mode");
+                  localStorage.removeItem("admin_user_id");
+                  localStorage.removeItem("admin_role");
+                  localStorage.removeItem("admin_name");
+                  
+                  // Clear any other admin-related localStorage items
+                  Object.keys(localStorage).forEach(key => {
+                    if (key.startsWith('admin_') || key.includes('admin')) {
+                      localStorage.removeItem(key);
+                    }
+                  });
+                  
+                  supabase.auth.signOut();
+                }}
                 className="px-2 py-1.5 sm:px-4 sm:py-2 rounded-lg transition-colors font-medium text-xs sm:text-sm"
                 style={{ backgroundColor: 'hsl(var(--destructive))', color: 'hsl(var(--destructive-foreground))' }}
                 onMouseEnter={(e) => e.target.style.opacity = '0.9'}

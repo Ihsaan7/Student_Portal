@@ -157,6 +157,19 @@ export default function ProfilePage() {
   }
 
   async function handleLogout() {
+    // CRITICAL: Clear all admin mode data on logout
+    localStorage.removeItem("admin_mode");
+    localStorage.removeItem("admin_user_id");
+    localStorage.removeItem("admin_role");
+    localStorage.removeItem("admin_name");
+    
+    // Clear any other admin-related localStorage items
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith('admin_') || key.includes('admin')) {
+        localStorage.removeItem(key);
+      }
+    });
+    
     await supabase.auth.signOut();
     router.push("/login");
   }

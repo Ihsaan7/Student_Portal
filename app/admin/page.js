@@ -6,6 +6,7 @@ import HandoutApprovalPanel from '../components/HandoutApprovalPanel';
 import AdminCourseGuidancePanel from '../components/AdminCourseGuidancePanel';
 import CareerDevelopmentAdminPanel from '../components/CareerDevelopmentAdminPanel';
 import AnnouncementAdminPanel from '../components/AnnouncementAdminPanel';
+import VUTipsAdminPanel from '../components/VUTipsAdminPanel';
 import { getAdminStats, updateSystemStats, logAdminAction } from '../../lib/adminAuth';
 import { supabase } from '../../lib/supabase';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -80,6 +81,20 @@ const AdminDashboard = ({ adminData }) => {
   const handleLogout = async () => {
     try {
       await logAdminAction('admin_logout');
+      
+      // CRITICAL: Clear all admin mode data on logout
+      localStorage.removeItem("admin_mode");
+      localStorage.removeItem("admin_user_id");
+      localStorage.removeItem("admin_role");
+      localStorage.removeItem("admin_name");
+      
+      // Clear any other admin-related localStorage items
+      Object.keys(localStorage).forEach(key => {
+        if (key.startsWith('admin_') || key.includes('admin')) {
+          localStorage.removeItem(key);
+        }
+      });
+      
       await supabase.auth.signOut();
       router.push('/login');
     } catch (err) {
@@ -312,6 +327,24 @@ const AdminDashboard = ({ adminData }) => {
             </div>
           </div>
 
+          <div 
+            onClick={() => setActiveTab('vu-tips')}
+            className={`bg-card p-6 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer border group border-l-4 ${
+              activeTab === 'vu-tips' 
+                ? 'border-primary bg-primary/5' 
+                : 'border-primary/20 hover:border-primary/40'
+            }`}
+            style={{ borderLeftColor: 'hsl(var(--primary))' }}
+          >
+            <div className="flex items-center">
+              <div className="text-3xl mr-4 group-hover:scale-110 transition-transform duration-200">💡</div>
+              <div>
+                <h3 className="text-lg font-semibold text-foreground">VU Tips</h3>
+                <p className="text-sm text-muted-foreground">Manage VU Tips video sections</p>
+              </div>
+            </div>
+          </div>
+
           {adminData?.role === 'super_admin' && (
             <div 
               onClick={() => router.push('/admin/settings')}
@@ -382,6 +415,16 @@ const AdminDashboard = ({ adminData }) => {
                 }`}
               >
                 Announcements
+              </button>
+              <button
+                onClick={() => setActiveTab('vu-tips')}
+                className={`py-3 px-1 border-b-2 font-medium text-sm whitespace-nowrap transition-colors ${
+                  activeTab === 'vu-tips'
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
+                }`}
+              >
+                VU Tips
               </button>
             </nav>
           </div>
@@ -473,6 +516,10 @@ const AdminDashboard = ({ adminData }) => {
 
         {activeTab === 'announcements' && (
           <AnnouncementAdminPanel />
+        )}
+
+        {activeTab === 'vu-tips' && (
+          <VUTipsAdminPanel user={adminData.user} />
         )}
       </main>
     </div>
