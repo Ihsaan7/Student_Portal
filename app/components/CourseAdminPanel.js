@@ -44,20 +44,20 @@ export default function CourseAdminPanel({ courseId, courseName, onUpdate }) {
         .order('created_at', { ascending: false });
       
       if (error) {
-        if (error.code === 'PGRST116' || error.message.includes('relation "announcements" does not exist')) {
+        if (error.code === 'PGRST116' || error.message?.includes('relation "announcements" does not exist') || error.message?.includes('Could not find the table')) {
           setAnnouncementsError('table_missing');
           console.warn('Announcements table does not exist. Please run database setup.');
           return;
         } else {
           setAnnouncementsError('general_error');
-          console.error('Error loading announcements:', error);
+          console.warn('Error loading announcements:', error.message || 'Unknown error');
           return;
         }
       }
       setAnnouncements(data || []);
       setAnnouncementsError(null);
     } catch (error) {
-      console.error('Error loading announcements:', error);
+      console.warn('Error loading announcements:', error.message || 'Unknown error');
       setAnnouncementsError('general_error');
     }
   };
