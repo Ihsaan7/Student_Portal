@@ -403,7 +403,7 @@ export default function DashboardLayout({ children, currentPage }) {
     >
       {/* Sidebar */}
       <aside
-        className="fixed top-0 left-0 h-full min-h-screen w-20 md:w-64 flex flex-col justify-between z-30 transition-all duration-300 border-r"
+        className="fixed top-0 left-0 h-full min-h-screen w-20 md:w-64 flex flex-col z-30 transition-all duration-300 border-r overflow-hidden"
         style={{
           backgroundColor: "hsl(var(--sidebar))",
           borderColor: "hsl(var(--sidebar-border))",
@@ -411,7 +411,8 @@ export default function DashboardLayout({ children, currentPage }) {
             theme === "dark" ? "none" : "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
         }}
       >
-        <div>
+        {/* Header - Fixed */}
+        <div className="flex-shrink-0">
           <div className="flex items-center justify-center md:justify-start gap-2 px-4 py-6">
             <StudyBuddyLogo size="small" showText={false} />
             <span
@@ -421,53 +422,57 @@ export default function DashboardLayout({ children, currentPage }) {
               StudentNest
             </span>
           </div>
-          <nav className="flex-1">
-            <ul className="space-y-3 mt-6 px-3">
-              {navItems.map((item) => (
-                <li key={item.name}>
-                  <a
-                    href={item.route}
-                    className={`flex items-center gap-4 px-4 py-4 rounded-lg transition-all duration-200 group ${
-                      currentPage === item.route
-                        ? "shadow-sm font-medium"
-                        : "hover:shadow-sm"
-                    }`}
-                    style={{
-                      backgroundColor:
-                        currentPage === item.route
-                          ? "hsl(var(--sidebar-accent))"
-                          : "transparent",
-                      color:
-                        currentPage === item.route
-                          ? "hsl(var(--sidebar-primary))"
-                          : "hsl(var(--sidebar-foreground))",
-                    }}
-                    onMouseEnter={(e) => {
-                      if (currentPage !== item.route) {
-                        e.target.style.backgroundColor =
-                          "hsl(var(--sidebar-accent) / 0.5)";
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (currentPage !== item.route) {
-                        e.target.style.backgroundColor = "transparent";
-                      }
-                    }}
-                  >
-                    <span className="w-6 h-6 flex items-center justify-center">
-                      {item.icon}
-                    </span>
-                    <span className="hidden md:inline text-base font-medium">
-                      {item.name}
-                    </span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
         </div>
+
+        {/* Navigation - Scrollable */}
+        <nav className="flex-1 overflow-y-auto overflow-x-hidden">
+          <ul className="space-y-3 mt-6 px-3 pb-6">
+            {navItems.map((item) => (
+              <li key={item.name}>
+                <a
+                  href={item.route}
+                  className={`flex items-center gap-4 px-4 py-4 rounded-lg transition-all duration-200 group ${
+                    currentPage === item.route
+                      ? "shadow-sm font-medium"
+                      : "hover:shadow-sm"
+                  }`}
+                  style={{
+                    backgroundColor:
+                      currentPage === item.route
+                        ? "hsl(var(--sidebar-accent))"
+                        : "transparent",
+                    color:
+                      currentPage === item.route
+                        ? "hsl(var(--sidebar-primary))"
+                        : "hsl(var(--sidebar-foreground))",
+                  }}
+                  onMouseEnter={(e) => {
+                    if (currentPage !== item.route) {
+                      e.target.style.backgroundColor =
+                        "hsl(var(--sidebar-accent) / 0.5)";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (currentPage !== item.route) {
+                      e.target.style.backgroundColor = "transparent";
+                    }
+                  }}
+                >
+                  <span className="w-6 h-6 flex items-center justify-center flex-shrink-0">
+                    {item.icon}
+                  </span>
+                  <span className="hidden md:inline text-base font-medium truncate">
+                    {item.name}
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        {/* Footer - Fixed */}
         <div
-          className="px-4 py-6 text-xs border-t hidden md:block"
+          className="flex-shrink-0 px-4 py-6 text-xs border-t hidden md:block"
           style={{
             color: "hsl(var(--sidebar-muted))",
             borderColor: "hsl(var(--sidebar-border))",
